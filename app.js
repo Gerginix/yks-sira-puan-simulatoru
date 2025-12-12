@@ -59,6 +59,74 @@ function showOnlyGroup(tur) {
   if (gDil) gDil.style.display = (tur === "DIL") ? "" : "none";
 }
 
+/* =========================
+   SIRALAMA (CSV) KISMI
+   ========================= */
+const CSV_FILES = {
+  SAY: "./say.csv",
+  EA:  "./ea.csv",
+  SOZ: "./soz.csv",
+  DIL: "./dil.csv",
+};
+
+const rankCache = {
+  SAY: null,
+  EA: null,
+  SOZ: null,
+  DIL: null,
+};
+
+function parseCSVToMap(text) {
+  const lines = text.replace(/\r/g, "").split("\n").map(x => x.trim()).filter(Boolean);
+  if (lines.length < 2) return new Map();
+
+  // başlık satırı var: puan,min,max
+  const map = new Map();
+  for (let i = 1; i < lines.length; i++) {
+    const parts = lines[i].split(",");
+    if (parts.length < 3) continue;
+    const puan = Number(parts[0]);
+    const min = parts[1]?.trim();
+    const max = parts[2]?.trim();
+    if (Number.isFinite(puan)) {
+      map.set(puan, { min, max });
+    }
+  }
+  return map;
+}
+
+async function loadRankMap(tur) {
+  if (rankCache[tur]) return rankCache[tur];
+  const url = CSV_FILES[tur];
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`CSV okunamadı: ${tur} (${res.status})`);
+  const text = await res.text();
+  const map = parseCSVToMap(text);
+  rankCache[tur] = map;
+  return map;
+}
+
+async function getRankMinMax(tur, puan) {
+  const puanInt = Math.floor(puan); // Excel: AŞAĞIYUVARLA(puan;0)
+  const map = await loadRankMap(tur);
+  const row = map.get(puanInt);
+  if (!row) return { min: "#YOK", max: "#YOK", puanInt };
+  return { min: row.min ?? "#YOK", max: row.max ?? "#YOK", puanInt };
+}
+
+function writeRank(min, max) {
+  // Eğer HTML’de ayrı alanlar varsa onları da doldurur:
+  const minEl = document.getElementById("minSira");
+  const maxEl = document.getElementById("maxSira");
+  const siraEl = document.getElementById("sira");
+
+  if (minEl) minEl.textContent = min;
+  if (maxEl) maxEl.textContent = max;
+
+  // Senin sayfanda genelde tek "sira" alanı var, ona da yazalım:
+  if (siraEl) siraEl.textContent = `MIN SIRA: ${min}  |  MAX SIRA: ${max}`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const turSelect = document.getElementById("puanTuru");
   const btn = document.getElementById("hesaplaBtn");
@@ -73,9 +141,13 @@ document.addEventListener("DOMContentLoaded", () => {
     showOnlyGroup(turSelect.value);
     sonuc.textContent = "—";
     siraEl.textContent = "—";
+    const minEl = document.getElementById("minSira");
+    const maxEl = document.getElementById("maxSira");
+    if (minEl) minEl.textContent = "—";
+    if (maxEl) maxEl.textContent = "—";
   });
 
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => {
     const tur = turSelect.value;
 
     // Ortak
@@ -114,8 +186,18 @@ document.addEventListener("DOMContentLoaded", () => {
       x.ydt = readNumber("ydt");
     }
 
+    // 1) PUAN
     const puan = calcScore(tur, x);
     sonuc.textContent = `${tur} Puan: ${puan.toFixed(3)}`;
-    siraEl.textContent = "—";
+
+    // 2) SIRALAMA (CSV’den)
+    try {
+      const { min, max } = await getRankMinMax(tur, puan);
+      writeRank(min, max);
+    } catch (e) {
+      // CSV bulunamazsa ya da okunamazsa:
+      writeRank("#YOK", "#YOK");
+      console.error(e);
+    }
   });
 });
