@@ -103,6 +103,35 @@
         --control-w: 85%;
       }
     }
+
+    /* === ARKA PLAN FOTO (PC + MOBİL) === */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image: url("umut.jpeg");
+      background-repeat:no-repeat;
+      background-size:cover;
+      background-position: 65% center; /* PC kadraj */
+      opacity:0.22;                    /* transparan, flu YOK */
+      z-index:-1;
+      pointer-events:none;
+    }
+
+    /* Tüm içerik foto üstünde kalsın */
+    body > *{
+      position:relative;
+      z-index:1;
+    }
+
+    /* === MOBİL AYAR === */
+    @media (max-width: 600px){
+      body::before{
+        background-position: 50% 20%;  /* yüz yukarıda */
+        background-size: 160%;         /* yüz büyük */
+        opacity:0.18;
+      }
+    }
   </style>
 
   <!-- GoatCounter -->
