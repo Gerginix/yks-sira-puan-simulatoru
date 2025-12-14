@@ -203,7 +203,6 @@
 
 <div class="igline">
   <span class="igicon" aria-hidden="true">
-    <!-- Inline Instagram icon (SVG) -->
     <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Instagram">
       <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.4-2.15a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/>
     </svg>
@@ -290,15 +289,19 @@
 
     if (!btn || !msg || !sonucEl || !siraEl) return;
 
+    function cleanText(t){ return (t || "").toString().trim(); }
+
     function getShareText(){
-      const sonuc = (sonucEl.textContent || "").trim();
-      const sira  = (siraEl.textContent || "").trim();
+      const sonuc = cleanText(sonucEl.textContent);
+      const sira  = cleanText(siraEl.textContent);
       const url   = window.location.href;
-      const pieces = [];
-      if (sonuc && sonuc !== "—") pieces.push(sonuc);
-      if (sira && sira !== "—") pieces.push("Sıralama: " + sira.replace(/^Sıra:\s*/i, ""));
-      pieces.push(url);
-      return pieces.join("\n");
+
+      const lines = [];
+      lines.push("YKS 2025 Puan ve Sıra Simülatörü");
+      if (sonuc && sonuc !== "—") lines.push(sonuc);
+      if (sira && sira !== "—")  lines.push(sira);
+      lines.push(url); // URL'yi metnin içine gömüyoruz (WhatsApp metni taşısın diye)
+      return lines.join("\n");
     }
 
     async function copyToClipboard(text){
@@ -306,7 +309,6 @@
         await navigator.clipboard.writeText(text);
         return true;
       }catch(e){
-        // Fallback
         const ta = document.createElement("textarea");
         ta.value = text;
         ta.style.position = "fixed";
@@ -322,15 +324,21 @@
     }
 
     btn.addEventListener("click", async () => {
+      const sonuc = cleanText(sonucEl.textContent);
+      if (!sonuc || sonuc === "—") {
+        msg.style.display = "block";
+        msg.textContent = "Önce HESAPLA’ya basıp sonucu üret.";
+        return;
+      }
+
       const text = getShareText();
 
-      // Mobilde native paylaşım (varsa)
+      // Mobilde native paylaşım (WhatsApp dahil): URL alanını KULLANMIYORUZ.
       if (navigator.share) {
         try{
           await navigator.share({
             title: "YKS 2025 Puan ve Sıra Simülatörü",
-            text,
-            url: window.location.href
+            text: text
           });
           msg.style.display = "block";
           msg.textContent = "Paylaşım ekranı açıldı.";
@@ -340,10 +348,10 @@
         }
       }
 
-      // PC / fallback: link+sonuç kopyala
+      // PC / fallback: sonuç+link kopyala
       const ok = await copyToClipboard(text);
       msg.style.display = "block";
-      msg.textContent = ok ? "Kopyalandı. İstediğin yere yapıştırabilirsin." : "Kopyalanamadı. Tarayıcı izin vermedi.";
+      msg.textContent = ok ? "Kopyalandı. WhatsApp/DM’ye yapıştırabilirsin." : "Kopyalanamadı. Tarayıcı izin vermedi.";
     });
   })();
 </script>
