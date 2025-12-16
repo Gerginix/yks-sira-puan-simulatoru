@@ -920,31 +920,46 @@
         }
       }
 
-      function normIl(s){
-        return (s || "")
-          .toString()
-          .toUpperCase()
-          .replace(/İ/g,"I")
-          .replace(/Ş/g,"S")
-          .replace(/Ğ/g,"G")
-          .replace(/Ü/g,"U")
-          .replace(/Ö/g,"O")
-          .replace(/Ç/g,"C")
-          .replace(/\s+/g," ")
-          .trim();
+      
+      function renderLists(yuzdelik, nakilYuz){
+        const il = (ilSelect?.value || "").toString().trim();
+
+        const okullar = Array.isArray(lgsData?.["Table 1"])
+          ? lgsData["Table 1"]
+          : (Array.isArray(lgsData?.okullar) ? lgsData.okullar : []);
+
+        const norm = s => (s||"").toString().trim();
+
+        const birinci = okullar
+          .filter(o => norm(o["İl Adı"]) === norm(il) && Number(o["SECIM_ANAHTAR"]) === 1)
+          .slice(0,12);
+
+        const nakil = okullar
+          .filter(o => norm(o["İl Adı"]) === norm(il) && Number(o["SECIM_ANAHTAR_NAKIL"]) === 1)
+          .slice(0,12);
+
+        fillTableExcel("tblBirinci", birinci);
+        fillTableExcel("tblNakil", nakil);
+
+        listsWrap.style.display = (birinci.length || nakil.length) ? "" : "none";
       }
 
-
-      function renderLists(yuzdelik, nakilYuz){
-        const il = ((ilSelect?.value || ilSelect?.options?.[0]?.value) || "").toString().trim();
-
-        const okullar = pickArr(lgsData, ["okullar","schools","liseler","lise_listesi","kurumlar","veri","data"]);
-
-        const getYuz = (o) => {
-          // desteklenen anahtarlar: yuzdelik2025 / yuzdelik_2025 / yuzdelik
-          const v = (o?.yuzdelik2025 ?? o?.yuzdelik_2025 ?? o?.yuzdelik);
-          return Number(v);
-        };
+      function fillTableExcel(tblId, rows){
+        const tbl = document.getElementById(tblId);
+        const tbody = tbl.querySelector("tbody");
+        tbody.innerHTML = "";
+        rows.forEach(r=>{
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="schoolName">${r["Okul Adı"]||""}</td>
+            <td class="colNum"></td>
+            <td class="colNum"></td>
+            <td class="colTrend">${r["AÇIKLAMA-1"]||""}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+;
         const getNakilYuz = (o) => {
           // desteklenen anahtarlar: yuzdelikNakil2025 / nakil_yuzdelik_2025 / nakil_yuzdelik
           const v = (o?.yuzdelikNakil2025 ?? o?.nakil_yuzdelik_2025 ?? o?.nakil_yuzdelik ?? o?.yuzdelikNakil);
@@ -952,16 +967,14 @@
         };
 
         const birinci = okullar
-          .filter(o => normIl(o.il) === normIl(il) && Number.isFinite(getYuz(o)))
-          .filter(o => getYuz(o) >= yuzdelik)
-          .map(o => ({...o, diff: (getYuz(o) - yuzdelik)}))
+          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getYuz(o)))
+          .map(o => ({...o, diff: Math.abs(getYuz(o) - yuzdelik)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
         const nakil = okullar
-          .filter(o => normIl(o.il) === normIl(il) && Number.isFinite(getNakilYuz(o)))
-          .filter(o => getNakilYuz(o) >= nakilYuz)
-          .map(o => ({...o, diff: (getNakilYuz(o) - nakilYuz)}))
+          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getNakilYuz(o)))
+          .map(o => ({...o, diff: Math.abs(getNakilYuz(o) - nakilYuz)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
