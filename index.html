@@ -818,11 +818,23 @@
 
         // İl seçenekleri
         const okullar = pickArr(lgsData, ["okullar","schools","liseler","lise_listesi","kurumlar","veri","data"]);
-        const illerFromJson = pickArr(lgsData, ["iller","il_listesi","provinces","cities"]);
-        const getIl = (o) => ((o?.["İl Adı"] ?? o?.["Il Adı"] ?? o?.il ?? o?.IL ?? o?.Il ?? o?.city ?? o?.sehir ?? o?.şehir ?? o?.province ?? "")).toString().trim();
-    const iller = (Array.isArray(illerFromJson) && illerFromJson.length)
-          ? illerFromJson.map(s=>s.toString().trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,"tr"))
-          : Array.from(new Set(okullar.map(getIl).filter(Boolean))).sort((a,b)=>a.localeCompare(b,"tr"));
+        const normIl = (s) => (s || "")
+          .toString()
+          .toUpperCase()
+          .replace(/İ/g,"I")
+          .replace(/Ş/g,"S")
+          .replace(/Ğ/g,"G")
+          .replace(/Ü/g,"U")
+          .replace(/Ö/g,"O")
+          .replace(/Ç/g,"C")
+          .replace(/\s+/g," ")
+          .trim();
+
+        const getIl = (o) => (o?.["İl Adı"] ?? o?.["Il Adı"] ?? o?.["IL ADI"] ?? o?.["IL_ADI"] ?? o?.il ?? o?.IL ?? o?.Il ?? o?.city ?? o?.sehir ?? o?.şehir ?? o?.province ?? "").toString().trim();
+    const iller = (Array.isArray(lgsData?.iller) && lgsData.iller.length)
+          ? lgsData.iller.map(x=>String(x)).filter(Boolean)
+          : Array.from(new Set(okullar.map(getIl).filter(Boolean)));
+        iller.sort((a,b)=>a.localeCompare(b,"tr"));
 
         ilSelect.innerHTML = "";
         iller.forEach(il => {
@@ -832,6 +844,7 @@
           ilSelect.appendChild(opt);
         });
         if (iller.includes("İSTANBUL")) ilSelect.value = "İSTANBUL";
+        if (!ilSelect.value && iller.length) ilSelect.value = iller[0];
 
         btnCalc && btnCalc.addEventListener("click", lgs_calculate);
 
@@ -926,31 +939,26 @@
         const il = (ilSelect?.value || "").toString().trim();
 
         const okullar = pickArr(lgsData, ["okullar","schools","liseler","lise_listesi","kurumlar","veri","data"]);
-        const illerFromJson = pickArr(lgsData, ["iller","il_listesi","provinces","cities"]);
 
         const getYuz = (o) => {
-          // desteklenen anahtarlar (JSON/Excel):
-          //  - yuzdelik2025 / yuzdelik_2025 / yuzdelik
-          //  - "2025 En Düşük % Dilim"
-          const v = (o?.yuzdelik2025 ?? o?.yuzdelik_2025 ?? o?.yuzdelik ?? o?.["2025 En Düşük % Dilim"]);
+          // desteklenen anahtarlar: yuzdelik2025 / yuzdelik_2025 / yuzdelik + Excel(Table 1)
+          const v = (o?.yuzdelik2025 ?? o?.yuzdelik_2025 ?? o?.yuzdelik ?? o?.["2025 En Düşük % Dilim"] ?? o?.["2025 En Dusuk % Dilim"]);
           return Number(v);
         };
         const getNakilYuz = (o) => {
-          // desteklenen anahtarlar (JSON/Excel):
-          //  - yuzdelikNakil2025 / nakil_yuzdelik_2025 / nakil_yuzdelik / yuzdelikNakil
-          //  - "2025 En Düşük Nakil Sonrası % Dilim"
-          const v = (o?.yuzdelikNakil2025 ?? o?.nakil_yuzdelik_2025 ?? o?.nakil_yuzdelik ?? o?.yuzdelikNakil ?? o?.["2025 En Düşük Nakil Sonrası % Dilim"]);
+          // desteklenen anahtarlar: yuzdelikNakil2025 / nakil_yuzdelik_2025 / nakil_yuzdelik + Excel(Table 1)
+          const v = (o?.yuzdelikNakil2025 ?? o?.nakil_yuzdelik_2025 ?? o?.nakil_yuzdelik ?? o?.yuzdelikNakil ?? o?.["2025 En Düşük Nakil Sonrası % Dilim"] ?? o?.["2025 En Dusuk Nakil Sonrasi % Dilim"]);
           return Number(v);
         };
 
         const birinci = okullar
-          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getYuz(o)))
+          .filter(o => normIl(getIl(o)) === normIl(il) && Number.isFinite(getYuz(o)))
           .map(o => ({...o, diff: Math.abs(getYuz(o) - yuzdelik)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
         const nakil = okullar
-          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getNakilYuz(o)))
+          .filter(o => normIl(getIl(o)) === normIl(il) && Number.isFinite(getNakilYuz(o)))
           .map(o => ({...o, diff: Math.abs(getNakilYuz(o) - nakilYuz)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
@@ -969,8 +977,8 @@
         rows.forEach(r => {
           const tr = document.createElement("tr");
 
-          const okul = (r.okul ?? r.OKUL ?? r.ad ?? r.name ?? r.kurum ?? "").toString();
-          const puan = Number(r.puan_2025 ?? r.puan ?? r.score ?? r.puan2025);
+          const okul = (r["Okul Adı"] ?? r["OKUL ADI"] ?? r.okul ?? r.OKUL ?? r.ad ?? r.name ?? r.kurum ?? "").toString();
+          const puan = Number(r["2025 PUAN"] ?? r["2025 Puan"] ?? r.puan_2025 ?? r.puan ?? r.score ?? r.puan2025);
           const yuz = (function(){
             if (typeof yuzKey === "string") return Number(r[yuzKey] ?? r.yuzdelik ?? r.yuzde ?? r.percentile ?? r.percentage);
             if (yuzKey && typeof yuzKey === "object") {
@@ -985,7 +993,7 @@
             return Number(r.yuzdelik ?? r.yuzde ?? r.percentile ?? r.percentage);
           })();
 
-          const trendText = (r.trend_2025 || r.trend || r.talep || "").toString();
+          const trendText = (r["AÇIKLAMA-1"] ?? r["ACIKLAMA-1"] ?? r.trend_2025 || r.trend || r.talep || "").toString();
 
           tr.innerHTML = `
             <td class="schoolName">${okul}</td>
