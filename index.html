@@ -818,9 +818,11 @@
 
         // İl seçenekleri
         const okullar = pickArr(lgsData, ["okullar","schools","liseler","lise_listesi","kurumlar","veri","data"]);
-        const getIl = (o) => (o?.il ?? o?.IL ?? o?.Il ?? o?.city ?? o?.sehir ?? o?.şehir ?? o?.province ?? "").toString().trim();
-    const iller = Array.from(new Set(okullar.map(getIl).filter(Boolean)))
-          .sort((a,b)=>a.localeCompare(b,"tr"));
+        const illerFromJson = pickArr(lgsData, ["iller","il_listesi","provinces","cities"]);
+        const getIl = (o) => ((o?.["İl Adı"] ?? o?.["Il Adı"] ?? o?.il ?? o?.IL ?? o?.Il ?? o?.city ?? o?.sehir ?? o?.şehir ?? o?.province ?? "")).toString().trim();
+    const iller = (Array.isArray(illerFromJson) && illerFromJson.length)
+          ? illerFromJson.map(s=>s.toString().trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,"tr"))
+          : Array.from(new Set(okullar.map(getIl).filter(Boolean))).sort((a,b)=>a.localeCompare(b,"tr"));
 
         ilSelect.innerHTML = "";
         iller.forEach(il => {
@@ -902,26 +904,16 @@
 
         outPuan && (outPuan.value = fmtPuan(puan));
 
-        const tab = (lgsData && (lgsData.puan2yuzdelik || lgsData.yuzdelik_tablosu)) || {};
-        // JSON anahtar uyumu (Excel → JSON): scores/puanlar[] ↔ yuzdelikler[]
-        const puanArr =
-          (Array.isArray(tab.scores) ? tab.scores :
-          (Array.isArray(tab.puanlar) ? tab.puanlar :
-          (Array.isArray(tab.puan) ? tab.puan : [])));
-        const yuzArr =
-          (Array.isArray(tab.yuzdelikler) ? tab.yuzdelikler :
-          (Array.isArray(tab.yuzdelik) ? tab.yuzdelik : []));
-        const nakilArr =
-          (Array.isArray(tab.yuzdelikNakil) ? tab.yuzdelikNakil :
-          (Array.isArray(tab.yuzdelikNakiller) ? tab.yuzdelikNakiller :
-          (Array.isArray(tab.nakil_yuzdelik) ? tab.nakil_yuzdelik :
-          (Array.isArray(tab.nakil_yuzdelikler) ? tab.nakil_yuzdelikler : []))));
+        const tab = lgsData.puan2yuzdelik || lgsData.yuzdelik_tablosu || {};
+        const puanArr = Array.isArray(tab.puan) ? tab.puan : (Array.isArray(tab.puanlar) ? tab.puanlar : []);
+        const yuzArr = Array.isArray(tab.yuzdelik) ? tab.yuzdelik : (Array.isArray(tab.yuzdelikler) ? tab.yuzdelikler : []);
+        const nakilArr = Array.isArray(tab.yuzdelikNakil) ? tab.yuzdelikNakil : (Array.isArray(tab.nakil_yuzdelik) ? tab.nakil_yuzdelik : (Array.isArray(tab.nakil_yuzdelikler) ? tab.nakil_yuzdelikler : []));
 
         if (puanArr.length && yuzArr.length){
           const i = nearestIndex(puanArr, puan);
           const yuz = yuzArr[i];
           outYuz && (outYuz.value = fmt2(yuz));
-          renderLists(Number(yuz), Number((Array.isArray(nakilArr) && nakilArr.length) ? nakilArr[i] : yuzArr[i]));
+          renderLists(Number(yuz), Number(nakilArr[i]));
           listsWrap && (listsWrap.style.display = "");
         } else {
           outYuz && (outYuz.value = "");
@@ -930,62 +922,41 @@
         }
       }
 
-      function normIl(s){
-        return (s || "")
-          .toString()
-          .toUpperCase()
-          .replace(/İ/g,"I")
-          .replace(/Ş/g,"S")
-          .replace(/Ğ/g,"G")
-          .replace(/Ü/g,"U")
-          .replace(/Ö/g,"O")
-          .replace(/Ç/g,"C")
-          .replace(/\s+/g," ")
-          .trim();
-      }
-
       function renderLists(yuzdelik, nakilYuz){
         const il = (ilSelect?.value || "").toString().trim();
 
         const okullar = pickArr(lgsData, ["okullar","schools","liseler","lise_listesi","kurumlar","veri","data"]);
+        const illerFromJson = pickArr(lgsData, ["iller","il_listesi","provinces","cities"]);
 
         const getYuz = (o) => {
-          // desteklenen anahtarlar: yuzdelik2025 / yuzdelik_2025 / yuzdelik
-          const v = (o?.yuzdelik2025 ?? o?.yuzdelik_2025 ?? o?.yuzdelik);
+          // desteklenen anahtarlar (JSON/Excel):
+          //  - yuzdelik2025 / yuzdelik_2025 / yuzdelik
+          //  - "2025 En Düşük % Dilim"
+          const v = (o?.yuzdelik2025 ?? o?.yuzdelik_2025 ?? o?.yuzdelik ?? o?.["2025 En Düşük % Dilim"]);
           return Number(v);
         };
         const getNakilYuz = (o) => {
-          // desteklenen anahtarlar: yuzdelikNakil2025 / nakil_yuzdelik_2025 / nakil_yuzdelik
-          const v = (o?.yuzdelikNakil2025 ?? o?.nakil_yuzdelik_2025 ?? o?.nakil_yuzdelik ?? o?.yuzdelikNakil);
+          // desteklenen anahtarlar (JSON/Excel):
+          //  - yuzdelikNakil2025 / nakil_yuzdelik_2025 / nakil_yuzdelik / yuzdelikNakil
+          //  - "2025 En Düşük Nakil Sonrası % Dilim"
+          const v = (o?.yuzdelikNakil2025 ?? o?.nakil_yuzdelik_2025 ?? o?.nakil_yuzdelik ?? o?.yuzdelikNakil ?? o?.["2025 En Düşük Nakil Sonrası % Dilim"]);
           return Number(v);
         };
 
         const birinci = okullar
-          .filter(o => normIl(o.il) === normIl(il) && Number.isFinite(getYuz(o)))
+          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getYuz(o)))
           .map(o => ({...o, diff: Math.abs(getYuz(o) - yuzdelik)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
         const nakil = okullar
-          .filter(o => normIl(o.il) === normIl(il) && Number.isFinite(getNakilYuz(o)))
+          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getNakilYuz(o)))
           .map(o => ({...o, diff: Math.abs(getNakilYuz(o) - nakilYuz)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
         fillTable("tblBirinci", birinci, { yuzField: "yuzdelik2025", alt: ["yuzdelik_2025","yuzdelik"] });
         fillTable("tblNakil", nakil, { yuzField: "yuzdelikNakil2025", alt: ["nakil_yuzdelik_2025","nakil_yuzdelik","yuzdelikNakil"] });
-
-
-        const birinciCount = birinci.length;
-        const nakilCount = nakil.length;
-        if ((birinciCount + nakilCount) === 0){
-          listsWrap && (listsWrap.style.display = "none");
-          noteEl && (noteEl.textContent = "Seçtiğin il için liste bulunamadı. (İl adı yazımı/boşluk farkı varsa otomatik düzeltilir.)");
-        } else {
-          listsWrap && (listsWrap.style.display = "");
-          noteEl && (noteEl.textContent = "");
-        }
-
       }
 
       function fillTable(tblId, rows, yuzKey){
