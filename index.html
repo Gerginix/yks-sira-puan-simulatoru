@@ -697,17 +697,27 @@
         if (lgsInited) return;
         lgsInited = true;
 
-        fetch("lgs.json", { cache: "no-store" })
-          .then(r => r.json())
-          .then(data => {
-            lgsData = data;
-            buildLgsUI();
-            noteEl.textContent = "";
-          })
-          .catch(err => {
-            console.error(err);
-            noteEl.textContent = "lgs.json okunamadı. Dosya repo kökünde mi? (lgs.json)";
-          });
+        const candidates = [
+          "lgs.json",
+          "./lgs.json",
+          "../lgs.json",
+          "/yks-sira-puan-simulatoru/lgs.json"
+        ];
+
+        (async () => {
+          for (const url of candidates){
+            try{
+              const r = await fetch(url, { cache: "no-store" });
+              if (!r.ok) continue;
+              const data = await r.json();
+              lgsData = data;
+              buildLgsUI();
+              noteEl.textContent = "";
+              return;
+            }catch(e){}
+          }
+          noteEl.textContent = "lgs.json okunamadı (404). Dosyayı index.html ile aynı klasöre koy veya Pages kaynağı farklıysa ../lgs.json gerekir.";
+        })();
       }
 
       function buildLgsUI(){
@@ -728,7 +738,7 @@
     ];
         tests.forEach((t, i) => {
           const testName = t.test || ("TEST " + (i+1));
-          const maxQ = Number(t.max_dogru ?? t.max_soru ?? t.maxSoru ?? t.max ?? 0);
+          const maxQ = Number((t.max_soru ?? t.max_dogru ?? t.maxQuestions ?? t.max ?? t.soru ?? 0));
 
           const row = document.createElement("div");
           row.className = "lgsRow";
@@ -892,10 +902,10 @@
 
         outPuan && (outPuan.value = fmtPuan(puan));
 
-        const tab = lgsData.yuzdelik_tablosu || {};
-        const puanArr = Array.isArray(tab.puan) ? tab.puan : [];
-        const yuzArr = Array.isArray(tab.yuzdelik) ? tab.yuzdelik : [];
-        const nakilArr = Array.isArray(tab.nakil_yuzdelik) ? tab.nakil_yuzdelik : [];
+        const tab = lgsData.puan2yuzdelik || lgsData.yuzdelik_tablosu || {};
+        const puanArr = Array.isArray(tab.puan) ? tab.puan : (Array.isArray(tab.puanlar) ? tab.puanlar : []);
+        const yuzArr = Array.isArray(tab.yuzdelik) ? tab.yuzdelik : (Array.isArray(tab.yuzdelikler) ? tab.yuzdelikler : []);
+        const nakilArr = Array.isArray(tab.yuzdelikNakil) ? tab.yuzdelikNakil : (Array.isArray(tab.nakil_yuzdelik) ? tab.nakil_yuzdelik : (Array.isArray(tab.nakil_yuzdelikler) ? tab.nakil_yuzdelikler : []));
 
         if (puanArr.length && yuzArr.length){
           const i = nearestIndex(puanArr, puan);
@@ -912,22 +922,34 @@
 
       function renderLists(yuzdelik, nakilYuz){
         const il = (ilSelect?.value || "").toString().trim();
+
         const okullar = pickArr(lgsData, ["okullar","schools","liseler","lise_listesi","kurumlar","veri","data"]);
 
+        const getYuz = (o) => {
+          // desteklenen anahtarlar: yuzdelik2025 / yuzdelik_2025 / yuzdelik
+          const v = (o?.yuzdelik2025 ?? o?.yuzdelik_2025 ?? o?.yuzdelik);
+          return Number(v);
+        };
+        const getNakilYuz = (o) => {
+          // desteklenen anahtarlar: yuzdelikNakil2025 / nakil_yuzdelik_2025 / nakil_yuzdelik
+          const v = (o?.yuzdelikNakil2025 ?? o?.nakil_yuzdelik_2025 ?? o?.nakil_yuzdelik ?? o?.yuzdelikNakil);
+          return Number(v);
+        };
+
         const birinci = okullar
-          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(Number(o.yuzdelik_2025)))
-          .map(o => ({...o, diff: Math.abs(Number(o.yuzdelik_2025) - yuzdelik)}))
+          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getYuz(o)))
+          .map(o => ({...o, diff: Math.abs(getYuz(o) - yuzdelik)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
         const nakil = okullar
-          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(Number(o.nakil_yuzdelik_2025)))
-          .map(o => ({...o, diff: Math.abs(Number(o.nakil_yuzdelik_2025) - nakilYuz)}))
+          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getNakilYuz(o)))
+          .map(o => ({...o, diff: Math.abs(getNakilYuz(o) - nakilYuz)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
-        fillTable("tblBirinci", birinci, "yuzdelik_2025");
-        fillTable("tblNakil", nakil, "nakil_yuzdelik_2025");
+        fillTable("tblBirinci", birinci, { yuzField: "yuzdelik2025", alt: ["yuzdelik_2025","yuzdelik"] });
+        fillTable("tblNakil", nakil, { yuzField: "yuzdelikNakil2025", alt: ["nakil_yuzdelik_2025","nakil_yuzdelik","yuzdelikNakil"] });
       }
 
       function fillTable(tblId, rows, yuzKey){
@@ -942,7 +964,19 @@
 
           const okul = (r.okul ?? r.OKUL ?? r.ad ?? r.name ?? r.kurum ?? "").toString();
           const puan = Number(r.puan_2025 ?? r.puan ?? r.score ?? r.puan2025);
-          const yuz = Number(r[yuzKey] ?? r.yuzdelik ?? r.yuzde ?? r.percentile ?? r.percentage);
+          const yuz = (function(){
+            if (typeof yuzKey === "string") return Number(r[yuzKey] ?? r.yuzdelik ?? r.yuzde ?? r.percentile ?? r.percentage);
+            if (yuzKey && typeof yuzKey === "object") {
+              const main = yuzKey.yuzField;
+              const alts = Array.isArray(yuzKey.alt) ? yuzKey.alt : [];
+              let v = (main ? r[main] : undefined);
+              if (v == null) {
+                for (const k of alts){ if (r[k] != null){ v = r[k]; break; } }
+              }
+              return Number(v);
+            }
+            return Number(r.yuzdelik ?? r.yuzde ?? r.percentile ?? r.percentage);
+          })();
 
           const trendText = (r.trend_2025 || r.trend || r.talep || "").toString();
 
