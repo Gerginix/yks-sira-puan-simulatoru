@@ -1,490 +1,624 @@
+
 <!doctype html>
 <html lang="tr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>YKS / LGS Puan ve Sıralama Simülatörü</title>
+  <title>YKS 2025 PUAN VE SIRA SİMÜLATÖRÜ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- SEO (hafif) -->
+  <meta name="description" content="2026 YKS hazırlığında deneme netlerinle 2025 YKS puan ve sıralamanı (SAY/EA/SÖZ/DİL) simüle et. OBP ile yerleştirme puanı ve sıralama hesaplama." />
+  <meta property="og:title" content="YKS 2025 PUAN VE SIRA SİMÜLATÖRÜ" />
+  <meta property="og:description" content="Deneme netlerin + OBP ile 2025 YKS puan ve sıralamanı simüle et (SAY/EA/SÖZ/DİL)." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="umut.jpeg" />
+
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#fafafa;color:#111}
-    .wrap{max-width:980px;margin:0 auto;padding:18px}
-    h1{font-size:22px;margin:0 0 6px}
-    .sub{opacity:.75;margin:0 0 14px;font-size:13px;line-height:1.35}
-    .card{background:#fff;border:1px solid #e6e6e6;border-radius:14px;padding:14px;box-shadow:0 1px 0 rgba(0,0,0,.03);margin:12px 0}
-    .switch{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
-    .switch button{padding:10px 14px;border-radius:12px;border:1px solid #222;background:#fff;cursor:pointer;font-weight:700}
-    .switch button.active{background:#111;color:#fff}
-    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-    .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    label{font-size:12px;opacity:.8;display:block;margin:0 0 4px}
-    input,select{width:100%;box-sizing:border-box;padding:10px 10px;border:1px solid #cfcfcf;border-radius:10px;font-size:14px;background:#fff}
-    .btn{padding:12px 14px;border-radius:12px;border:1px solid #111;background:#111;color:#fff;font-weight:800;cursor:pointer}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .out{white-space:pre-wrap;font-weight:700}
-    .muted{opacity:.7;font-size:12px}
-    table{width:100%;border-collapse:collapse}
-    th,td{border-bottom:1px solid #eee;padding:8px 6px;font-size:13px;text-align:left;vertical-align:top}
-    th{font-size:12px;opacity:.75}
-    .lgsRow{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:8px;align-items:center;margin:6px 0}
-    .lgsHdr{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:8px;opacity:.75;font-size:12px}
-    .pill{display:inline-block;padding:4px 8px;border:1px solid #ddd;border-radius:999px;font-size:12px;opacity:.85}
-    .err{color:#b00020;font-weight:700}
-    .ok{color:#0a7a2f;font-weight:700}
+    :root{
+      --page-w: 380px;
+      --control-w: 260px;
+      --radius: 10px;
+    }
+
+    body{
+      font-family: Arial, sans-serif;
+      max-width: var(--page-w);
+      margin: 24px auto;
+      padding: 10px;
+    }
+
+    h1{
+      text-align:center;
+      margin: 6px 0 10px;
+      font-size: 22px;
+    }
+
+    .subtitle{
+      text-align:center;
+      font-size: 13px;
+      color:#333;
+      line-height:1.45;
+      margin-bottom:16px;
+    }
+
+    /* Instagram satırı (subtitle altında) */
+    .igline{
+      text-align:center;
+      font-size: 13px;
+      margin-top: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .igline a{
+      color:#0b57d0;
+      text-decoration: underline;
+      word-break: break-word;
+    }
+    .igicon{
+      width:18px;
+      height:18px;
+      display:inline-block;
+      flex:0 0 auto;
+    }
+
+    /* Dipnot */
+    .disclaimer{
+      text-align:center;
+      font-size:12px;
+      color:#444;
+      margin-top:10px;
+      line-height:1.4;
+    }
+
+    label{
+      font-weight:700;
+      display:block;
+      margin-top:10px;
+      width: var(--control-w);
+      margin-left:auto;
+      margin-right:auto;
+      font-size:14px;
+    }
+
+    input, select{
+      width: var(--control-w);
+      padding:8px;
+      margin-top:6px;
+      display:block;
+      margin-left:auto;
+      margin-right:auto;
+      text-align:center;
+    }
+
+    button{
+      width: var(--control-w);
+      padding:12px;
+      margin:14px auto 0;
+      font-size:16px;
+      font-weight:700;
+      display:block;
+      cursor:pointer;
+    }
+
+    /* Paylaş butonu (ikincil) */
+    .btn-secondary{
+      margin-top:10px;
+      font-size:14px;
+      font-weight:700;
+      opacity:0.92;
+    }
+
+    .grp{
+      border:1px solid #ddd;
+      border-radius: var(--radius);
+      padding:10px;
+      margin-top:12px;
+    }
+
+    .grp b{
+      display:block;
+      text-align:center;
+      font-size:14px;
+      margin-bottom:6px;
+    }
+
+    #sonuc{
+      margin-top:16px;
+      font-size:20px;
+      font-weight:800;
+      text-align:center;
+    }
+
+    #sira{
+      margin-top:8px;
+      font-size:16px;
+      font-weight:700;
+      text-align:center;
+    }
+
+    .hint{
+      font-size:12px;
+      color:#555;
+      margin-top:6px;
+      text-align:center;
+    }
+
+    @media (max-width: 420px){
+      :root{
+        --page-w: 92vw;
+        --control-w: 85%;
+      }
+    }
+
+    /* === ARKA PLAN FOTO (PC + MOBİL) === */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image: url("umut.jpeg");
+      background-repeat:no-repeat;
+      background-size:cover;
+      background-position: 65% center; /* PC kadraj */
+      opacity:0.22;                    /* transparan, flu YOK */
+      z-index:-1;
+      pointer-events:none;
+    }
+
+    /* Tüm içerik foto üstünde kalsın */
+    body > *{
+      position:relative;
+      z-index:1;
+    }
+
+    /* === MOBİL AYAR === */
+    @media (max-width: 600px){
+      body::before{
+        background-position: 50% 20%;  /* yüz yukarıda */
+        background-size: 160%;         /* yüz büyük */
+        opacity:0.18;
+      }
+    }
+
+    /* === AKILLI UYARI (satır) === */
+    .warnline{
+      width: var(--control-w);
+      margin: 10px auto 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(180,0,0,0.18);
+      background: rgba(255, 230, 230, 0.55);
+      color: #5a0000;
+      font-size: 12.5px;
+      line-height: 1.4;
+      display:none;
+    }
+    .warnline b{ font-weight:800; }
+
+    /* === NEDEN HESAPLANMADI? (MODAL) === */
+    .modalOverlay{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,0.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index:9999;
+    }
+    .modalCard{
+      width: min(520px, 92vw);
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.20);
+      padding: 16px 16px 14px;
+    }
+    .modalTitle{
+      font-size: 18px;
+      font-weight: 900;
+      margin: 0 0 8px;
+      color:#111;
+      text-align:left;
+    }
+    .modalText{
+      font-size: 13.5px;
+      line-height: 1.5;
+      color:#222;
+      margin: 0 0 12px;
+      white-space: pre-line;
+    }
+    .modalActions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .modalBtn{
+      width:auto;
+      margin:0;
+      padding:10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background:#111;
+      color:#fff;
+      font-weight: 800;
+      font-size: 14px;
+      cursor:pointer;
+    }
+    .modalBtnLight{
+      background: rgba(255,255,255,0.9);
+      color:#111;
+    }
   </style>
+
+  <!-- GoatCounter -->
+  <script data-goatcounter="https://gerginix.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
 </head>
+
 <body>
-  <div class="wrap">
-    <h1>YKS 2025 Puan & Sıralama + LGS 2025 Puan & Yüzdelik</h1>
-    <p class="sub">
-      YKS tarafı: deneme netleri + OBP ile puan ve sıralama. LGS tarafı: ders bazlı doğru/yanlış/net ile puan ve yüzdelik.
-    </p>
 
-    <div class="card">
-      <div class="switch" id="examSwitch">
-        <button type="button" id="btnYks" class="active">YKS</button>
-        <button type="button" id="btnLgs">LGS</button>
-      </div>
+<h1>YKS 2025 PUAN VE SIRA SİMÜLATÖRÜ</h1>
 
-      <!-- ====================== YKS PANEL ====================== -->
-      <section id="yksPanel">
-        <div class="grid2">
-          <div>
-            <label>Puan Türü</label>
-            <select id="puanTuru">
-              <option value="SAY">SAY</option>
-              <option value="EA">EA</option>
-              <option value="SOZ">SÖZ</option>
-              <option value="DIL">DİL</option>
-            </select>
-          </div>
-          <div>
-            <label>OBP (0–100)</label>
-            <input id="obp" type="number" inputmode="decimal" step="0.01" min="0" max="100" data-max="100" placeholder="0">
-          </div>
-        </div>
+<div class="subtitle">
+  2026 YKS hazırlığınızı sürdürürken deneme sınavlarında ürettiğiniz netlerin,
+  sizi 2025 YKS'de kaç puanla hangi puan türünde kaçıncı yapacağını görmek için
+  bu PUAN ve SIRALAMA simülatörünü yıl boyunca kullanmaya devam edin.
+  <br><br>
+  OBP kısmına güncel OBP'nizi yazarak 2025 YKS YERLEŞTİRME PUANINIZI ve
+  SIRALAMANIZI %99,5 oranında doğru hesaplayacaktır.
+</div>
 
-        <div class="card" style="margin:12px 0 0">
-          <div class="pill">TYT</div>
-          <div class="grid">
-            <div><label>TYT Türkçe (max 40)</label><input id="tyt_tr" type="number" step="0.01" min="0" max="40" data-max="40" placeholder="0"></div>
-            <div><label>TYT Sosyal (max 20)</label><input id="tyt_sos" type="number" step="0.01" min="0" max="20" data-max="20" placeholder="0"></div>
-            <div><label>TYT Matematik (max 40)</label><input id="tyt_mat" type="number" step="0.01" min="0" max="40" data-max="40" placeholder="0"></div>
-            <div><label>TYT Fen (max 20)</label><input id="tyt_fen" type="number" step="0.01" min="0" max="20" data-max="20" placeholder="0"></div>
-          </div>
-          <p class="muted" style="margin:10px 0 0">Netler max soru sayısını aşamaz (aşarsa otomatik max’a çekilir).</p>
-        </div>
+<div class="igline">
+  <span class="igicon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Instagram">
+      <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.4-2.15a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/>
+    </svg>
+  </span>
 
-        <div class="card" id="grp_say" style="margin:12px 0 0">
-          <div class="pill">AYT (SAY)</div>
-          <div class="grid">
-            <div><label>AYT Matematik (max 40)</label><input id="ayt_mat" type="number" step="0.01" min="0" max="40" data-max="40" placeholder="0"></div>
-            <div><label>AYT Fizik (max 14)</label><input id="ayt_fiz" type="number" step="0.01" min="0" max="14" data-max="14" placeholder="0"></div>
-            <div><label>AYT Kimya (max 13)</label><input id="ayt_kim" type="number" step="0.01" min="0" max="13" data-max="13" placeholder="0"></div>
-            <div><label>AYT Biyoloji (max 13)</label><input id="ayt_bio" type="number" step="0.01" min="0" max="13" data-max="13" placeholder="0"></div>
-          </div>
-        </div>
+  <span>Daha fazlası için instagram hesabımı takip edebilrsiniz:</span>
+  <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
+    instagram.com/umutsahin.tr
+  </a>
+</div>
 
-        <div class="card" id="grp_ea" style="margin:12px 0 0; display:none">
-          <div class="pill">AYT (EA)</div>
-          <div class="grid">
-            <div><label>AYT Matematik (max 40)</label><input id="ayt_mat_ea" type="number" step="0.01" min="0" max="40" data-max="40" placeholder="0"></div>
-            <div><label>AYT Edebiyat (max 24)</label><input id="ayt_edeb" type="number" step="0.01" min="0" max="24" data-max="24" placeholder="0"></div>
-            <div><label>AYT Tarih-1 (max 10)</label><input id="ayt_tar1" type="number" step="0.01" min="0" max="10" data-max="10" placeholder="0"></div>
-            <div><label>AYT Coğrafya-1 (max 6)</label><input id="ayt_cog1" type="number" step="0.01" min="0" max="6" data-max="6" placeholder="0"></div>
-          </div>
-        </div>
+<div class="disclaimer">
+  Bu sonuçlar bir <b>simülasyondur</b>. Gerçek YKS sonuçları; sınavın zorluk düzeyi, standart sapma ve ÖSYM hesaplamalarına göre değişebilir.
+</div>
 
-        <div class="card" id="grp_soz" style="margin:12px 0 0; display:none">
-          <div class="pill">AYT (SÖZ)</div>
-          <div class="grid">
-            <div><label>AYT Edebiyat (max 24)</label><input id="ayt_edeb_soz" type="number" step="0.01" min="0" max="24" data-max="24" placeholder="0"></div>
-            <div><label>AYT Tarih-1 (max 10)</label><input id="ayt_tar1_soz" type="number" step="0.01" min="0" max="10" data-max="10" placeholder="0"></div>
-            <div><label>AYT Coğrafya-1 (max 6)</label><input id="ayt_cog1_soz" type="number" step="0.01" min="0" max="6" data-max="6" placeholder="0"></div>
-            <div><label>AYT Tarih-2 (max 11)</label><input id="ayt_tar2" type="number" step="0.01" min="0" max="11" data-max="11" placeholder="0"></div>
-            <div><label>AYT Coğrafya-2 (max 11)</label><input id="ayt_cog2" type="number" step="0.01" min="0" max="11" data-max="11" placeholder="0"></div>
-            <div><label>AYT Felsefe (max 12)</label><input id="ayt_fels" type="number" step="0.01" min="0" max="12" data-max="12" placeholder="0"></div>
-            <div><label>AYT DKAB (max 6)</label><input id="ayt_dkab" type="number" step="0.01" min="0" max="6" data-max="6" placeholder="0"></div>
-          </div>
-        </div>
+<label>Puan Türü</label>
+<select id="puanTuru">
+  <option value="SAY">SAY</option>
+  <option value="EA">EA</option>
+  <option value="SOZ">SÖZ</option>
+  <option value="DIL">DİL</option>
+</select>
 
-        <div class="card" id="grp_dil" style="margin:12px 0 0; display:none">
-          <div class="pill">YDT (DİL)</div>
-          <div class="grid2">
-            <div><label>YDT Net (max 80)</label><input id="ydt" type="number" step="0.01" min="0" max="80" data-max="80" placeholder="0"></div>
-            <div></div>
-          </div>
-        </div>
+<label>OBP (0–100)</label>
+<input id="obp" type="number" step="0.01" placeholder="Örn: 85,50" />
+<div class="hint">Virgül veya nokta ile yazabilirsin.</div>
 
-        <div class="row" style="margin-top:12px">
-          <button class="btn" id="hesaplaBtn" type="button">HESAPLA</button>
-          <div class="out" id="sonuc">—</div>
-          <div class="out" id="sira">—</div>
-        </div>
-      </section>
+<div class="grp">
+  <b>TYT Netleri</b>
+  <label>TYT Türkçe</label><input id="tyt_tr" type="number" step="0.25" />
+  <label>TYT Sosyal</label><input id="tyt_sos" type="number" step="0.25" />
+  <label>TYT Matematik</label><input id="tyt_mat" type="number" step="0.25" />
+  <label>TYT Fen</label><input id="tyt_fen" type="number" step="0.25" />
+</div>
 
-      <!-- ====================== LGS PANEL ====================== -->
-      <section id="lgsPanel" style="display:none">
-        <h3 style="margin:0 0 8px">LGS 2025 Puan & Yüzdelik</h3>
-        <p class="muted" style="margin:0 0 10px">
-          Doğru/Yanlış tam sayıdır. Net istersen küsuratlı girilebilir. Doğru/Yanlış doluysa net otomatik hesaplanır.
-        </p>
+<div id="grp_say" class="grp">
+  <b>AYT (SAY)</b>
+  <label>AYT Matematik</label><input id="ayt_mat" type="number" step="0.25" />
+  <label>AYT Fizik</label><input id="ayt_fiz" type="number" step="0.25" />
+  <label>AYT Kimya</label><input id="ayt_kim" type="number" step="0.25" />
+  <label>AYT Biyoloji</label><input id="ayt_bio" type="number" step="0.25" />
+</div>
 
-        <div class="lgsHdr">
-          <div>TEST</div><div>DOĞRU</div><div>YANLIŞ</div><div>NET</div>
-        </div>
-        <div id="lgsRows"></div>
+<div id="grp_ea" class="grp" style="display:none">
+  <b>AYT (EA)</b>
+  <label>AYT Matematik</label><input id="ayt_mat_ea" type="number" step="0.25" />
+  <label>AYT Edebiyat</label><input id="ayt_edeb" type="number" step="0.25" />
+  <label>AYT Tarih-1</label><input id="ayt_tar1" type="number" step="0.25" />
+  <label>AYT Coğrafya-1</label><input id="ayt_cog1" type="number" step="0.25" />
+</div>
 
-        <div class="grid2" style="margin-top:12px">
-          <div>
-            <label>TOPLAM DOĞRU</label>
-            <input id="lgsDogruTop" type="text" readonly>
-          </div>
-          <div>
-            <label>TOPLAM YANLIŞ</label>
-            <input id="lgsYanlisTop" type="text" readonly>
-          </div>
-          <div>
-            <label>TOPLAM NET</label>
-            <input id="lgsNetTop" type="text" readonly>
-          </div>
-          <div>
-            <label>LGS PUANI</label>
-            <input id="lgsPuan" type="text" readonly>
-          </div>
-        </div>
+<div id="grp_soz" class="grp" style="display:none">
+  <b>AYT (SÖZ)</b>
+  <label>AYT Edebiyat</label><input id="ayt_edeb_soz" type="number" step="0.25" />
+  <label>AYT Tarih-1</label><input id="ayt_tar1_soz" type="number" step="0.25" />
+  <label>AYT Coğrafya-1</label><input id="ayt_cog1_soz" type="number" step="0.25" />
+  <label>AYT Tarih-2</label><input id="ayt_tar2" type="number" step="0.25" />
+  <label>AYT Coğrafya-2</label><input id="ayt_cog2" type="number" step="0.25" />
+  <label>AYT Felsefe Grubu</label><input id="ayt_fels" type="number" step="0.25" />
+  <label>AYT DKAB</label><input id="ayt_dkab" type="number" step="0.25" />
+</div>
 
-        <div class="grid2" style="margin-top:10px">
-          <div>
-            <label>GENEL YÜZDELİK DİLİMİ</label>
-            <input id="lgsYuzdelik" type="text" readonly>
-          </div>
-          <div>
-            <label>İL SEÇİMİ</label>
-            <select id="lgsIl"><option value="">Yükleniyor…</option></select>
-          </div>
-        </div>
+<div id="grp_dil" class="grp" style="display:none">
+  <b>YDT (DİL)</b>
+  <label>YDT Net</label><input id="ydt" type="number" step="0.25" />
+</div>
 
-        <div class="row" style="margin-top:12px">
-          <button class="btn" id="btnLgsHesapla" type="button">HESAPLA</button>
-          <div id="lgsNote" class="muted"></div>
-        </div>
+<button id="hesaplaBtn">HESAPLA</button>
 
-        <div id="lgsLists" style="display:none; margin-top:14px">
-          <h4 style="margin:0 0 8px">Birinci Yerleştirme Dönemi</h4>
-          <table id="tblBirinci">
-            <thead><tr><th>OKUL</th><th>TABAN PUAN</th><th>YÜZDELİK</th><th>TALEP</th></tr></thead>
-            <tbody></tbody>
-          </table>
+<div id="sonuc">—</div>
+<div id="sira">—</div>
 
-          <h4 style="margin:14px 0 8px">Son Nakil Dönemi</h4>
-          <table id="tblNakil">
-            <thead><tr><th>OKUL</th><th>TABAN PUAN</th><th>YÜZDELİK</th><th>TALEP</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </section>
+<!-- Akıllı uyarı satırı (kural tutmazsa burada da görünür) -->
+<div id="uyariSatiri" class="warnline"></div>
+
+<button id="paylasBtn" class="btn-secondary" type="button">SONUCU PAYLAŞ</button>
+<div id="paylasMesaj" class="hint" style="display:none;"></div>
+
+<!-- === NEDEN HESAPLANMADI? MODAL === -->
+<div id="hataOverlay" class="modalOverlay" aria-hidden="true">
+  <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="hataBaslik">
+    <div id="hataBaslik" class="modalTitle">Puan hesaplanamadı</div>
+    <div id="hataMetin" class="modalText"></div>
+    <div class="modalActions">
+      <button id="hataKapat2" class="modalBtn modalBtnLight" type="button">Alanlara dön</button>
+      <button id="hataKapat" class="modalBtn" type="button">Kapat</button>
     </div>
-
-    <p class="muted">Not: Eğer GitHub Pages eski dosyayı cache’liyorsa Ctrl+Shift+R yap.</p>
   </div>
+</div>
 
-  <!-- YKS motoru -->
-  <script src="app.js"></script>
+<script src="app.js"></script>
 
-  <!-- Input clamp + LGS motoru (YKS'yi etkilemez) -->
-  <script>
-    // YKS inputlarında max soru aşılmasın (app.js'ye dokunmadan)
-    (function(){
-      function clampInput(el){
-        const max = Number(el.getAttribute("data-max"));
-        if (!Number.isFinite(max)) return;
-        const raw = (el.value ?? "").toString().trim();
-        if (!raw) return;
-        const n = Number(raw.replace(",", "."));
-        if (!Number.isFinite(n)) return;
-        if (n > max) el.value = String(max);
-        if (n < 0) el.value = "0";
+<script>
+  (function(){
+    // --- yardımcılar ---
+    function readNumber(id){
+      const el = document.getElementById(id);
+      if (!el) return 0;
+      const raw = (el.value ?? "").toString().trim();
+      const normalized = raw.replace(",", ".");
+      const n = Number(normalized);
+      return Number.isFinite(n) ? n : 0;
+    }
+    function round2(x){ return Math.round(x * 100) / 100; }
+
+    // --- modal kontrol ---
+    const overlay = document.getElementById("hataOverlay");
+    const hataMetin = document.getElementById("hataMetin");
+    const kapatBtn = document.getElementById("hataKapat");
+    const kapatBtn2 = document.getElementById("hataKapat2");
+    const uyari = document.getElementById("uyariSatiri");
+
+    function closeModal(){
+      if (overlay) overlay.style.display = "none";
+      if (overlay) overlay.setAttribute("aria-hidden", "true");
+    }
+    function openModal(text){
+      if (hataMetin) hataMetin.textContent = text;
+      if (overlay){
+        overlay.style.display = "flex";
+        overlay.setAttribute("aria-hidden", "false");
       }
-      document.addEventListener("input", (e) => {
-        const el = e.target;
-        if (!(el instanceof HTMLInputElement)) return;
-        if (!el.hasAttribute("data-max")) return;
-        // sadece YKS inputlarını clamp'la
-        if (el.id && el.id.startsWith("lgs_")) return;
-        clampInput(el);
-      }, true);
-    })();
+    }
+    if (kapatBtn) kapatBtn.addEventListener("click", closeModal);
+    if (kapatBtn2) kapatBtn2.addEventListener("click", closeModal);
+    if (overlay){
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeModal();
+      });
+    }
 
-    // Sınav switch
-    (function(){
-      const btnY = document.getElementById("btnYks");
-      const btnL = document.getElementById("btnLgs");
-      const yks = document.getElementById("yksPanel");
-      const lgs = document.getElementById("lgsPanel");
-      function set(mode){
-        const isL = mode === "LGS";
-        btnY.classList.toggle("active", !isL);
-        btnL.classList.toggle("active", isL);
-        yks.style.display = isL ? "none" : "";
-        lgs.style.display = isL ? "" : "none";
-        if (isL) window.__LGS_INIT__ && window.__LGS_INIT__();
-      }
-      btnY.addEventListener("click", ()=>set("YKS"));
-      btnL.addEventListener("click", ()=>set("LGS"));
-      set("YKS");
-    })();
+    // --- Akıllı metin üretimi ---
+    function buildRuleMessage(tur, sum){
+      const s = round2(sum);
+      const need = 0.50;
 
-    // LGS motoru (index.html içinde, YKS ile bağı yok)
-    (function(){
-      const rowsWrap = document.getElementById("lgsRows");
-      const ilSelect = document.getElementById("lgsIl");
-      const btnCalc = document.getElementById("btnLgsHesapla");
-      const noteEl = document.getElementById("lgsNote");
-      const listsWrap = document.getElementById("lgsLists");
-      const outDogru = document.getElementById("lgsDogruTop");
-      const outYanlis = document.getElementById("lgsYanlisTop");
-      const outNet = document.getElementById("lgsNetTop");
-      const outPuan = document.getElementById("lgsPuan");
-      const outYuz = document.getElementById("lgsYuzdelik");
+      const titleLine = tur + " yerleştirme puanının oluşması için\n";
+      const ruleLine =
+        (tur === "DIL")
+          ? "YDT'den toplam en az 0,50 net gerekir."
+          : "ilgili AYT testlerinden toplam en az 0,50 net gerekir.";
 
-      let DATA = null;
+      let which = "";
+      let example = "";
 
-      const toNum = (v) => {
-        if (v == null) return NaN;
-        const s = String(v).trim().replace(",", ".");
-        if (!s) return NaN;
-        const n = Number(s);
-        return Number.isFinite(n) ? n : NaN;
-      };
-      const fmt2 = (n) => Number.isFinite(n) ? n.toFixed(2).replace(".", ",") : "";
-      const fmtP = (n) => Number.isFinite(n) ? n.toFixed(2).replace(".", ",") : "";
-      const clamp = (n, min, max) => Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : NaN;
-
-      function buildRows(){
-        rowsWrap.innerHTML = "";
-        const tests = Array.isArray(DATA?.testler) ? DATA.testler : [];
-        const ratio = Number(DATA?.yanlis_dogru_orani ?? 3);
-
-        tests.forEach((t, i) => {
-          const name = t.test ?? t.ad ?? ("TEST " + (i+1));
-          const max = Number(t.max_dogru ?? t.max ?? 0);
-          const kats = Number(t.katsayi ?? 0);
-
-          const row = document.createElement("div");
-          row.className = "lgsRow";
-          row.dataset.max = String(max);
-          row.dataset.katsayi = String(kats);
-          row.innerHTML = `
-            <div><strong>${name}</strong> <span class="muted">(max ${max})</span></div>
-            <div><input class="d" type="number" step="1" min="0" max="${max}" placeholder="0"></div>
-            <div><input class="y" type="number" step="1" min="0" max="${max}" placeholder="0"></div>
-            <div><input class="n" type="number" step="0.01" min="0" max="${max}" placeholder="0"></div>
-          `;
-
-          const dEl = row.querySelector(".d");
-          const yEl = row.querySelector(".y");
-          const nEl = row.querySelector(".n");
-
-          function recalc(from){
-            const mx = Number(row.dataset.max||0);
-
-            let d = toNum(dEl.value);
-            let y = toNum(yEl.value);
-            let n = toNum(nEl.value);
-
-            if (from === "n" && Number.isFinite(n)) {
-              // Net girildiyse D/Y temizle
-              n = clamp(n, 0, mx);
-              nEl.value = fmt2(n);
-              dEl.value = "";
-              yEl.value = "";
-            } else {
-              // D/Y girildiyse NET hesapla
-              d = Number.isFinite(d) ? clamp(Math.floor(d), 0, mx) : NaN;
-              y = Number.isFinite(y) ? clamp(Math.floor(y), 0, mx) : NaN;
-
-              if (Number.isFinite(d)) dEl.value = String(d);
-              if (Number.isFinite(y)) yEl.value = String(y);
-
-              if (Number.isFinite(d) || Number.isFinite(y)) {
-                const dd = Number.isFinite(d) ? d : 0;
-                const yy = Number.isFinite(y) ? y : 0;
-                if (dd + yy > mx) {
-                  // basit kural: önce doğru kalsın, yanlış kırp
-                  const newY = Math.max(0, mx - dd);
-                  yEl.value = String(newY);
-                  y = newY;
-                }
-                const net = clamp((Number.isFinite(d)?d:0) - (Number.isFinite(y)?y:0)/ratio, 0, mx);
-                nEl.value = fmt2(net);
-              } else if (Number.isFinite(n)) {
-                n = clamp(n, 0, mx);
-                nEl.value = fmt2(n);
-              } else {
-                nEl.value = "";
-              }
-            }
-            recalcTotals();
-          }
-
-          dEl.addEventListener("input", ()=>recalc("d"));
-          yEl.addEventListener("input", ()=>recalc("y"));
-          nEl.addEventListener("input", ()=>recalc("n"));
-
-          rowsWrap.appendChild(row);
-        });
-
-        recalcTotals();
+      if (tur === "SAY"){
+        const mat = readNumber("ayt_mat");
+        const fiz = readNumber("ayt_fiz");
+        const kim = readNumber("ayt_kim");
+        const bio = readNumber("ayt_bio");
+        which =
+          "SAY için geçerli testler: AYT Matematik, Fizik, Kimya, Biyoloji.\n" +
+          "Şu an: Mat=" + mat + ", Fiz=" + fiz + ", Kim=" + kim + ", Bio=" + bio + ".";
+        example = "Örnek: AYT Matematik'i 0,50 yap ve tekrar dene.";
+      } else if (tur === "EA"){
+        const mat = readNumber("ayt_mat_ea");
+        const edb = readNumber("ayt_edeb");
+        const tar = readNumber("ayt_tar1");
+        const cog = readNumber("ayt_cog1");
+        which =
+          "EA için geçerli testler: AYT Matematik, Edebiyat, Tarih-1, Coğrafya-1.\n" +
+          "Şu an: Mat=" + mat + ", Edeb=" + edb + ", Tar1=" + tar + ", Coğ1=" + cog + ".";
+        example = "Örnek: Edebiyat'ı 0,50 yap ve tekrar dene.";
+      } else if (tur === "SOZ"){
+        const edb = readNumber("ayt_edeb_soz");
+        const tar1 = readNumber("ayt_tar1_soz");
+        const cog1 = readNumber("ayt_cog1_soz");
+        const tar2 = readNumber("ayt_tar2");
+        const cog2 = readNumber("ayt_cog2");
+        const fels = readNumber("ayt_fels");
+        const dkab = readNumber("ayt_dkab");
+        which =
+          "SÖZ için geçerli testler: Edebiyat, Tarih-1, Coğrafya-1, Tarih-2, Coğrafya-2, Felsefe, DKAB.\n" +
+          "Şu an: Edeb=" + edb + ", Tar1=" + tar1 + ", Coğ1=" + cog1 + ", Tar2=" + tar2 + ", Coğ2=" + cog2 + ", Fels=" + fels + ", DKAB=" + dkab + ".";
+        example = "Örnek: Edebiyat'ı 0,50 yap ve tekrar dene.";
+      } else if (tur === "DIL"){
+        const ydt = readNumber("ydt");
+        which =
+          "DİL için geçerli test: YDT.\n" +
+          "Şu an: YDT=" + ydt + ".";
+        example = "Örnek: YDT'yi 0,50 yap ve tekrar dene.";
       }
 
-      function recalcTotals(){
-        if (!DATA) return;
-        const ratio = Number(DATA?.yanlis_dogru_orani ?? 3);
+      const sumLine = "\n\nŞu anki toplamın: " + s.toFixed(2) + "\nGerekli minimum: " + need.toFixed(2);
 
-        let sumD=0, sumY=0, sumN=0;
-        rowsWrap.querySelectorAll(".lgsRow").forEach(r=>{
-          const mx = Number(r.dataset.max||0);
-          const dEl = r.querySelector(".d");
-          const yEl = r.querySelector(".y");
-          const nEl = r.querySelector(".n");
-          const d = toNum(dEl.value);
-          const y = toNum(yEl.value);
-          let n = toNum(nEl.value);
+      return titleLine + ruleLine + "\n\n" + which + sumLine + "\n\n" + example;
+    }
 
-          if (Number.isFinite(d)) sumD += clamp(Math.floor(d),0,mx);
-          if (Number.isFinite(y)) sumY += clamp(Math.floor(y),0,mx);
+    function setWarnline(text){
+      if (!uyari) return;
+      uyari.textContent = text;
+      uyari.style.display = "block";
+    }
+    function clearWarnline(){
+      if (!uyari) return;
+      uyari.style.display = "none";
+      uyari.textContent = "";
+    }
 
-          if (!Number.isFinite(n)) {
-            const dd = Number.isFinite(d)?d:0;
-            const yy = Number.isFinite(y)?y:0;
-            n = dd - yy/ratio;
-          }
-          if (Number.isFinite(n)) sumN += clamp(n,0,mx);
-        });
+    // --- KURAL: AYT/YDT toplam >= 0,50 değilse HESAPLA engellenir ---
+    document.addEventListener("DOMContentLoaded", () => {
+      const turSelect = document.getElementById("puanTuru");
+      const btn = document.getElementById("hesaplaBtn");
+      const sonucEl = document.getElementById("sonuc");
+      const siraEl = document.getElementById("sira");
 
-        outDogru.value = fmt2(sumD);
-        outYanlis.value = fmt2(sumY);
-        outNet.value = fmt2(sumN);
-      }
+      if (!turSelect || !btn || !sonucEl || !siraEl) return;
 
-      function nearestIndex(arr, x){
-        let bestI=0, bestD=Infinity;
-        for (let i=0;i<arr.length;i++){
-          const d = Math.abs(arr[i]-x);
-          if (d < bestD){ bestD=d; bestI=i; }
+      // Puan türü değişince uyarıları temizle
+      turSelect.addEventListener("change", () => {
+        clearWarnline();
+        closeModal();
+      });
+
+      // CAPTURE: app.js'in click handler'ından ÖNCE çalışır
+      btn.addEventListener("click", (e) => {
+        const tur = turSelect.value;
+
+        let sum = 0;
+        if (tur === "SAY"){
+          sum =
+            readNumber("ayt_mat") +
+            readNumber("ayt_fiz") +
+            readNumber("ayt_kim") +
+            readNumber("ayt_bio");
+        } else if (tur === "EA"){
+          sum =
+            readNumber("ayt_mat_ea") +
+            readNumber("ayt_edeb") +
+            readNumber("ayt_tar1") +
+            readNumber("ayt_cog1");
+        } else if (tur === "SOZ"){
+          sum =
+            readNumber("ayt_edeb_soz") +
+            readNumber("ayt_tar1_soz") +
+            readNumber("ayt_cog1_soz") +
+            readNumber("ayt_tar2") +
+            readNumber("ayt_cog2") +
+            readNumber("ayt_fels") +
+            readNumber("ayt_dkab");
+        } else if (tur === "DIL"){
+          sum = readNumber("ydt");
         }
-        return bestI;
-      }
 
-      function fillTable(tblId, rows, yuzKey){
-        const tbl = document.getElementById(tblId);
-        const tbody = tbl.querySelector("tbody");
-        tbody.innerHTML = "";
-        rows.forEach(o=>{
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${(o.okul||"")}</td>
-            <td>${Number.isFinite(Number(o.puan_2025))?fmtP(Number(o.puan_2025)):""}</td>
-            <td>${Number.isFinite(Number(o[yuzKey]))?fmt2(Number(o[yuzKey])):""}</td>
-            <td>${(o.trend_2025||"")}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      }
+        // KURAL
+        if (sum < 0.5){
+          // app.js'i durdur
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
 
-      function calc(){
-        if (!DATA) return;
-        const base = Number(DATA.base_puan ?? 0);
-        let puan = base;
+          // sonuçları sıfırla
+          sonucEl.textContent = "—";
+          siraEl.textContent = "—";
 
-        rowsWrap.querySelectorAll(".lgsRow").forEach(r=>{
-          const mx = Number(r.dataset.max||0);
-          const kats = Number(r.dataset.katsayi||0);
-          const nEl = r.querySelector(".n");
-          let n = toNum(nEl.value);
-          if (!Number.isFinite(n)) n = 0;
-          n = clamp(n,0,mx);
-          puan += n*kats;
-        });
+          const msg = buildRuleMessage(tur, sum);
 
-        outPuan.value = fmtP(puan);
-
-        const tab = DATA.yuzdelik_tablosu || {};
-        const puanArr = Array.isArray(tab.puan) ? tab.puan.map(Number) : [];
-        const yuzArr = Array.isArray(tab.yuzdelik) ? tab.yuzdelik.map(Number) : [];
-        const nakilArr = Array.isArray(tab.nakil_yuzdelik) ? tab.nakil_yuzdelik.map(Number) : [];
-
-        if (puanArr.length && yuzArr.length){
-          const i = nearestIndex(puanArr, puan);
-          const yuz = yuzArr[i];
-          outYuz.value = fmt2(yuz);
-
-          const il = (ilSelect.value||"").trim();
-          const okullar = Array.isArray(DATA.okullar) ? DATA.okullar : [];
-
-          const birinci = okullar
-            .filter(o => (o.il||"").toString().trim()===il && Number.isFinite(Number(o.yuzdelik_2025)))
-            .map(o => ({...o, diff: Math.abs(Number(o.yuzdelik_2025)-yuz)}))
-            .sort((a,b)=>a.diff-b.diff)
-            .slice(0,12);
-
-          const nakil = okullar
-            .filter(o => (o.il||"").toString().trim()===il && Number.isFinite(Number(o.nakil_yuzdelik_2025)))
-            .map(o => ({...o, diff: Math.abs(Number(o.nakil_yuzdelik_2025)-Number(nakilArr[i]||yuz))}))
-            .sort((a,b)=>a.diff-b.diff)
-            .slice(0,12);
-
-          fillTable("tblBirinci", birinci, "yuzdelik_2025");
-          fillTable("tblNakil", nakil, "nakil_yuzdelik_2025");
-          listsWrap.style.display = "";
-          noteEl.textContent = "";
-        } else {
-          listsWrap.style.display = "none";
-          noteEl.textContent = "lgs.json: yüzdelik_tablosu bulunamadı.";
+          // satır uyarı + modal ekran
+          setWarnline("⚠️ " + tur + " puanı için ilgili AYT/YDT toplamın 0,50'nin altında. (Şu an: " + round2(sum).toFixed(2) + ") Detay için ekrana bak.");
+          openModal(msg);
+          return;
         }
+
+        // Kural sağlandıysa: hiçbir şeye karışma
+        clearWarnline();
+        closeModal();
+
+      }, true); // <-- capture
+    });
+  })();
+</script>
+
+<script>
+  (function(){
+    const btn = document.getElementById("paylasBtn");
+    const msg = document.getElementById("paylasMesaj");
+    const sonucEl = document.getElementById("sonuc");
+    const siraEl = document.getElementById("sira");
+
+    if (!btn || !msg || !sonucEl || !siraEl) return;
+
+    function cleanText(t){ return (t || "").toString().trim(); }
+
+    function getShareText(){
+      const sonuc = cleanText(sonucEl.textContent);
+      const sira  = cleanText(siraEl.textContent);
+      const url   = window.location.href;
+
+      const lines = [];
+      lines.push("YKS 2025 Puan ve Sıra Simülatörü");
+      if (sonuc && sonuc !== "—") lines.push(sonuc);
+      if (sira && sira !== "—")  lines.push(sira);
+      lines.push(url);
+      return lines.join("\n");
+    }
+
+    async function copyToClipboard(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch(e){
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        let ok = false;
+        try{ ok = document.execCommand("copy"); }catch(_){ ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+      }
+    }
+
+    btn.addEventListener("click", async () => {
+      const sonuc = cleanText(sonucEl.textContent);
+      if (!sonuc || sonuc === "—") {
+        msg.style.display = "block";
+        msg.textContent = "Önce HESAPLA’ya basıp sonucu üret.";
+        return;
       }
 
-      async function init(){
+      const text = getShareText();
+
+      if (navigator.share) {
         try{
-          noteEl.textContent = "lgs.json yükleniyor…";
-          const res = await fetch("lgs.json", { cache: "no-store" });
-          if (!res.ok) throw new Error("lgs.json okunamadı");
-          DATA = await res.json();
-
-          buildRows();
-
-          const okullar = Array.isArray(DATA.okullar) ? DATA.okullar : [];
-          const iller = Array.from(new Set(okullar.map(o => (o.il||"").toString().trim()).filter(Boolean)))
-            .sort((a,b)=>a.localeCompare(b,"tr"));
-
-          ilSelect.innerHTML = "";
-          if (!iller.length){
-            const opt = document.createElement("option");
-            opt.value = "";
-            opt.textContent = "İller bulunamadı (okullar boş?)";
-            ilSelect.appendChild(opt);
-            noteEl.innerHTML = '<span class="err">lgs.json içinde okullar/il alanı yok ya da boş.</span>';
-          } else {
-            iller.forEach(il=>{
-              const opt = document.createElement("option");
-              opt.value = il;
-              opt.textContent = il;
-              ilSelect.appendChild(opt);
-            });
-            if (iller.includes("İSTANBUL")) ilSelect.value = "İSTANBUL";
-            noteEl.innerHTML = '<span class="ok">lgs.json yüklendi.</span>';
-          }
-
-          btnCalc.addEventListener("click", calc);
+          await navigator.share({
+            title: "YKS 2025 Puan ve Sıra Simülatörü",
+            text: text
+          });
+          msg.style.display = "block";
+          msg.textContent = "Paylaşım ekranı açıldı.";
+          return;
         }catch(e){
-          console.error(e);
-          noteEl.innerHTML = '<span class="err">lgs.json yüklenemedi. Repo kökünde lgs.json var mı?</span>';
-          ilSelect.innerHTML = '<option value="">Hata</option>';
+          // iptal
         }
       }
 
-      window.__LGS_INIT__ = function(){ if (!DATA) init(); };
+      const ok = await copyToClipboard(text);
+      msg.style.display = "block";
+      msg.textContent = ok ? "Kopyalandı. WhatsApp/DM’ye yapıştırabilirsin." : "Kopyalanamadı. Tarayıcı izin vermedi.";
+    });
+  })();
+</script>
 
-    })();
-  </script>
 </body>
 </html>
