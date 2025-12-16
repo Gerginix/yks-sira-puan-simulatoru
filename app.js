@@ -281,3 +281,73 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+/* =====================================================
+   YKS MAKSİMUM NET SINIRI (SADECE INPUT CLAMP)
+   - Mevcut hesap akışına dokunmaz
+   - Negatif ve üst limit girişini anında düzeltir
+===================================================== */
+(function(){
+  const LIMITS = {
+    // TYT
+    tyt_tr: 40,
+    tyt_sos: 20,
+    tyt_mat: 40,
+    tyt_fen: 20,
+
+    // AYT SAY
+    ayt_mat: 40,
+    ayt_fiz: 14,
+    ayt_kim: 13,
+    ayt_bio: 13,
+
+    // AYT EA
+    ayt_mat_ea: 40,
+    ayt_edeb: 24,
+    ayt_tar1: 10,
+    ayt_cog1: 6,
+
+    // AYT SÖZ
+    ayt_edeb_soz: 24,
+    ayt_tar1_soz: 10,
+    ayt_cog1_soz: 6,
+    ayt_tar2: 11,
+    ayt_cog2: 11,
+    ayt_fels: 12,
+    ayt_dkab: 6,
+
+    // YDT
+    ydt: 80,
+  };
+
+  function clampField(el, max){
+    if (!el) return;
+    const raw = (el.value ?? "").toString().trim();
+    if (!raw) return;
+
+    // TR virgül toleransı
+    const normalized = raw.replace(",", ".");
+    let n = Number(normalized);
+    if (!Number.isFinite(n)) return;
+
+    if (n < 0) n = 0;
+    if (n > max) n = max;
+
+    // kullanıcı yazımını bozmayacak şekilde set et
+    el.value = String(n);
+  }
+
+  function bind(){
+    for (const [id, max] of Object.entries(LIMITS)) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      el.addEventListener("input", () => clampField(el, max));
+      el.addEventListener("blur",  () => clampField(el, max));
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bind);
+  } else {
+    bind();
+  }
+})();
