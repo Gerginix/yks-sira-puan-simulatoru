@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="tr">
 <head>
@@ -252,6 +251,38 @@
       background: rgba(255,255,255,0.9);
       color:#111;
     }
+
+    /* === SINAV TÜRÜ (C: LGS hissi) === */
+    .examSwitch{
+      width: var(--control-w);
+      margin: 6px auto 2px;
+      text-align:center;
+      font-size: 14px;
+      font-weight: 800;
+      user-select:none;
+      padding: 6px 0;
+      border-radius: 10px;
+    }
+    .examSwitch a{
+      color:#111;
+      cursor:pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-thickness: 2px;
+      margin: 0 10px;
+    }
+    .examSwitch a.passive{
+      opacity:0.65;
+      font-weight:700;
+      text-decoration-thickness: 1px;
+    }
+    .examSwitch a.active{
+      opacity:1;
+      font-weight:900;
+    }
+    body.lgsMode .examSwitch{
+      background: #ededed; /* C */
+    }
   </style>
 
   <!-- GoatCounter -->
@@ -289,82 +320,132 @@
   Bu sonuçlar bir <b>simülasyondur</b>. Gerçek YKS sonuçları; sınavın zorluk düzeyi, standart sapma ve ÖSYM hesaplamalarına göre değişebilir.
 </div>
 
-<label>Puan Türü</label>
-<select id="puanTuru">
-  <option value="SAY">SAY</option>
-  <option value="EA">EA</option>
-  <option value="SOZ">SÖZ</option>
-  <option value="DIL">DİL</option>
-</select>
-
-<label>OBP (0–100)</label>
-<input id="obp" type="number" step="0.01" placeholder="Örn: 85,50" />
-<div class="hint">Virgül veya nokta ile yazabilirsin.</div>
-
-<div class="grp">
-  <b>TYT Netleri</b>
-  <label>TYT Türkçe</label><input id="tyt_tr" type="number" step="0.25" />
-  <label>TYT Sosyal</label><input id="tyt_sos" type="number" step="0.25" />
-  <label>TYT Matematik</label><input id="tyt_mat" type="number" step="0.25" />
-  <label>TYT Fen</label><input id="tyt_fen" type="number" step="0.25" />
+<div class="examSwitch" id="examSwitch">
+  <a id="linkYks" class="active" href="javascript:void(0)">YKS</a>
+  <a id="linkLgs" class="passive" href="javascript:void(0)">LGS</a>
 </div>
 
-<div id="grp_say" class="grp">
-  <b>AYT (SAY)</b>
-  <label>AYT Matematik</label><input id="ayt_mat" type="number" step="0.25" />
-  <label>AYT Fizik</label><input id="ayt_fiz" type="number" step="0.25" />
-  <label>AYT Kimya</label><input id="ayt_kim" type="number" step="0.25" />
-  <label>AYT Biyoloji</label><input id="ayt_bio" type="number" step="0.25" />
-</div>
+<!-- === YKS PANEL (dokunulmaz içerik, sadece kapsül) === -->
+<div id="yksPanel">
 
-<div id="grp_ea" class="grp" style="display:none">
-  <b>AYT (EA)</b>
-  <label>AYT Matematik</label><input id="ayt_mat_ea" type="number" step="0.25" />
-  <label>AYT Edebiyat</label><input id="ayt_edeb" type="number" step="0.25" />
-  <label>AYT Tarih-1</label><input id="ayt_tar1" type="number" step="0.25" />
-  <label>AYT Coğrafya-1</label><input id="ayt_cog1" type="number" step="0.25" />
-</div>
+  <label>Puan Türü</label>
+  <select id="puanTuru">
+    <option value="SAY">SAY</option>
+    <option value="EA">EA</option>
+    <option value="SOZ">SÖZ</option>
+    <option value="DIL">DİL</option>
+  </select>
 
-<div id="grp_soz" class="grp" style="display:none">
-  <b>AYT (SÖZ)</b>
-  <label>AYT Edebiyat</label><input id="ayt_edeb_soz" type="number" step="0.25" />
-  <label>AYT Tarih-1</label><input id="ayt_tar1_soz" type="number" step="0.25" />
-  <label>AYT Coğrafya-1</label><input id="ayt_cog1_soz" type="number" step="0.25" />
-  <label>AYT Tarih-2</label><input id="ayt_tar2" type="number" step="0.25" />
-  <label>AYT Coğrafya-2</label><input id="ayt_cog2" type="number" step="0.25" />
-  <label>AYT Felsefe Grubu</label><input id="ayt_fels" type="number" step="0.25" />
-  <label>AYT DKAB</label><input id="ayt_dkab" type="number" step="0.25" />
-</div>
+  <label>OBP (0–100)</label>
+  <input id="obp" type="number" step="0.01" placeholder="Örn: 85,50" />
+  <div class="hint">Virgül veya nokta ile yazabilirsin.</div>
 
-<div id="grp_dil" class="grp" style="display:none">
-  <b>YDT (DİL)</b>
-  <label>YDT Net</label><input id="ydt" type="number" step="0.25" />
-</div>
+  <div class="grp">
+    <b>TYT Netleri</b>
+    <label>TYT Türkçe</label><input id="tyt_tr" type="number" step="0.25" />
+    <label>TYT Sosyal</label><input id="tyt_sos" type="number" step="0.25" />
+    <label>TYT Matematik</label><input id="tyt_mat" type="number" step="0.25" />
+    <label>TYT Fen</label><input id="tyt_fen" type="number" step="0.25" />
+  </div>
 
-<button id="hesaplaBtn">HESAPLA</button>
+  <div id="grp_say" class="grp">
+    <b>AYT (SAY)</b>
+    <label>AYT Matematik</label><input id="ayt_mat" type="number" step="0.25" />
+    <label>AYT Fizik</label><input id="ayt_fiz" type="number" step="0.25" />
+    <label>AYT Kimya</label><input id="ayt_kim" type="number" step="0.25" />
+    <label>AYT Biyoloji</label><input id="ayt_bio" type="number" step="0.25" />
+  </div>
 
-<div id="sonuc">—</div>
-<div id="sira">—</div>
+  <div id="grp_ea" class="grp" style="display:none">
+    <b>AYT (EA)</b>
+    <label>AYT Matematik</label><input id="ayt_mat_ea" type="number" step="0.25" />
+    <label>AYT Edebiyat</label><input id="ayt_edeb" type="number" step="0.25" />
+    <label>AYT Tarih-1</label><input id="ayt_tar1" type="number" step="0.25" />
+    <label>AYT Coğrafya-1</label><input id="ayt_cog1" type="number" step="0.25" />
+  </div>
 
-<!-- Akıllı uyarı satırı (kural tutmazsa burada da görünür) -->
-<div id="uyariSatiri" class="warnline"></div>
+  <div id="grp_soz" class="grp" style="display:none">
+    <b>AYT (SÖZ)</b>
+    <label>AYT Edebiyat</label><input id="ayt_edeb_soz" type="number" step="0.25" />
+    <label>AYT Tarih-1</label><input id="ayt_tar1_soz" type="number" step="0.25" />
+    <label>AYT Coğrafya-1</label><input id="ayt_cog1_soz" type="number" step="0.25" />
+    <label>AYT Tarih-2</label><input id="ayt_tar2" type="number" step="0.25" />
+    <label>AYT Coğrafya-2</label><input id="ayt_cog2" type="number" step="0.25" />
+    <label>AYT Felsefe Grubu</label><input id="ayt_fels" type="number" step="0.25" />
+    <label>AYT DKAB</label><input id="ayt_dkab" type="number" step="0.25" />
+  </div>
 
-<button id="paylasBtn" class="btn-secondary" type="button">SONUCU PAYLAŞ</button>
-<div id="paylasMesaj" class="hint" style="display:none;"></div>
+  <div id="grp_dil" class="grp" style="display:none">
+    <b>YDT (DİL)</b>
+    <label>YDT Net</label><input id="ydt" type="number" step="0.25" />
+  </div>
 
-<!-- === NEDEN HESAPLANMADI? MODAL === -->
-<div id="hataOverlay" class="modalOverlay" aria-hidden="true">
-  <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="hataBaslik">
-    <div id="hataBaslik" class="modalTitle">Puan hesaplanamadı</div>
-    <div id="hataMetin" class="modalText"></div>
-    <div class="modalActions">
-      <button id="hataKapat2" class="modalBtn modalBtnLight" type="button">Alanlara dön</button>
-      <button id="hataKapat" class="modalBtn" type="button">Kapat</button>
+  <button id="hesaplaBtn">HESAPLA</button>
+
+  <div id="sonuc">—</div>
+  <div id="sira">—</div>
+
+  <div id="uyariSatiri" class="warnline"></div>
+
+  <button id="paylasBtn" class="btn-secondary" type="button">SONUCU PAYLAŞ</button>
+  <div id="paylasMesaj" class="hint" style="display:none;"></div>
+
+  <div id="hataOverlay" class="modalOverlay" aria-hidden="true">
+    <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="hataBaslik">
+      <div id="hataBaslik" class="modalTitle">Puan hesaplanamadı</div>
+      <div id="hataMetin" class="modalText"></div>
+      <div class="modalActions">
+        <button id="hataKapat2" class="modalBtn modalBtnLight" type="button">Alanlara dön</button>
+        <button id="hataKapat" class="modalBtn" type="button">Kapat</button>
+      </div>
     </div>
+  </div>
+
+</div>
+<!-- === /YKS PANEL === -->
+
+<!-- === LGS PANEL (şimdilik iskelet) === -->
+<div id="lgsPanel" style="display:none">
+  <div class="grp">
+    <b>LGS</b>
   </div>
 </div>
 
 <script src="app.js"></script>
+
+<script>
+  (function(){
+    const linkYks = document.getElementById("linkYks");
+    const linkLgs = document.getElementById("linkLgs");
+    const yksPanel = document.getElementById("yksPanel");
+    const lgsPanel = document.getElementById("lgsPanel");
+
+    function setMode(mode){
+      const isLgs = (mode === "LGS");
+
+      if (yksPanel) yksPanel.style.display = isLgs ? "none" : "block";
+      if (lgsPanel) lgsPanel.style.display = isLgs ? "block" : "none";
+
+      if (linkYks){
+        linkYks.classList.toggle("active", !isLgs);
+        linkYks.classList.toggle("passive", isLgs);
+        linkYks.style.textDecoration = isLgs ? "none" : "underline";
+      }
+      if (linkLgs){
+        linkLgs.classList.toggle("active", isLgs);
+        linkLgs.classList.toggle("passive", !isLgs);
+        linkLgs.style.textDecoration = isLgs ? "underline" : "none";
+      }
+
+      document.body.classList.toggle("lgsMode", isLgs);
+    }
+
+    if (linkYks) linkYks.addEventListener("click", () => setMode("YKS"));
+    if (linkLgs) linkLgs.addEventListener("click", () => setMode("LGS"));
+
+    setMode("YKS");
+  })();
+</script>
 
 <script>
   (function(){
