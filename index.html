@@ -2,15 +2,11 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8" />
-  <title>YKS 2025 PUAN VE SIRA SİMÜLATÖRÜ</title>
+  <title>YKS / LGS PUAN ve YÜZDELİK SİMÜLATÖRÜ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- SEO (hafif) -->
   <meta name="description" content="2026 YKS hazırlığında deneme netlerinle 2025 YKS puan ve sıralamanı (SAY/EA/SÖZ/DİL) simüle et. OBP ile yerleştirme puanı ve sıralama hesaplama." />
-  <meta property="og:title" content="YKS 2025 PUAN VE SIRA SİMÜLATÖRÜ" />
-  <meta property="og:description" content="Deneme netlerin + OBP ile 2025 YKS puan ve sıralamanı simüle et (SAY/EA/SÖZ/DİL)." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="umut.jpeg" />
 
   <style>
     :root{
@@ -18,688 +14,925 @@
       --control-w: 260px;
       --radius: 10px;
     }
-
     body{
       font-family: Arial, sans-serif;
-      max-width: var(--page-w);
+      max-width: 420px;
       margin: 24px auto;
-      padding: 10px;
+      padding: 12px;
+      text-align: center;
+      background: #fff;
     }
-
-    h1{
-      text-align:center;
-      margin: 6px 0 10px;
+    .heroTitle{
+      font-weight: 800;
       font-size: 22px;
+      margin: 10px 0 8px;
+      letter-spacing: 0.2px;
     }
-
-    .subtitle{
-      text-align:center;
+    .heroSub{
       font-size: 13px;
-      color:#333;
-      line-height:1.45;
-      margin-bottom:16px;
+      opacity: .85;
+      margin: 0 0 10px;
+      line-height: 1.4;
     }
-
-    /* Instagram satırı (subtitle altında) */
-    .igline{
-      text-align:center;
-      font-size: 13px;
-      margin-top: 10px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      flex-wrap:wrap;
+    .bgWrap{
+      position: fixed;
+      inset: 0;
+      background: url("umut.jpeg") center/cover no-repeat;
+      z-index: -2;
+      filter: blur(0px);
     }
-    .igline a{
-      color:#0b57d0;
-      text-decoration: underline;
-      word-break: break-word;
-    }
-    .igicon{
-      width:18px;
-      height:18px;
-      display:inline-block;
-      flex:0 0 auto;
-    }
-
-    /* Dipnot */
-    .disclaimer{
-      text-align:center;
-      font-size:12px;
-      color:#444;
-      margin-top:10px;
-      line-height:1.4;
+    .bgOverlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.72);
+      z-index: -1;
     }
 
     label{
-      font-weight:700;
       display:block;
-      margin-top:10px;
+      margin: 12px auto 6px;
+      font-weight: 700;
       width: var(--control-w);
-      margin-left:auto;
-      margin-right:auto;
-      font-size:14px;
+      text-align:left;
     }
-
-    input, select{
+    select, input{
       width: var(--control-w);
-      padding:8px;
-      margin-top:6px;
-      display:block;
-      margin-left:auto;
-      margin-right:auto;
-      text-align:center;
-    }
-
-    button{
-      width: var(--control-w);
-      padding:12px;
-      margin:14px auto 0;
-      font-size:16px;
-      font-weight:700;
-      display:block;
-      cursor:pointer;
-    }
-
-    /* Paylaş butonu (ikincil) */
-    .btn-secondary{
-      margin-top:10px;
-      font-size:14px;
-      font-weight:700;
-      opacity:0.92;
-    }
-
-    .grp{
-      border:1px solid #ddd;
-      border-radius: var(--radius);
-      padding:10px;
-      margin-top:12px;
-    }
-
-    .grp b{
-      display:block;
-      text-align:center;
-      font-size:14px;
-      margin-bottom:6px;
-    }
-
-    #sonuc{
-      margin-top:16px;
-      font-size:20px;
-      font-weight:800;
-      text-align:center;
-    }
-
-    #sira{
-      margin-top:8px;
-      font-size:16px;
-      font-weight:700;
-      text-align:center;
-    }
-
-    .hint{
-      font-size:12px;
-      color:#555;
-      margin-top:6px;
-      text-align:center;
-    }
-
-    @media (max-width: 420px){
-      :root{
-        --page-w: 92vw;
-        --control-w: 85%;
-      }
-    }
-
-    /* === ARKA PLAN FOTO (PC + MOBİL) === */
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      background-image: url("umut.jpeg");
-      background-repeat:no-repeat;
-      background-size:cover;
-      background-position: 65% center; /* PC kadraj */
-      opacity:0.22;                    /* transparan, flu YOK */
-      z-index:-1;
-      pointer-events:none;
-    }
-
-    /* Tüm içerik foto üstünde kalsın */
-    body > *{
-      position:relative;
-      z-index:1;
-    }
-
-    /* === MOBİL AYAR === */
-    @media (max-width: 600px){
-      body::before{
-        background-position: 50% 20%;  /* yüz yukarıda */
-        background-size: 160%;         /* yüz büyük */
-        opacity:0.18;
-      }
-    }
-
-    /* === AKILLI UYARI (satır) === */
-    .warnline{
-      width: var(--control-w);
-      margin: 10px auto 0;
       padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(180,0,0,0.18);
-      background: rgba(255, 230, 230, 0.55);
-      color: #5a0000;
-      font-size: 12.5px;
-      line-height: 1.4;
-      display:none;
+      border: 1px solid #bfbfbf;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+      background: #fff;
     }
-    .warnline b{ font-weight:800; }
+    .hint{
+      font-size: 12px;
+      opacity:.75;
+      margin-top:6px;
+    }
+    .sectionTitle{
+      margin: 18px 0 8px;
+      font-weight: 800;
+      font-size: 14px;
+      opacity: .9;
+    }
+    .card{
+      margin: 10px auto;
+      width: calc(var(--control-w) + 40px);
+      background: rgba(255,255,255,0.45);
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 10px;
+      padding: 12px 10px;
+      box-sizing: border-box;
+    }
+    .btn{
+      width: var(--control-w);
+      padding: 12px 14px;
+      font-weight: 800;
+      border: 1px solid #222;
+      background: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 12px 0 6px;
+    }
+    .result{
+      margin-top: 12px;
+      font-weight: 800;
+    }
+    .disclaimer{
+      width: calc(var(--control-w) + 40px);
+      margin: 10px auto 0;
+      font-size: 12px;
+      opacity: .85;
+      line-height: 1.35;
+    }
+    a{ color:#0b57d0; }
 
-    /* === NEDEN HESAPLANMADI? (MODAL) === */
-    .modalOverlay{
-      position:fixed;
-      inset:0;
+    /* Paylaş modal (mevcut) */
+    .modalBack{
+      position: fixed;
+      inset: 0;
       background: rgba(0,0,0,0.45);
       display:none;
       align-items:center;
       justify-content:center;
-      padding: 18px;
-      z-index:9999;
+      padding: 16px;
+      box-sizing:border-box;
+      z-index: 999;
     }
-    .modalCard{
-      width: min(520px, 92vw);
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,0.10);
-      background: rgba(255,255,255,0.92);
-      box-shadow: 0 12px 35px rgba(0,0,0,0.20);
-      padding: 16px 16px 14px;
-    }
-    .modalTitle{
-      font-size: 18px;
-      font-weight: 900;
-      margin: 0 0 8px;
-      color:#111;
+    .modal{
+      width: min(420px, 100%);
+      background:#fff;
+      border-radius: 12px;
+      padding: 14px;
+      box-sizing:border-box;
       text-align:left;
     }
-    .modalText{
-      font-size: 13.5px;
-      line-height: 1.5;
-      color:#222;
-      margin: 0 0 12px;
-      white-space: pre-line;
+    .modalTitle{
+      font-weight: 800;
+      margin: 0 0 8px;
     }
-    .modalActions{
+    .modalText{
+      width: 100%;
+      min-height: 110px;
+      border:1px solid #cfcfcf;
+      border-radius: 8px;
+      padding: 10px;
+      box-sizing:border-box;
+      font-size: 13px;
+      line-height: 1.35;
+      resize: vertical;
+    }
+    .modalBtns{
       display:flex;
       gap:10px;
+      margin-top: 10px;
       justify-content:flex-end;
-      align-items:center;
+      flex-wrap: wrap;
     }
     .modalBtn{
-      width:auto;
-      margin:0;
-      padding:10px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(0,0,0,0.10);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #222;
       background:#111;
       color:#fff;
-      font-weight: 800;
-      font-size: 14px;
       cursor:pointer;
+      font-weight: 800;
     }
     .modalBtnLight{
-      background: rgba(255,255,255,0.9);
+      background:#fff;
       color:#111;
+      border:1px solid #bfbfbf;
     }
 
-    /* === SINAV TÜRÜ (C: LGS hissi) === */
-    .examSwitch{
-      width: var(--control-w);
-      margin: 6px auto 2px;
-      text-align:center;
-      font-size: 14px;
-      font-weight: 800;
-      user-select:none;
-      padding: 6px 0;
-      border-radius: 10px;
-    }
-    .examSwitch a{
-      color:#111;
+    /* === SINAV TÜRÜ (YKS/LGS) === */
+    .examSwitchWrap{ margin: 10px auto 14px; width: var(--control-w); text-align:left; }
+    .examLabel{ font-weight:700; margin-bottom:6px; }
+    .examSwitch{ display:flex; gap:10px; }
+    .examBtn{
+      flex:1;
+      padding:10px 12px;
+      border:1px solid #bfbfbf;
+      background:#fff;
       cursor:pointer;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      text-decoration-thickness: 2px;
-      margin: 0 10px;
-    }
-    .examSwitch a.passive{
-      opacity:0.65;
       font-weight:700;
-      text-decoration-thickness: 1px;
+      border-radius: 6px;
     }
-    .examSwitch a.active{
-      opacity:1;
-      font-weight:900;
+    .examBtn.active{
+      background:#111;
+      color:#fff;
+      border-color:#111;
     }
-    body.lgsMode .examSwitch{
-      background: #ededed; /* C */
+    .examBtn.lgsActive{ background:#ededed; color:#111; border-color:#bfbfbf; }
+
+    /* === LGS GRID (Excel Sayfa3 hissi) === */
+    .lgsGridHead{
+      display:grid;
+      grid-template-columns: 1.6fr .8fr .8fr .8fr;
+      gap:10px;
+      background:#e6e6e6;
+      padding:10px;
+      border:1px solid #cfcfcf;
+      font-weight:700;
+      margin-top:10px;
+      width: calc(var(--control-w) + 40px);
+      margin-left:auto;
+      margin-right:auto;
+      box-sizing:border-box;
+      text-align:left;
+    }
+    .lgsRows{
+      width: calc(var(--control-w) + 40px);
+      margin: 0 auto;
+      border-left:1px solid #cfcfcf;
+      border-right:1px solid #cfcfcf;
+      box-sizing:border-box;
+      text-align:left;
+    }
+    .lgsRow{
+      display:grid;
+      grid-template-columns: 1.6fr .8fr .8fr .8fr;
+      gap:10px;
+      padding:10px;
+      border-bottom:1px solid #cfcfcf;
+      background: rgba(255,255,255,0.75);
+      box-sizing:border-box;
+    }
+    .lgsRow:nth-child(even){ background: rgba(255,255,255,0.55); }
+    .lgsTestName{ font-weight:700; display:flex; align-items:center; }
+    .smallInput{
+      width:100%;
+      padding:10px 10px;
+      border:1px solid #bfbfbf;
+      border-radius:6px;
+      font-size:14px;
+      box-sizing:border-box;
+      background:#fff;
+    }
+    .lgsTotals{
+      width: calc(var(--control-w) + 40px);
+      margin: 0 auto 10px;
+      display:grid;
+      grid-template-columns: 1.6fr .8fr .8fr .8fr;
+      gap:10px;
+      padding:10px;
+      border:1px solid #cfcfcf;
+      background:#f2f2f2;
+      box-sizing:border-box;
+      text-align:left;
+    }
+    .lgsTotalsLabel{ font-weight:800; display:flex; align-items:center; }
+
+    .lgsKpi{
+      width: calc(var(--control-w) + 40px);
+      margin: 6px auto 0;
+      text-align:left;
+    }
+    .kpiRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      align-items:center;
+      margin:8px 0;
+    }
+    .kpiLabel{ font-weight:800; }
+
+    .listTitle{
+      width: calc(var(--control-w) + 40px);
+      margin:14px auto 8px;
+      font-weight:800;
+      font-size:13px;
+      text-align:left;
+    }
+    .schoolTableWrap{
+      width: calc(var(--control-w) + 40px);
+      margin: 0 auto;
+      overflow:auto;
+      border:1px solid #cfcfcf;
+      background: rgba(255,255,255,0.65);
+      box-sizing:border-box;
+    }
+    .schoolTable{ width:100%; border-collapse:collapse; min-width:720px; }
+    .schoolTable th, .schoolTable td{
+      border-bottom:1px solid #d9d9d9;
+      padding:10px;
+      vertical-align:top;
+      font-size:13px;
+      text-align:left;
+    }
+    .schoolTable thead th{ background:#e6e6e6; position:sticky; top:0; }
+    .colNum{ width:110px; text-align:right; }
+    .colTrend{ width:220px; }
+    .colOkul{ min-width:260px; }
+
+    .schoolName{ white-space:nowrap; }
+    @media (max-width: 480px){
+      .schoolTable{ min-width:520px; }
+      .schoolName{ white-space:normal; word-break:break-word; }
+    }
+
+    /* === LGS: TALEP RENKLERİ (Excel mantığı: DÜŞÜŞ=yeşil, ARTIŞ=kırmızı) === */
+    .trendUp{
+      background: rgba(255, 228, 228, 0.9);
+      color:#5a0000;
+      font-weight:700;
+    }
+    .trendDown{
+      background: rgba(224, 245, 224, 0.9);
+      color:#0b3d0b;
+      font-weight:700;
     }
   </style>
-
-  <!-- GoatCounter -->
-  <script data-goatcounter="https://gerginix.goatcounter.com/count"
-          async src="//gc.zgo.at/count.js"></script>
 </head>
 
 <body>
+  <div class="bgWrap"></div>
+  <div class="bgOverlay"></div>
 
-<h1>YKS 2025 PUAN VE SIRA SİMÜLATÖRÜ</h1>
+  <div class="heroTitle">YKS 2025 PUAN VE SIRA<br/>SİMÜLATÖRÜ</div>
 
-<div class="subtitle">
-  2026 YKS hazırlığınızı sürdürürken deneme sınavlarında ürettiğiniz netlerin,
-  sizi 2025 YKS'de kaç puanla hangi puan türünde kaçıncı yapacağını görmek için
-  bu PUAN ve SIRALAMA simülatörünü yıl boyunca kullanmaya devam edin.
-  <br><br>
-  OBP kısmına güncel OBP'nizi yazarak 2025 YKS YERLEŞTİRME PUANINIZI ve
-  SIRALAMANIZI %99,5 oranında doğru hesaplayacaktır.
-</div>
-
-<div class="igline">
-  <span class="igicon" aria-hidden="true">
-    <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Instagram">
-      <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.4-2.15a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/>
-    </svg>
-  </span>
-
-  <span>Daha fazlası için instagram hesabımı takip edebilrsiniz:</span>
-  <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
-    instagram.com/umutsahin.tr
-  </a>
-</div>
-
-<div class="disclaimer">
-  Bu sonuçlar bir <b>simülasyondur</b>. Gerçek YKS sonuçları; sınavın zorluk düzeyi, standart sapma ve ÖSYM hesaplamalarına göre değişebilir.
-</div>
-
-<div class="examSwitch" id="examSwitch">
-  <a id="linkYks" class="active" href="javascript:void(0)">YKS</a>
-  <a id="linkLgs" class="passive" href="javascript:void(0)">LGS</a>
-</div>
-
-<!-- === YKS PANEL (dokunulmaz içerik, sadece kapsül) === -->
-<div id="yksPanel">
-
-  <label>Puan Türü</label>
-  <select id="puanTuru">
-    <option value="SAY">SAY</option>
-    <option value="EA">EA</option>
-    <option value="SOZ">SÖZ</option>
-    <option value="DIL">DİL</option>
-  </select>
-
-  <label>OBP (0–100)</label>
-  <input id="obp" type="number" step="0.01" placeholder="Örn: 85,50" />
-  <div class="hint">Virgül veya nokta ile yazabilirsin.</div>
-
-  <div class="grp">
-    <b>TYT Netleri</b>
-    <label>TYT Türkçe</label><input id="tyt_tr" type="number" step="0.25" />
-    <label>TYT Sosyal</label><input id="tyt_sos" type="number" step="0.25" />
-    <label>TYT Matematik</label><input id="tyt_mat" type="number" step="0.25" />
-    <label>TYT Fen</label><input id="tyt_fen" type="number" step="0.25" />
+  <div class="heroSub">
+    2026 YKS hazırlığınızı sürdürürken deneme sınavlarında ürettiğiniz netlerin,
+    sizi 2025 YKS'de kaç puanla hangi puan türünde kaçıncı yapacağını görmek için
+    bu PUAN ve SIRALAMA simülatörünü yıl boyunca kullanmaya devam edin.
+    <br/><br/>
+    OBP kısmına güncel OBP'nizi yazarak 2025 YKS YERLEŞTİRME PUANINIZI ve
+    SIRALAMANIZI %99,5 oranında doğru hesaplayacaktır.
   </div>
 
-  <div id="grp_say" class="grp">
-    <b>AYT (SAY)</b>
-    <label>AYT Matematik</label><input id="ayt_mat" type="number" step="0.25" />
-    <label>AYT Fizik</label><input id="ayt_fiz" type="number" step="0.25" />
-    <label>AYT Kimya</label><input id="ayt_kim" type="number" step="0.25" />
-    <label>AYT Biyoloji</label><input id="ayt_bio" type="number" step="0.25" />
+  <div style="margin-top:10px;">
+    <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
+      instagram.com/umutsahin.tr
+    </a>
   </div>
 
-  <div id="grp_ea" class="grp" style="display:none">
-    <b>AYT (EA)</b>
-    <label>AYT Matematik</label><input id="ayt_mat_ea" type="number" step="0.25" />
-    <label>AYT Edebiyat</label><input id="ayt_edeb" type="number" step="0.25" />
-    <label>AYT Tarih-1</label><input id="ayt_tar1" type="number" step="0.25" />
-    <label>AYT Coğrafya-1</label><input id="ayt_cog1" type="number" step="0.25" />
+  <div class="disclaimer">
+    Bu sonuçlar bir <b>simülasyondur</b>. Gerçek YKS sonuçları; sınavın zorluk düzeyi,
+    standart sapma ve ÖSYM hesaplamalarına göre değişebilir.
   </div>
 
-  <div id="grp_soz" class="grp" style="display:none">
-    <b>AYT (SÖZ)</b>
-    <label>AYT Edebiyat</label><input id="ayt_edeb_soz" type="number" step="0.25" />
-    <label>AYT Tarih-1</label><input id="ayt_tar1_soz" type="number" step="0.25" />
-    <label>AYT Coğrafya-1</label><input id="ayt_cog1_soz" type="number" step="0.25" />
-    <label>AYT Tarih-2</label><input id="ayt_tar2" type="number" step="0.25" />
-    <label>AYT Coğrafya-2</label><input id="ayt_cog2" type="number" step="0.25" />
-    <label>AYT Felsefe Grubu</label><input id="ayt_fels" type="number" step="0.25" />
-    <label>AYT DKAB</label><input id="ayt_dkab" type="number" step="0.25" />
-  </div>
+  <div id="yksPanel">
+    <div class="examSwitchWrap">
+      <div class="examLabel">Sınav Türü</div>
+      <div class="examSwitch" role="tablist" aria-label="Sınav Türü">
+        <button id="btnYks" type="button" class="examBtn active" role="tab" aria-selected="true">YKS</button>
+        <button id="btnLgs" type="button" class="examBtn" role="tab" aria-selected="false">LGS</button>
+      </div>
+    </div>
 
-  <div id="grp_dil" class="grp" style="display:none">
-    <b>YDT (DİL)</b>
-    <label>YDT Net</label><input id="ydt" type="number" step="0.25" />
-  </div>
+    <label>Puan Türü</label>
+    <select id="puanTuru">
+      <option value="SAY">SAY</option>
+      <option value="EA">EA</option>
+      <option value="SOZ">SÖZ</option>
+      <option value="DIL">DİL</option>
+    </select>
 
-  <button id="hesaplaBtn">HESAPLA</button>
+    <label>OBP (0–100)</label>
+    <input id="obp" type="number" step="0.01" placeholder="Örn: 85,50" />
+    <div class="hint">Virgül veya nokta ile yazabilirsin.</div>
 
-  <div id="sonuc">—</div>
-  <div id="sira">—</div>
+    <div class="card">
+      <div class="sectionTitle">TYT Netleri</div>
 
-  <div id="uyariSatiri" class="warnline"></div>
+      <label style="width:var(--control-w); margin-top:8px;">TYT Türkçe</label>
+      <input id="tytTurkce" type="number" step="0.01" placeholder="" />
 
-  <button id="paylasBtn" class="btn-secondary" type="button">SONUCU PAYLAŞ</button>
-  <div id="paylasMesaj" class="hint" style="display:none;"></div>
+      <label style="width:var(--control-w);">TYT Sosyal</label>
+      <input id="tytSosyal" type="number" step="0.01" placeholder="" />
 
-  <div id="hataOverlay" class="modalOverlay" aria-hidden="true">
-    <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="hataBaslik">
-      <div id="hataBaslik" class="modalTitle">Puan hesaplanamadı</div>
-      <div id="hataMetin" class="modalText"></div>
-      <div class="modalActions">
-        <button id="hataKapat2" class="modalBtn modalBtnLight" type="button">Alanlara dön</button>
-        <button id="hataKapat" class="modalBtn" type="button">Kapat</button>
+      <label style="width:var(--control-w);">TYT Matematik</label>
+      <input id="tytMat" type="number" step="0.01" placeholder="" />
+
+      <label style="width:var(--control-w);">TYT Fen</label>
+      <input id="tytFen" type="number" step="0.01" placeholder="" />
+    </div>
+
+    <div class="card">
+      <div class="sectionTitle" id="aytTitle">AYT (SAY)</div>
+
+      <label style="width:var(--control-w); margin-top:8px;" id="ayt1Label">AYT Matematik</label>
+      <input id="ayt1" type="number" step="0.01" placeholder="" />
+
+      <label style="width:var(--control-w);" id="ayt2Label">AYT Fizik</label>
+      <input id="ayt2" type="number" step="0.01" placeholder="" />
+
+      <label style="width:var(--control-w);" id="ayt3Label">AYT Kimya</label>
+      <input id="ayt3" type="number" step="0.01" placeholder="" />
+
+      <label style="width:var(--control-w);" id="ayt4Label">AYT Biyoloji</label>
+      <input id="ayt4" type="number" step="0.01" placeholder="" />
+    </div>
+
+    <button class="btn" id="btnHesapla" type="button">HESAPLA</button>
+
+    <div class="result" id="sonuc"></div>
+
+    <div style="margin: 10px 0 0;">
+      <button class="btn" id="btnPaylas" type="button" style="display:none;">Paylaş</button>
+    </div>
+
+    <div class="modalBack" id="modalBack">
+      <div class="modal">
+        <div class="modalTitle">Sonucu Paylaş</div>
+        <textarea class="modalText" id="shareText" readonly></textarea>
+        <div class="modalBtns">
+          <button class="modalBtnLight modalBtn" id="btnCopy" type="button">Kopyala</button>
+          <button class="modalBtn" id="btnShareNative" type="button">Paylaş</button>
+          <button class="modalBtn modalBtnLight" id="btnCloseModal" type="button">Alanlara dön</button>
+        </div>
       </div>
     </div>
   </div>
 
-</div>
-<!-- === /YKS PANEL === -->
+  <div id="lgsPanel" style="display:none;">
+    <div class="sectionTitle">LGS 2025 PUAN ve YÜZDELİK SİMÜLATÖRÜ</div>
 
-<!-- === LGS PANEL (şimdilik iskelet) === -->
-<div id="lgsPanel" style="display:none">
-  <div class="grp">
-    <b>LGS</b>
+    <div class="lgsGridHead">
+      <div>TEST</div><div>DOĞRU</div><div>YANLIŞ</div><div>NET</div>
+    </div>
+
+    <div class="lgsRows" id="lgsRows"></div>
+
+    <div class="lgsTotals">
+      <div class="lgsTotalsLabel">TOPLAM</div>
+      <div><input id="lgsDogruTop" class="smallInput" type="text" readonly></div>
+      <div><input id="lgsYanlisTop" class="smallInput" type="text" readonly></div>
+      <div><input id="lgsNetTop" class="smallInput" type="text" readonly></div>
+    </div>
+
+    <div class="lgsKpi">
+      <div class="kpiRow">
+        <div class="kpiLabel">LGS PUANI</div>
+        <input id="lgsPuan" type="text" readonly>
+      </div>
+      <div class="kpiRow">
+        <div class="kpiLabel">GENEL YÜZDELİK DİLİMİ</div>
+        <input id="lgsYuzdelik" type="text" readonly>
+      </div>
+      <div class="kpiRow">
+        <div class="kpiLabel">İL SEÇİMİ</div>
+        <select id="lgsIl"></select>
+      </div>
+    </div>
+
+    <button id="btnLgsHesapla" class="btn" type="button">HESAPLA</button>
+
+    <div id="lgsLists" style="display:none;">
+      <div class="listTitle">BİRİNCİ YERLEŞTİRME DÖNEMİNDE YERLEŞEBİLECEĞİ LİSELER</div>
+      <div class="schoolTableWrap">
+        <table class="schoolTable" id="tblBirinci">
+          <thead>
+            <tr>
+              <th class="colOkul">OKUL</th>
+              <th class="colNum">TABAN PUAN</th>
+              <th class="colNum">YÜZDELİK</th>
+              <th class="colTrend">2025'TE ÖNCEKİ YILLARA GÖRE</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="listTitle">SON NAKİL YERLEŞTİRME DÖNEMİNDE YERLEŞEBİLECEĞİ LİSELER</div>
+      <div class="schoolTableWrap">
+        <table class="schoolTable" id="tblNakil">
+          <thead>
+            <tr>
+              <th class="colOkul">OKUL</th>
+              <th class="colNum">TABAN PUAN</th>
+              <th class="colNum">YÜZDELİK</th>
+              <th class="colTrend">2025'TE ÖNCEKİ YILLARA GÖRE</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="hint" id="lgsNote" style="margin-top:10px; opacity:.85;"></div>
   </div>
-</div>
 
-<script src="app.js"></script>
+  <script src="app.js"></script>
 
-<script>
-  (function(){
-    const linkYks = document.getElementById("linkYks");
-    const linkLgs = document.getElementById("linkLgs");
-    const yksPanel = document.getElementById("yksPanel");
-    const lgsPanel = document.getElementById("lgsPanel");
-
-    function setMode(mode){
-      const isLgs = (mode === "LGS");
-
-      if (yksPanel) yksPanel.style.display = isLgs ? "none" : "block";
-      if (lgsPanel) lgsPanel.style.display = isLgs ? "block" : "none";
-
-      if (linkYks){
-        linkYks.classList.toggle("active", !isLgs);
-        linkYks.classList.toggle("passive", isLgs);
-        linkYks.style.textDecoration = isLgs ? "none" : "underline";
-      }
-      if (linkLgs){
-        linkLgs.classList.toggle("active", isLgs);
-        linkLgs.classList.toggle("passive", !isLgs);
-        linkLgs.style.textDecoration = isLgs ? "underline" : "none";
+  <script>
+    (function(){
+      // --- yardımcılar ---
+      function num(v){
+        if (v === null || v === undefined) return 0;
+        if (typeof v === "number") return isFinite(v) ? v : 0;
+        const s = String(v).trim().replace(",", ".");
+        if (!s) return 0;
+        const n = Number(s);
+        return isFinite(n) ? n : 0;
       }
 
-      document.body.classList.toggle("lgsMode", isLgs);
-    }
-
-    if (linkYks) linkYks.addEventListener("click", () => setMode("YKS"));
-    if (linkLgs) linkLgs.addEventListener("click", () => setMode("LGS"));
-
-    setMode("YKS");
-  })();
-</script>
-
-<script>
-  (function(){
-    // --- yardımcılar ---
-    function readNumber(id){
-      const el = document.getElementById(id);
-      if (!el) return 0;
-      const raw = (el.value ?? "").toString().trim();
-      const normalized = raw.replace(",", ".");
-      const n = Number(normalized);
-      return Number.isFinite(n) ? n : 0;
-    }
-    function round2(x){ return Math.round(x * 100) / 100; }
-
-    // --- modal kontrol ---
-    const overlay = document.getElementById("hataOverlay");
-    const hataMetin = document.getElementById("hataMetin");
-    const kapatBtn = document.getElementById("hataKapat");
-    const kapatBtn2 = document.getElementById("hataKapat2");
-    const uyari = document.getElementById("uyariSatiri");
-
-    function closeModal(){
-      if (overlay) overlay.style.display = "none";
-      if (overlay) overlay.setAttribute("aria-hidden", "true");
-    }
-    function openModal(text){
-      if (hataMetin) hataMetin.textContent = text;
-      if (overlay){
-        overlay.style.display = "flex";
-        overlay.setAttribute("aria-hidden", "false");
-      }
-    }
-    if (kapatBtn) kapatBtn.addEventListener("click", closeModal);
-    if (kapatBtn2) kapatBtn2.addEventListener("click", closeModal);
-    if (overlay){
-      overlay.addEventListener("click", (e) => {
-        if (e.target === overlay) closeModal();
-      });
-    }
-
-    // --- Akıllı metin üretimi ---
-    function buildRuleMessage(tur, sum){
-      const s = round2(sum);
-      const need = 0.50;
-
-      const titleLine = tur + " yerleştirme puanının oluşması için\n";
-      const ruleLine =
-        (tur === "DIL")
-          ? "YDT'den toplam en az 0,50 net gerekir."
-          : "ilgili AYT testlerinden toplam en az 0,50 net gerekir.";
-
-      let which = "";
-      let example = "";
-
-      if (tur === "SAY"){
-        const mat = readNumber("ayt_mat");
-        const fiz = readNumber("ayt_fiz");
-        const kim = readNumber("ayt_kim");
-        const bio = readNumber("ayt_bio");
-        which =
-          "SAY için geçerli testler: AYT Matematik, Fizik, Kimya, Biyoloji.\n" +
-          "Şu an: Mat=" + mat + ", Fiz=" + fiz + ", Kim=" + kim + ", Bio=" + bio + ".";
-        example = "Örnek: AYT Matematik'i 0,50 yap ve tekrar dene.";
-      } else if (tur === "EA"){
-        const mat = readNumber("ayt_mat_ea");
-        const edb = readNumber("ayt_edeb");
-        const tar = readNumber("ayt_tar1");
-        const cog = readNumber("ayt_cog1");
-        which =
-          "EA için geçerli testler: AYT Matematik, Edebiyat, Tarih-1, Coğrafya-1.\n" +
-          "Şu an: Mat=" + mat + ", Edeb=" + edb + ", Tar1=" + tar + ", Coğ1=" + cog + ".";
-        example = "Örnek: Edebiyat'ı 0,50 yap ve tekrar dene.";
-      } else if (tur === "SOZ"){
-        const edb = readNumber("ayt_edeb_soz");
-        const tar1 = readNumber("ayt_tar1_soz");
-        const cog1 = readNumber("ayt_cog1_soz");
-        const tar2 = readNumber("ayt_tar2");
-        const cog2 = readNumber("ayt_cog2");
-        const fels = readNumber("ayt_fels");
-        const dkab = readNumber("ayt_dkab");
-        which =
-          "SÖZ için geçerli testler: Edebiyat, Tarih-1, Coğrafya-1, Tarih-2, Coğrafya-2, Felsefe, DKAB.\n" +
-          "Şu an: Edeb=" + edb + ", Tar1=" + tar1 + ", Coğ1=" + cog1 + ", Tar2=" + tar2 + ", Coğ2=" + cog2 + ", Fels=" + fels + ", DKAB=" + dkab + ".";
-        example = "Örnek: Edebiyat'ı 0,50 yap ve tekrar dene.";
-      } else if (tur === "DIL"){
-        const ydt = readNumber("ydt");
-        which =
-          "DİL için geçerli test: YDT.\n" +
-          "Şu an: YDT=" + ydt + ".";
-        example = "Örnek: YDT'yi 0,50 yap ve tekrar dene.";
+      function fmt(n, d=2){
+        if (!isFinite(n)) return "";
+        return n.toFixed(d).replace(".", ",");
       }
 
-      const sumLine = "\n\nŞu anki toplamın: " + s.toFixed(2) + "\nGerekli minimum: " + need.toFixed(2);
+      // --- AYT etiketleri (mevcut) ---
+      const puanTuru = document.getElementById("puanTuru");
+      const aytTitle = document.getElementById("aytTitle");
+      const ayt1Label = document.getElementById("ayt1Label");
+      const ayt2Label = document.getElementById("ayt2Label");
+      const ayt3Label = document.getElementById("ayt3Label");
+      const ayt4Label = document.getElementById("ayt4Label");
 
-      return titleLine + ruleLine + "\n\n" + which + sumLine + "\n\n" + example;
-    }
+      function setAytLabels(){
+        const t = puanTuru.value;
+        if (t === "SAY"){
+          aytTitle.textContent = "AYT (SAY)";
+          ayt1Label.textContent = "AYT Matematik";
+          ayt2Label.textContent = "AYT Fizik";
+          ayt3Label.textContent = "AYT Kimya";
+          ayt4Label.textContent = "AYT Biyoloji";
+        } else if (t === "EA"){
+          aytTitle.textContent = "AYT (EA)";
+          ayt1Label.textContent = "AYT Matematik";
+          ayt2Label.textContent = "AYT Edebiyat";
+          ayt3Label.textContent = "AYT Tarih-1";
+          ayt4Label.textContent = "AYT Coğrafya-1";
+        } else if (t === "SOZ"){
+          aytTitle.textContent = "AYT (SÖZ)";
+          ayt1Label.textContent = "AYT Edebiyat";
+          ayt2Label.textContent = "AYT Tarih-1";
+          ayt3Label.textContent = "AYT Coğrafya-1";
+          ayt4Label.textContent = "AYT Felsefe Grubu";
+        } else {
+          aytTitle.textContent = "YDT (DİL)";
+          ayt1Label.textContent = "YDT Dil";
+          ayt2Label.textContent = "—";
+          ayt3Label.textContent = "—";
+          ayt4Label.textContent = "—";
+        }
+      }
+      puanTuru.addEventListener("change", setAytLabels);
+      setAytLabels();
 
-    function setWarnline(text){
-      if (!uyari) return;
-      uyari.textContent = text;
-      uyari.style.display = "block";
-    }
-    function clearWarnline(){
-      if (!uyari) return;
-      uyari.style.display = "none";
-      uyari.textContent = "";
-    }
+      // --- mevcut YKS hesap (app.js çalışıyor; burada sadece UI/Paylaş modal var) ---
+      const modalBack = document.getElementById("modalBack");
+      const shareText = document.getElementById("shareText");
+      const btnPaylas = document.getElementById("btnPaylas");
+      const btnCopy = document.getElementById("btnCopy");
+      const btnShareNative = document.getElementById("btnShareNative");
+      const btnCloseModal = document.getElementById("btnCloseModal");
 
-    // --- KURAL: AYT/YDT toplam >= 0,50 değilse HESAPLA engellenir ---
-    document.addEventListener("DOMContentLoaded", () => {
-      const turSelect = document.getElementById("puanTuru");
-      const btn = document.getElementById("hesaplaBtn");
-      const sonucEl = document.getElementById("sonuc");
-      const siraEl = document.getElementById("sira");
+      function openModal(){
+        modalBack.style.display = "flex";
+      }
+      function closeModal(){
+        modalBack.style.display = "none";
+      }
 
-      if (!turSelect || !btn || !sonucEl || !siraEl) return;
-
-      // Puan türü değişince uyarıları temizle
-      turSelect.addEventListener("change", () => {
-        clearWarnline();
-        closeModal();
+      btnCloseModal.addEventListener("click", closeModal);
+      modalBack.addEventListener("click", (e)=>{
+        if (e.target === modalBack) closeModal();
       });
 
-      // CAPTURE: app.js'in click handler'ından ÖNCE çalışır
-      btn.addEventListener("click", (e) => {
-        const tur = turSelect.value;
-
-        let sum = 0;
-        if (tur === "SAY"){
-          sum =
-            readNumber("ayt_mat") +
-            readNumber("ayt_fiz") +
-            readNumber("ayt_kim") +
-            readNumber("ayt_bio");
-        } else if (tur === "EA"){
-          sum =
-            readNumber("ayt_mat_ea") +
-            readNumber("ayt_edeb") +
-            readNumber("ayt_tar1") +
-            readNumber("ayt_cog1");
-        } else if (tur === "SOZ"){
-          sum =
-            readNumber("ayt_edeb_soz") +
-            readNumber("ayt_tar1_soz") +
-            readNumber("ayt_cog1_soz") +
-            readNumber("ayt_tar2") +
-            readNumber("ayt_cog2") +
-            readNumber("ayt_fels") +
-            readNumber("ayt_dkab");
-        } else if (tur === "DIL"){
-          sum = readNumber("ydt");
-        }
-
-        // KURAL
-        if (sum < 0.5){
-          // app.js'i durdur
-          e.preventDefault();
-          e.stopPropagation();
-          if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-
-          // sonuçları sıfırla
-          sonucEl.textContent = "—";
-          siraEl.textContent = "—";
-
-          const msg = buildRuleMessage(tur, sum);
-
-          // satır uyarı + modal ekran
-          setWarnline("⚠️ " + tur + " puanı için ilgili AYT/YDT toplamın 0,50'nin altında. (Şu an: " + round2(sum).toFixed(2) + ") Detay için ekrana bak.");
-          openModal(msg);
-          return;
-        }
-
-        // Kural sağlandıysa: hiçbir şeye karışma
-        clearWarnline();
-        closeModal();
-
-      }, true); // <-- capture
-    });
-  })();
-</script>
-
-<script>
-  (function(){
-    const btn = document.getElementById("paylasBtn");
-    const msg = document.getElementById("paylasMesaj");
-    const sonucEl = document.getElementById("sonuc");
-    const siraEl = document.getElementById("sira");
-
-    if (!btn || !msg || !sonucEl || !siraEl) return;
-
-    function cleanText(t){ return (t || "").toString().trim(); }
-
-    function getShareText(){
-      const sonuc = cleanText(sonucEl.textContent);
-      const sira  = cleanText(siraEl.textContent);
-      const url   = window.location.href;
-
-      const lines = [];
-      lines.push("YKS 2025 Puan ve Sıra Simülatörü");
-      if (sonuc && sonuc !== "—") lines.push(sonuc);
-      if (sira && sira !== "—")  lines.push(sira);
-      lines.push(url);
-      return lines.join("\n");
-    }
-
-    async function copyToClipboard(text){
-      try{
-        await navigator.clipboard.writeText(text);
-        return true;
-      }catch(e){
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        ta.style.position = "fixed";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
-        let ok = false;
-        try{ ok = document.execCommand("copy"); }catch(_){ ok = false; }
-        document.body.removeChild(ta);
-        return ok;
-      }
-    }
-
-    btn.addEventListener("click", async () => {
-      const sonuc = cleanText(sonucEl.textContent);
-      if (!sonuc || sonuc === "—") {
-        msg.style.display = "block";
-        msg.textContent = "Önce HESAPLA’ya basıp sonucu üret.";
-        return;
+      function getShareText(){
+        const sonuc = document.getElementById("sonuc").textContent || "";
+        const tur = document.getElementById("puanTuru").value || "";
+        return `YKS 2025 Simülasyon Sonucu (${tur})\\n${sonuc}\\n\\nSimülatör: https://gerginix.github.io/yks-sira-puan-simulatoru/`;
       }
 
-      const text = getShareText();
+      btnPaylas.addEventListener("click", ()=>{
+        shareText.value = getShareText();
+        openModal();
+      });
 
-      if (navigator.share) {
+      btnCopy.addEventListener("click", async ()=>{
         try{
-          await navigator.share({
-            title: "YKS 2025 Puan ve Sıra Simülatörü",
-            text: text
-          });
-          msg.style.display = "block";
-          msg.textContent = "Paylaşım ekranı açıldı.";
-          return;
+          await navigator.clipboard.writeText(shareText.value || "");
+          btnCopy.textContent = "Kopyalandı";
+          setTimeout(()=>btnCopy.textContent="Kopyala", 1200);
         }catch(e){
-          // iptal
+          btnCopy.textContent = "İzin yok";
+          setTimeout(()=>btnCopy.textContent="Kopyala", 1200);
+        }
+      });
+
+      btnShareNative.addEventListener("click", async ()=>{
+        const txt = shareText.value || "";
+        if (navigator.share){
+          try{
+            await navigator.share({ text: txt });
+          }catch(e){}
+        } else {
+          btnShareNative.textContent = "Paylaşım desteklenmiyor";
+          setTimeout(()=>btnShareNative.textContent="Paylaş", 1400);
+        }
+      });
+
+      // Sonuç dolunca paylaş butonu görünsün (mevcut davranış)
+      const sonucEl = document.getElementById("sonuc");
+      const obs = new MutationObserver(()=>{
+        const has = (sonucEl.textContent || "").trim().length > 0;
+        btnPaylas.style.display = has ? "" : "none";
+      });
+      obs.observe(sonucEl, { childList:true, subtree:true, characterData:true });
+
+    })();
+
+    /* =========================
+       LGS PANEL (lgs.json)
+       - YKS koduna dokunmaz
+       ========================= */
+    (function(){
+      const btnYks = document.getElementById("btnYks");
+      const btnLgs = document.getElementById("btnLgs");
+
+      const yksPanel = document.getElementById("yksPanel");
+      const lgsPanel = document.getElementById("lgsPanel");
+
+      function setExam(mode){
+        if (!btnYks || !btnLgs || !yksPanel || !lgsPanel) return;
+
+        const isLgs = mode === "LGS";
+        btnYks.classList.toggle("active", !isLgs);
+        btnLgs.classList.toggle("active", isLgs);
+
+        // LGS aktifken butonun pastel gri hissi
+        btnLgs.classList.toggle("lgsActive", isLgs);
+        btnYks.classList.toggle("lgsActive", false);
+
+        btnYks.setAttribute("aria-selected", String(!isLgs));
+        btnLgs.setAttribute("aria-selected", String(isLgs));
+
+        yksPanel.style.display = isLgs ? "none" : "";
+        lgsPanel.style.display = isLgs ? "" : "none";
+
+        if (isLgs) lgs_initOnce();
+      }
+
+      btnYks && btnYks.addEventListener("click", () => setExam("YKS"));
+      btnLgs && btnLgs.addEventListener("click", () => setExam("LGS"));
+
+      // --- LGS motoru ---
+      let lgsData = null;
+      let lgsInited = false;
+
+      const rowsWrap = document.getElementById("lgsRows");
+      const ilSelect = document.getElementById("lgsIl");
+      const btnCalc = document.getElementById("btnLgsHesapla");
+      const noteEl = document.getElementById("lgsNote");
+      const listsWrap = document.getElementById("lgsLists");
+
+      const outDogru = document.getElementById("lgsDogruTop");
+      const outYanlis = document.getElementById("lgsYanlisTop");
+      const outNet = document.getElementById("lgsNetTop");
+      const outPuan = document.getElementById("lgsPuan");
+      const outYuz = document.getElementById("lgsYuzdelik");
+
+      function fmt2(n){
+        if (n === null || n === undefined || Number.isNaN(n)) return "";
+        return Number(n).toFixed(2).replace(".", ",");
+      }
+      function fmtPuan(n){
+        if (n === null || n === undefined || Number.isNaN(n)) return "";
+        return Number(n).toFixed(2).replace(".", ",");
+      }
+      function toNum(v){
+        if (v === null || v === undefined) return NaN;
+        const s = String(v).trim().replace(",", ".");
+        if (!s) return NaN;
+        const n = Number(s);
+        return Number.isFinite(n) ? n : NaN;
+      }
+      function clamp(n, min, max){
+        if (!Number.isFinite(n)) return NaN;
+        return Math.min(max, Math.max(min, n));
+      }
+
+      function applyTrendColors(container){
+        if (!container) return;
+        const cells = container.querySelectorAll("[data-trend-cell]");
+        cells.forEach(cell => {
+          const t = (cell.textContent || "").toUpperCase();
+          cell.classList.remove("trendUp","trendDown");
+          if (t.includes("TALEP ARTIŞI")) cell.classList.add("trendUp");
+          if (t.includes("TALEP DÜŞÜŞÜ")) cell.classList.add("trendDown");
+        });
+      }
+
+      function lgs_initOnce(){
+        if (lgsInited) return;
+        lgsInited = true;
+
+        fetch("lgs.json", { cache: "no-store" })
+          .then(r => r.json())
+          .then(data => {
+            lgsData = data;
+            buildLgsUI();
+            noteEl.textContent = "";
+          })
+          .catch(err => {
+            console.error(err);
+            noteEl.textContent = "lgs.json okunamadı. Dosya repo kökünde mi? (lgs.json)";
+          });
+      }
+
+      function buildLgsUI(){
+        if (!lgsData || !rowsWrap || !ilSelect) return;
+
+        // Satırları üret
+        rowsWrap.innerHTML = "";
+        const tests = Array.isArray(lgsData.testler) ? lgsData.testler : [];
+        tests.forEach((t, i) => {
+          const testName = t.test || ("TEST " + (i+1));
+          const maxQ = Number(t.max_dogru ?? 0);
+
+          const row = document.createElement("div");
+          row.className = "lgsRow";
+          row.dataset.test = testName;
+          row.dataset.max = String(maxQ);
+          row.dataset.katsayi = String(Number(t.katsayi ?? 0));
+
+          row.innerHTML = `
+            <div class="lgsTestName">${testName}</div>
+            <div><input class="smallInput inpD" inputmode="decimal" placeholder="0" /></div>
+            <div><input class="smallInput inpY" inputmode="decimal" placeholder="0" /></div>
+            <div><input class="smallInput inpN" inputmode="decimal" placeholder="0" /></div>
+          `;
+
+          const inpD = row.querySelector(".inpD");
+          const inpY = row.querySelector(".inpY");
+          const inpN = row.querySelector(".inpN");
+
+          const onChange = (who) => {
+            row.dataset.last = who;
+
+            const max = Number(row.dataset.max || 0);
+            const ratio = Number(lgsData.yanlis_dogru_orani ?? 3);
+
+            let d = toNum(inpD.value);
+            let y = toNum(inpY.value);
+            let n = toNum(inpN.value);
+
+            const last = row.dataset.last;
+
+            // Kullanıcı NET'e yazarsa: D/Y temizlenir, NET clamp edilir
+            if (last === "n" && Number.isFinite(n)) {
+              n = clamp(n, 0, max);
+              inpN.value = fmt2(n);
+              inpD.value = "";
+              inpY.value = "";
+            } else {
+              if (Number.isFinite(d)) d = clamp(d, 0, max);
+              if (Number.isFinite(y)) y = clamp(y, 0, max);
+
+              // D+Y max'ı aşmasın
+              if (Number.isFinite(d) && Number.isFinite(y) && (d + y) > max) {
+                if (last === "d") d = max - y;
+                if (last === "y") y = max - d;
+                d = clamp(d, 0, max);
+                y = clamp(y, 0, max);
+              }
+
+              inpD.value = Number.isFinite(d) ? fmt2(d) : (inpD.value.trim() ? inpD.value : "");
+              inpY.value = Number.isFinite(y) ? fmt2(y) : (inpY.value.trim() ? inpY.value : "");
+
+              // NET hesap (D/Y varsa)
+              if (Number.isFinite(d) || Number.isFinite(y)) {
+                const dd = Number.isFinite(d) ? d : 0;
+                const yy = Number.isFinite(y) ? y : 0;
+                const net = dd - (yy / ratio);
+                const netClamped = clamp(net, 0, max);
+                inpN.value = fmt2(netClamped);
+              } else {
+                // D/Y yoksa NET serbest
+                if (Number.isFinite(n)) {
+                  n = clamp(n, 0, max);
+                  inpN.value = fmt2(n);
+                }
+              }
+            }
+
+            recalcTotalsOnly();
+          };
+
+          inpD.addEventListener("input", () => onChange("d"));
+          inpY.addEventListener("input", () => onChange("y"));
+          inpN.addEventListener("input", () => onChange("n"));
+
+          rowsWrap.appendChild(row);
+        });
+
+        // İl seçenekleri
+        const okullar = Array.isArray(lgsData.okullar) ? lgsData.okullar : [];
+        const iller = Array.from(new Set(okullar.map(o => (o.il || "").toString().trim()).filter(Boolean)))
+          .sort((a,b)=>a.localeCompare(b,"tr"));
+
+        ilSelect.innerHTML = "";
+        iller.forEach(il => {
+          const opt = document.createElement("option");
+          opt.value = il;
+          opt.textContent = il;
+          ilSelect.appendChild(opt);
+        });
+        if (iller.includes("İSTANBUL")) ilSelect.value = "İSTANBUL";
+
+        btnCalc && btnCalc.addEventListener("click", lgs_calculate);
+
+        recalcTotalsOnly();
+      }
+
+      function getRows(){
+        return rowsWrap ? Array.from(rowsWrap.querySelectorAll(".lgsRow")) : [];
+      }
+
+      function recalcTotalsOnly(){
+        const rows = getRows();
+        let sumD = 0, sumY = 0, sumN = 0;
+
+        rows.forEach(r => {
+          const max = Number(r.dataset.max || 0);
+          const ratio = Number(lgsData?.yanlis_dogru_orani ?? 3);
+
+          const dEl = r.querySelector(".inpD");
+          const yEl = r.querySelector(".inpY");
+          const nEl = r.querySelector(".inpN");
+
+          const d = toNum(dEl?.value);
+          const y = toNum(yEl?.value);
+          const n = toNum(nEl?.value);
+
+          if (Number.isFinite(d)) sumD += clamp(d, 0, max);
+          if (Number.isFinite(y)) sumY += clamp(y, 0, max);
+
+          if (Number.isFinite(n)) sumN += clamp(n, 0, max);
+          else {
+            const dd = Number.isFinite(d) ? d : 0;
+            const yy = Number.isFinite(y) ? y : 0;
+            if (dd || yy) sumN += clamp(dd - (yy/ratio), 0, max);
+          }
+        });
+
+        outDogru && (outDogru.value = fmt2(sumD));
+        outYanlis && (outYanlis.value = fmt2(sumY));
+        outNet && (outNet.value = fmt2(sumN));
+      }
+
+      function nearestIndex(arr, x){
+        let bestI = 0;
+        let bestD = Infinity;
+        for (let i=0;i<arr.length;i++){
+          const d = Math.abs(arr[i]-x);
+          if (d < bestD){ bestD = d; bestI = i; }
+        }
+        return bestI;
+      }
+
+      function lgs_calculate(){
+        if (!lgsData) { noteEl.textContent = "lgs.json henüz yüklenmedi."; return; }
+
+        const rows = getRows();
+        const base = Number(lgsData.base_puan ?? 0);
+
+        let puan = base;
+
+        rows.forEach(r => {
+          const max = Number(r.dataset.max || 0);
+          const kats = Number(r.dataset.katsayi || 0);
+          const nEl = r.querySelector(".inpN");
+          let net = toNum(nEl?.value);
+          if (!Number.isFinite(net)) net = 0;
+          net = clamp(net, 0, max);
+          puan += net * kats;
+        });
+
+        outPuan && (outPuan.value = fmtPuan(puan));
+
+        const tab = lgsData.yuzdelik_tablosu || {};
+        const puanArr = Array.isArray(tab.puan) ? tab.puan : [];
+        const yuzArr = Array.isArray(tab.yuzdelik) ? tab.yuzdelik : [];
+        const nakilArr = Array.isArray(tab.nakil_yuzdelik) ? tab.nakil_yuzdelik : [];
+
+        if (puanArr.length && yuzArr.length){
+          const i = nearestIndex(puanArr, puan);
+          const yuz = yuzArr[i];
+          outYuz && (outYuz.value = fmt2(yuz));
+          renderLists(Number(yuz), Number(nakilArr[i]));
+          listsWrap && (listsWrap.style.display = "");
+        } else {
+          outYuz && (outYuz.value = "");
+          noteEl.textContent = "yüzdelik_tablosu bulunamadı.";
+          listsWrap && (listsWrap.style.display = "none");
         }
       }
 
-      const ok = await copyToClipboard(text);
-      msg.style.display = "block";
-      msg.textContent = ok ? "Kopyalandı. WhatsApp/DM’ye yapıştırabilirsin." : "Kopyalanamadı. Tarayıcı izin vermedi.";
-    });
-  })();
-</script>
+      function renderLists(yuzdelik, nakilYuz){
+        const il = (ilSelect?.value || "").toString().trim();
+        const okullar = Array.isArray(lgsData.okullar) ? lgsData.okullar : [];
+
+        const birinci = okullar
+          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(Number(o.yuzdelik_2025)))
+          .map(o => ({...o, diff: Math.abs(Number(o.yuzdelik_2025) - yuzdelik)}))
+          .sort((a,b)=>a.diff-b.diff)
+          .slice(0, 12);
+
+        const nakil = okullar
+          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(Number(o.nakil_yuzdelik_2025)))
+          .map(o => ({...o, diff: Math.abs(Number(o.nakil_yuzdelik_2025) - nakilYuz)}))
+          .sort((a,b)=>a.diff-b.diff)
+          .slice(0, 12);
+
+        fillTable("tblBirinci", birinci, "yuzdelik_2025");
+        fillTable("tblNakil", nakil, "nakil_yuzdelik_2025");
+      }
+
+      function fillTable(tblId, rows, yuzKey){
+        const tbl = document.getElementById(tblId);
+        if (!tbl) return;
+        const tbody = tbl.querySelector("tbody");
+        if (!tbody) return;
+
+        tbody.innerHTML = "";
+        rows.forEach(r => {
+          const tr = document.createElement("tr");
+
+          const okul = (r.okul || "").toString();
+          const puan = Number(r.puan_2025);
+          const yuz = Number(r[yuzKey]);
+
+          const trendText = (r.trend_2025 || r.trend || r.talep || "").toString();
+
+          tr.innerHTML = `
+            <td class="schoolName">${okul}</td>
+            <td class="colNum">${Number.isFinite(puan) ? fmtPuan(puan) : ""}</td>
+            <td class="colNum">${Number.isFinite(yuz) ? fmt2(yuz) : ""}</td>
+            <td class="colTrend" data-trend-cell>${trendText}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        applyTrendColors(tbl);
+      }
+
+      // default: YKS açık
+      setExam("YKS");
+    })();
+  </script>
 
 </body>
 </html>
