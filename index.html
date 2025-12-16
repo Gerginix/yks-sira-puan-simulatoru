@@ -818,11 +818,9 @@
 
         // İl seçenekleri
         const okullar = pickArr(lgsData, ["okullar","schools","liseler","lise_listesi","kurumlar","veri","data"]);
-        const illerFromJson = pickArr(lgsData, ["iller","il_listesi","provinces","cities"]);
-        const getIl = (o) => ((o?.["İl Adı"] ?? o?.["Il Adı"] ?? o?.il ?? o?.IL ?? o?.Il ?? o?.city ?? o?.sehir ?? o?.şehir ?? o?.province ?? "")).toString().trim();
-    const iller = (Array.isArray(illerFromJson) && illerFromJson.length)
-          ? illerFromJson.map(s=>s.toString().trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,"tr"))
-          : Array.from(new Set(okullar.map(getIl).filter(Boolean))).sort((a,b)=>a.localeCompare(b,"tr"));
+        const getIl = (o) => (o?.il ?? o?.IL ?? o?.Il ?? o?.city ?? o?.sehir ?? o?.şehir ?? o?.province ?? "").toString().trim();
+    const iller = Array.from(new Set(okullar.map(getIl).filter(Boolean)))
+          .sort((a,b)=>a.localeCompare(b,"tr"));
 
         ilSelect.innerHTML = "";
         iller.forEach(il => {
@@ -922,36 +920,48 @@
         }
       }
 
+      function normIl(s){
+        return (s || "")
+          .toString()
+          .toUpperCase()
+          .replace(/İ/g,"I")
+          .replace(/Ş/g,"S")
+          .replace(/Ğ/g,"G")
+          .replace(/Ü/g,"U")
+          .replace(/Ö/g,"O")
+          .replace(/Ç/g,"C")
+          .replace(/\s+/g," ")
+          .trim();
+      }
+
+
       function renderLists(yuzdelik, nakilYuz){
-        const il = (ilSelect?.value || "").toString().trim();
+        const il = ((ilSelect?.value || ilSelect?.options?.[0]?.value) || "").toString().trim();
 
         const okullar = pickArr(lgsData, ["okullar","schools","liseler","lise_listesi","kurumlar","veri","data"]);
-        const illerFromJson = pickArr(lgsData, ["iller","il_listesi","provinces","cities"]);
 
         const getYuz = (o) => {
-          // desteklenen anahtarlar (JSON/Excel):
-          //  - yuzdelik2025 / yuzdelik_2025 / yuzdelik
-          //  - "2025 En Düşük % Dilim"
-          const v = (o?.yuzdelik2025 ?? o?.yuzdelik_2025 ?? o?.yuzdelik ?? o?.["2025 En Düşük % Dilim"]);
+          // desteklenen anahtarlar: yuzdelik2025 / yuzdelik_2025 / yuzdelik
+          const v = (o?.yuzdelik2025 ?? o?.yuzdelik_2025 ?? o?.yuzdelik);
           return Number(v);
         };
         const getNakilYuz = (o) => {
-          // desteklenen anahtarlar (JSON/Excel):
-          //  - yuzdelikNakil2025 / nakil_yuzdelik_2025 / nakil_yuzdelik / yuzdelikNakil
-          //  - "2025 En Düşük Nakil Sonrası % Dilim"
-          const v = (o?.yuzdelikNakil2025 ?? o?.nakil_yuzdelik_2025 ?? o?.nakil_yuzdelik ?? o?.yuzdelikNakil ?? o?.["2025 En Düşük Nakil Sonrası % Dilim"]);
+          // desteklenen anahtarlar: yuzdelikNakil2025 / nakil_yuzdelik_2025 / nakil_yuzdelik
+          const v = (o?.yuzdelikNakil2025 ?? o?.nakil_yuzdelik_2025 ?? o?.nakil_yuzdelik ?? o?.yuzdelikNakil);
           return Number(v);
         };
 
         const birinci = okullar
-          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getYuz(o)))
-          .map(o => ({...o, diff: Math.abs(getYuz(o) - yuzdelik)}))
+          .filter(o => normIl(o.il) === normIl(il) && Number.isFinite(getYuz(o)))
+          .filter(o => getYuz(o) >= yuzdelik)
+          .map(o => ({...o, diff: (getYuz(o) - yuzdelik)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
         const nakil = okullar
-          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getNakilYuz(o)))
-          .map(o => ({...o, diff: Math.abs(getNakilYuz(o) - nakilYuz)}))
+          .filter(o => normIl(o.il) === normIl(il) && Number.isFinite(getNakilYuz(o)))
+          .filter(o => getNakilYuz(o) >= nakilYuz)
+          .map(o => ({...o, diff: (getNakilYuz(o) - nakilYuz)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
