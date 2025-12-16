@@ -607,13 +607,10 @@
 
       function toggleYksFields(show){
         if (!yksPanel) return;
-
-        // Menü (YKS/LGS düğmeleri) her zaman görünür kalsın
         const switchWrap = yksPanel.querySelector(".examSwitchWrap");
-
         Array.from(yksPanel.children).forEach(el => {
           if (switchWrap && el === switchWrap) {
-            el.style.display = ""; // ✅ menü asla kaybolmaz
+            el.style.display = ""; // menü hep görünür
           } else {
             el.style.display = show ? "" : "none";
           }
@@ -624,7 +621,6 @@
         if (!btnYks || !btnLgs || !yksPanel || !lgsPanel) return;
 
         const isLgs = mode === "LGS";
-
         btnYks.classList.toggle("active", !isLgs);
         btnLgs.classList.toggle("active", isLgs);
 
@@ -635,11 +631,10 @@
         btnYks.setAttribute("aria-selected", String(!isLgs));
         btnLgs.setAttribute("aria-selected", String(isLgs));
 
-        // ✅ ESKİ BUG: yksPanel komple gizleniyordu, menü de kayboluyordu.
-        // ✅ FIX: sadece YKS alanlarını gizle, menü kalsın.
+        // ✅ YKS panelini komple saklama, sadece YKS alanlarını gizle
         toggleYksFields(!isLgs);
 
-        // LGS paneli aç/kapat
+        // LGS panelini aç/kapat
         lgsPanel.style.display = isLgs ? "" : "none";
 
         if (isLgs) lgs_initOnce();
