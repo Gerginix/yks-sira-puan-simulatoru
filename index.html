@@ -711,7 +711,6 @@
               if (!r.ok) continue;
               const data = await r.json();
               lgsData = data;
-              bindIlOptions();
               buildLgsUI();
               noteEl.textContent = "";
               return;
@@ -721,34 +720,10 @@
         })();
       }
 
-      function bindIlOptions(){
-        if (!ilSelect || !lgsData) return;
-
-        const raw = Array.isArray(lgsData.iller) ? lgsData.iller : null;
-        const okullar = Array.isArray(lgsData.okullar) ? lgsData.okullar
-          : (Array.isArray(lgsData["Table 1"]) ? lgsData["Table 1"] : []);
-
-        const getIl = (o) => (o && (o["İl Adı"] ?? o["Il Adı"] ?? o.il ?? o.IL ?? o.Il ?? o["İL"])) ?? "";
-        const list = (raw && raw.length) ? raw : [...new Set(okullar.map(getIl).filter(Boolean).map(s=>String(s).trim()))];
-
-        const uniq = [...new Set(list.map(s=>String(s).trim()).filter(Boolean))]
-          .sort((a,b)=>a.localeCompare(b, "tr"));
-
-        ilSelect.innerHTML =
-          '<option value="">İl seç…</option>' +
-          uniq.map(il => `<option value="${il}">${il}</option>`).join("");
-
-        // Varsayılan seçim: ilk il
-        if (!ilSelect.value && uniq.length) ilSelect.value = uniq[0];
-      }
-
-
       function buildLgsUI(){
         if (!lgsData || !rowsWrap || !ilSelect) return;
 
-        
-        bindIlOptions();
-// Satırları üret
+        // Satırları üret
         rowsWrap.innerHTML = "";
         const pickArr = (obj, keys) => { for (const k of keys){ const v = obj?.[k]; if (Array.isArray(v)) return v; } return []; };
     const testsRaw = pickArr(lgsData, ["testler","tests","dersler","subjects","oturumlar"]);
@@ -927,22 +902,46 @@
 
         outPuan && (outPuan.value = fmtPuan(puan));
 
-        const tab = lgsData.puan2yuzdelik || lgsData.yuzdelik_tablosu || {};
-        const puanArr = Array.isArray(tab.puan) ? tab.puan : (Array.isArray(tab.puanlar) ? tab.puanlar : []);
-        const yuzArr = Array.isArray(tab.yuzdelik) ? tab.yuzdelik : (Array.isArray(tab.yuzdelikler) ? tab.yuzdelikler : []);
-        const nakilArr = Array.isArray(tab.yuzdelikNakil) ? tab.yuzdelikNakil : (Array.isArray(tab.nakil_yuzdelik) ? tab.nakil_yuzdelik : (Array.isArray(tab.nakil_yuzdelikler) ? tab.nakil_yuzdelikler : []));
+        const tab = (lgsData && (lgsData.puan2yuzdelik || lgsData.yuzdelik_tablosu)) || {};
+        // JSON anahtar uyumu (Excel → JSON): scores/puanlar[] ↔ yuzdelikler[]
+        const puanArr =
+          (Array.isArray(tab.scores) ? tab.scores :
+          (Array.isArray(tab.puanlar) ? tab.puanlar :
+          (Array.isArray(tab.puan) ? tab.puan : [])));
+        const yuzArr =
+          (Array.isArray(tab.yuzdelikler) ? tab.yuzdelikler :
+          (Array.isArray(tab.yuzdelik) ? tab.yuzdelik : []));
+        const nakilArr =
+          (Array.isArray(tab.yuzdelikNakil) ? tab.yuzdelikNakil :
+          (Array.isArray(tab.yuzdelikNakiller) ? tab.yuzdelikNakiller :
+          (Array.isArray(tab.nakil_yuzdelik) ? tab.nakil_yuzdelik :
+          (Array.isArray(tab.nakil_yuzdelikler) ? tab.nakil_yuzdelikler : []))));
 
         if (puanArr.length && yuzArr.length){
           const i = nearestIndex(puanArr, puan);
           const yuz = yuzArr[i];
           outYuz && (outYuz.value = fmt2(yuz));
-          renderLists(Number(yuz), Number(nakilArr[i]));
+          renderLists(Number(yuz), Number((Array.isArray(nakilArr) && nakilArr.length) ? nakilArr[i] : yuzArr[i]));
           listsWrap && (listsWrap.style.display = "");
         } else {
           outYuz && (outYuz.value = "");
           noteEl.textContent = "yüzdelik_tablosu bulunamadı.";
           listsWrap && (listsWrap.style.display = "none");
         }
+      }
+
+      function normIl(s){
+        return (s || "")
+          .toString()
+          .toUpperCase()
+          .replace(/İ/g,"I")
+          .replace(/Ş/g,"S")
+          .replace(/Ğ/g,"G")
+          .replace(/Ü/g,"U")
+          .replace(/Ö/g,"O")
+          .replace(/Ç/g,"C")
+          .replace(/\s+/g," ")
+          .trim();
       }
 
       function renderLists(yuzdelik, nakilYuz){
@@ -962,19 +961,31 @@
         };
 
         const birinci = okullar
-          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getYuz(o)))
+          .filter(o => normIl(o.il) === normIl(il) && Number.isFinite(getYuz(o)))
           .map(o => ({...o, diff: Math.abs(getYuz(o) - yuzdelik)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
         const nakil = okullar
-          .filter(o => (o.il || "").toString().trim() === il && Number.isFinite(getNakilYuz(o)))
+          .filter(o => normIl(o.il) === normIl(il) && Number.isFinite(getNakilYuz(o)))
           .map(o => ({...o, diff: Math.abs(getNakilYuz(o) - nakilYuz)}))
           .sort((a,b)=>a.diff-b.diff)
           .slice(0, 12);
 
         fillTable("tblBirinci", birinci, { yuzField: "yuzdelik2025", alt: ["yuzdelik_2025","yuzdelik"] });
         fillTable("tblNakil", nakil, { yuzField: "yuzdelikNakil2025", alt: ["nakil_yuzdelik_2025","nakil_yuzdelik","yuzdelikNakil"] });
+
+
+        const birinciCount = birinci.length;
+        const nakilCount = nakil.length;
+        if ((birinciCount + nakilCount) === 0){
+          listsWrap && (listsWrap.style.display = "none");
+          noteEl && (noteEl.textContent = "Seçtiğin il için liste bulunamadı. (İl adı yazımı/boşluk farkı varsa otomatik düzeltilir.)");
+        } else {
+          listsWrap && (listsWrap.style.display = "");
+          noteEl && (noteEl.textContent = "");
+        }
+
       }
 
       function fillTable(tblId, rows, yuzKey){
