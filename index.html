@@ -547,16 +547,8 @@
     </div>
 
     <div id="lgsListeBox" class="result hidden" style="margin-top:10px;">
-      <div style="font-weight:bold; margin-bottom:6px;">Okul listeleri (maks. 12 + 12)</div>
-      <!-- Mobilde dar ekrana sığması için: satır kaydırma / word-break aktif -->
-      <div id="lgsOkulListe" style="margin:0; padding:0; text-align:left; white-space:normal; overflow-wrap:anywhere; word-break:break-word;"></div>
-    </div>
-
-    <div style="margin-top: 12px; font-size: 12px;">
-      <span style="opacity:.85;">Daha fazlası için instagram hesabımı takip edebilirsin:</span>
-      <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
-        instagram.com/umutsahin.tr
-      </a>
+      <div style="font-weight:bold; margin-bottom:6px;">2025 verisine göre girebildiğin okullar (maks. 12)</div>
+      <ol id="lgsOkulListe" style="margin:0; padding-left:18px;"></ol>
     </div>
 
     <div style="margin-top: 12px; font-size: 12px;">
@@ -1118,7 +1110,13 @@
       for (let i = 0; i < h.length; i++) if (h[i] === name) last = i;
       return last;
     };
-    state.idx.il = findLast("İl Adı"); // AY mantığı: excel'de 2 kez var, biz sonuncuyu alıyoruz
+
+    const findFirst = (name) => {
+      for (let i = 0; i < h.length; i++) if (h[i] === name) return i;
+      return -1;
+    };
+    state.idx.ilSchool = findFirst("İl Adı"); // okul satırlarındaki il (A sütunu)
+    state.idx.ilList = findLast("İl Adı");   // il seçim listesi (AY sütunu)
     state.idx.okul = findLast("Okul Adı");
     state.idx.puan = findLast("2025 PUAN");
     state.idx.puan2 = findLast("2025 2. YER. PUANI");
@@ -1155,7 +1153,7 @@
     const sel = $("lgsIlSec");
     if (sel) {
       const ilSet = new Set();
-      const ilIdx = state.idx.il;
+      const ilIdx = (state.idx.ilList >= 0 ? state.idx.ilList : state.idx.ilSchool);
       if (ilIdx >= 0) {
         state.rows.forEach(row => {
           const il = row?.[ilIdx];
@@ -1289,7 +1287,7 @@
   }
 
   function filterByIl(il) {
-    const ilIdx = state.idx.il;
+    const ilIdx = state.idx.ilSchool;
     if (ilIdx < 0) return [];
     return state.rows.filter(r => String(r?.[ilIdx] ?? "").trim() === il);
   }
@@ -1359,7 +1357,7 @@
       }
       const rows = items.map((it,i)=>`
         <div style="display:flex; gap:10px; justify-content:space-between; padding:6px 0; border-top:1px dashed rgba(0,0,0,.12);">
-          <div style="text-align:left; flex:1; overflow-wrap:anywhere; word-break:break-word;">${i+1}. ${it.okul}</div>
+          <div style="text-align:left; flex:1;">${i+1}. ${it.okul}</div>
           <div style="min-width:90px; text-align:right;">${fmt(it.puan)}</div>
         </div>`).join("");
       return `<div style="margin:10px 0; padding:10px; border:1px solid rgba(0,0,0,.12); border-radius:10px; background:#fff;">
@@ -1368,7 +1366,7 @@
       </div>`;
     };
 
-    box.innerHTML = htmlList("1. Yerleştirme (2025 PUAN) - Maks. 12", list1) + htmlList("Nakil dönemi / Son yerleştirme (2025 2. YER. PUANI) - Maks. 12", list2);
+    box.innerHTML = htmlList("2025 PUAN’a göre (12 okul)", list1) + htmlList("2025 2. YER. PUANI’na göre (12 okul)", list2);
   }
 
   function setWarn(msg) {
@@ -1402,9 +1400,6 @@
       const list1 = topList(ilRows, score, state.idx.puan, 12);
       const list2 = topList(ilRows, score, state.idx.puan2, 12);
       renderLists(list1, list2);
-
-      const listeBox = $("lgsListeBox");
-      if (listeBox) listeBox.classList.remove("hidden");
 
       const sonuc = $("lgsSonuc");
       if (sonuc) sonuc.classList.remove("hidden");
