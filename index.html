@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="tr">
 <head>
@@ -110,60 +111,91 @@
       opacity:0.92;
     }
 
-    .hint{
-      width: var(--control-w);
-      margin: 6px auto 0;
-      font-size: 12px;
-      color:#444;
-      text-align:center;
-      line-height:1.35;
-    }
-
-    /* Sonuç alanı */
-    #sonuc, #sira{
-      width: var(--control-w);
-      margin: 12px auto 0;
-      padding: 10px;
-      border: 1px solid #bbb;
-      border-radius: var(--radius);
-      text-align:center;
-      font-weight:900;
-      font-size: 16px;
-    }
-    #sira{
-      margin-top:8px;
-      font-weight:800;
-      font-size: 15px;
-    }
-
-    /* Gruplar */
     .grp{
-      width: var(--control-w);
-      margin: 10px auto 0;
-      padding: 10px 10px 2px;
-      border: 1px solid rgba(0,0,0,0.12);
+      border:1px solid #ddd;
       border-radius: var(--radius);
-      background: rgba(0,0,0,0.02);
+      padding:10px;
+      margin-top:12px;
     }
+
     .grp b{
       display:block;
       text-align:center;
-      margin-bottom: 8px;
+      font-size:14px;
+      margin-bottom:6px;
     }
 
-    /* Akıllı uyarı satırı (buton üstü) */
+    #sonuc{
+      margin-top:16px;
+      font-size:20px;
+      font-weight:800;
+      text-align:center;
+    }
+
+    #sira{
+      margin-top:8px;
+      font-size:16px;
+      font-weight:700;
+      text-align:center;
+    }
+
+    .hint{
+      font-size:12px;
+      color:#555;
+      margin-top:6px;
+      text-align:center;
+    }
+
+    @media (max-width: 420px){
+      :root{
+        --page-w: 92vw;
+        --control-w: 85%;
+      }
+    }
+
+    /* === ARKA PLAN FOTO (PC + MOBİL) === */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image: url("umut.jpeg");
+      background-repeat:no-repeat;
+      background-size:cover;
+      background-position: 65% center; /* PC kadraj */
+      opacity:0.22;                    /* transparan, flu YOK */
+      z-index:-1;
+      pointer-events:none;
+    }
+
+    /* Tüm içerik foto üstünde kalsın */
+    body > *{
+      position:relative;
+      z-index:1;
+    }
+
+    /* === MOBİL AYAR === */
+    @media (max-width: 600px){
+      body::before{
+        background-position: 50% 20%;  /* yüz yukarıda */
+        background-size: 160%;         /* yüz büyük */
+        opacity:0.18;
+      }
+    }
+
+    /* === AKILLI UYARI (satır) === */
     .warnline{
       width: var(--control-w);
       margin: 10px auto 0;
-      padding: 10px;
-      border-radius: var(--radius);
-      border: 1px solid rgba(0,0,0,0.12);
-      background: rgba(255, 232, 199, 0.75);
-      color:#111;
-      font-size: 13px;
-      line-height: 1.35;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(180,0,0,0.18);
+      background: rgba(255, 230, 230, 0.55);
+      color: #5a0000;
+      font-size: 12.5px;
+      line-height: 1.4;
       display:none;
     }
+    .warnline b{ font-weight:800; }
 
     /* === NEDEN HESAPLANMADI? (MODAL) === */
     .modalOverlay{
@@ -220,7 +252,7 @@
       background: rgba(255,255,255,0.9);
       color:#111;
     }
-
+  
     /* DY-NET satırı: Doğru / Yanlış / Net (Net = D - Y/4) */
     .dywrap{
       display:flex;
@@ -244,9 +276,17 @@
       box-sizing: border-box;
     }
 
+  
     /* === YKS / LGS MOD SEÇİMİ === */
     .hidden{ display:none !important; }
 
+    .modehint{
+      text-align:center;
+      font-size: 13px;
+      color:#333;
+      margin-top: 4px;
+      margin-bottom: 6px;
+    }
     .modebar{
       width: var(--control-w);
       margin: 10px auto 14px;
@@ -270,14 +310,6 @@
     .modebtn.active{
       background:#111;
       color:#fff;
-      border-color: rgba(0,0,0,0.12);
-    }
-    .modehint{
-      text-align:center;
-      font-size: 13px;
-      color:#333;
-      margin-top: 2px;
-      margin-bottom: 8px;
     }
 
   </style>
@@ -297,6 +329,8 @@
 </div>
 
 <div id="introYKS" class="hidden">
+
+
 <h1>YKS 2025 PUAN VE SIRA SİMÜLATÖRÜ</h1>
 
 <div class="subtitle">
@@ -324,8 +358,10 @@
 <div class="disclaimer">
   Bu sonuçlar bir <b>simülasyondur</b>. Gerçek YKS sonuçları; sınavın zorluk düzeyi, standart sapma ve ÖSYM hesaplamalarına göre değişebilir.
 </div>
-</div>
 
+
+
+</div>
 
 <div id="lgsUI" class="hidden" style="text-align:center; margin: 14px auto 0; width: var(--control-w);">
   <h1 style="margin: 6px 0 10px; font-size: 22px;">LGS 2025 PUAN ve YÜZDELİK SİMÜLATÖRÜ</h1>
@@ -428,6 +464,8 @@
       <button id="hataKapat" class="modalBtn" type="button">Kapat</button>
     </div>
   </div>
+</div>
+
 </div>
 
 <script src="app.js"></script>
@@ -612,84 +650,6 @@
   })();
 </script>
 
-
-<script>
-/* =====================================================
-   YKS DOĞRU / YANLIŞ -> NET OTOMATİK (YKS motorunu bozmaz)
-   - Net input id'leri AYNI kalır (tyt_tr, ayt_mat, ...)
-   - Yeni alanlar: <id>_d ve <id>_y
-   - Kural: Net = D - Y/4
-   - Kural: D + Y <= maxSoru (aşarsa Y kısılır)
-   - Negatif net mümkün (D/Y sayıları negatif olamaz)
-===================================================== */
-(function(){
-  const MAXQ = {
-    tyt_tr: 40, tyt_sos: 20, tyt_mat: 40, tyt_fen: 20,
-    ayt_mat: 40, ayt_fiz: 14, ayt_kim: 13, ayt_bio: 13,
-    ayt_mat_ea: 40, ayt_edeb: 24, ayt_tar1: 10, ayt_cog1: 6,
-    ayt_edeb_soz: 24, ayt_tar1_soz: 10, ayt_cog1_soz: 6,
-    ayt_tar2: 11, ayt_cog2: 11, ayt_fels: 12, ayt_dkab: 6,
-    ydt: 80
-  };
-
-  function toInt(val){
-    const s = (val ?? "").toString().trim();
-    if (!s) return null;
-    const n = Number(s.replace(",", "."));
-    if (!Number.isFinite(n)) return null;
-    return Math.trunc(n);
-  }
-
-  function fmtNet(x){
-    const r = Math.round(x * 1000) / 1000;
-    return (Math.abs(r) < 1e-12) ? "0" : String(r);
-  }
-
-  function clampDY(baseId){
-    const dEl = document.getElementById(baseId + "_d");
-    const yEl = document.getElementById(baseId + "_y");
-    const nEl = document.getElementById(baseId);
-    if (!dEl || !yEl || !nEl) return;
-
-    let d = toInt(dEl.value);
-    let y = toInt(yEl.value);
-    if (d == null) d = 0;
-    if (y == null) y = 0;
-    if (d < 0) d = 0;
-    if (y < 0) y = 0;
-
-    const max = MAXQ[baseId];
-    if (Number.isFinite(max)){
-      if (d > max) d = max;
-      if (y > max) y = max;
-      if (d + y > max){
-        y = Math.max(0, max - d);
-      }
-    }
-
-    dEl.value = String(d);
-    yEl.value = String(y);
-
-    const net = d - (y / 4);
-    nEl.value = fmtNet(net);
-  }
-
-  function attach(baseId){
-    const dEl = document.getElementById(baseId + "_d");
-    const yEl = document.getElementById(baseId + "_y");
-    const nEl = document.getElementById(baseId);
-    if (!dEl || !yEl || !nEl) return;
-
-    dEl.addEventListener("input", () => clampDY(baseId));
-    yEl.addEventListener("input", () => clampDY(baseId));
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    Object.keys(MAXQ).forEach(attach);
-  });
-})();
-</script>
-
 <script>
   (function(){
     const btn = document.getElementById("paylasBtn");
@@ -763,7 +723,102 @@
     });
   })();
 </script>
-</div>
+
+
+<script>
+/* =====================================================
+   YKS DOĞRU / YANLIŞ -> NET OTOMATİK (YKS motorunu bozmaz)
+   - Net input id'leri AYNI kalır (tyt_tr, ayt_mat, ...)
+   - Yeni alanlar: <id>_d ve <id>_y
+   - Kural: Net = D - Y/4
+   - Kural: D + Y <= maxSoru (aşarsa Y kısılır)
+   - Negatif net mümkün (D/Y sayıları negatif olamaz)
+===================================================== */
+(function(){
+  const MAXQ = {
+    tyt_tr: 40, tyt_sos: 20, tyt_mat: 40, tyt_fen: 20,
+    ayt_mat: 40, ayt_fiz: 14, ayt_kim: 13, ayt_bio: 13,
+    ayt_mat_ea: 40, ayt_edeb: 24, ayt_tar1: 10, ayt_cog1: 6,
+    ayt_edeb_soz: 24, ayt_tar1_soz: 10, ayt_cog1_soz: 6,
+    ayt_tar2: 11, ayt_cog2: 11, ayt_fels: 12, ayt_dkab: 6,
+    ydt: 80
+  };
+
+  function toInt(val){
+    const s = (val ?? "").toString().trim();
+    if (!s) return null;
+    const n = Number(s.replace(",", "."));
+    if (!Number.isFinite(n)) return null;
+    return Math.trunc(n);
+  }
+
+  function fmtNet(x){
+    // 0.25 adımlı; ama küsurat çıkarsa da düzgün yaz
+    const r = Math.round(x * 1000) / 1000;
+    return (Math.abs(r) < 1e-12) ? "0" : String(r);
+  }
+
+  function bindOne(id){
+    const netEl = document.getElementById(id);
+    const dEl = document.getElementById(id + "_d");
+    const yEl = document.getElementById(id + "_y");
+    if (!netEl || !dEl || !yEl) return;
+
+    const max = MAXQ[id];
+
+    function recalc(){
+      const dRaw = toInt(dEl.value);
+      const yRaw = toInt(yEl.value);
+
+      // İkisi de boşsa net manuel kalsın
+      if (dRaw === null && yRaw === null){
+        netEl.readOnly = false;
+        return;
+      }
+
+      let d = (dRaw === null) ? 0 : dRaw;
+      let y = (yRaw === null) ? 0 : yRaw;
+
+      // Doğru/yanlış negatif olamaz
+      if (d < 0) d = 0;
+      if (y < 0) y = 0;
+
+      // Üst limit (tek tek)
+      if (d > max) d = max;
+      if (y > max) y = max;
+
+      // D+Y aşarsa yanlış kıs
+      if (d + y > max){
+        y = Math.max(0, max - d);
+      }
+
+      // UI'ya geri yaz (düzeltme olduysa)
+      if (dRaw !== null && dEl.value !== String(d)) dEl.value = String(d);
+      if (yRaw !== null && yEl.value !== String(y)) yEl.value = String(y);
+
+      const net = d - (y / 4);
+      netEl.value = fmtNet(net);
+      netEl.readOnly = true;
+    }
+
+    dEl.addEventListener("input", recalc);
+    yEl.addEventListener("input", recalc);
+    dEl.addEventListener("blur", recalc);
+    yEl.addEventListener("blur", recalc);
+
+    // Sayfa ilk açılışında da hesapla
+    recalc();
+  }
+
+  function init(){
+    Object.keys(MAXQ).forEach(bindOne);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+
 
 <script>
   (function(){
@@ -778,14 +833,16 @@
       btn.classList.toggle("active", !!on);
     }
 
-    function setMode(mode){
+    function hideAll(){
       if (introYKS) introYKS.classList.add("hidden");
       if (yksUI)    yksUI.classList.add("hidden");
       if (lgsUI)    lgsUI.classList.add("hidden");
-
       setActive(btnYKS, false);
       setActive(btnLGS, false);
+    }
 
+    function setMode(mode){
+      hideAll();
       if (mode === "YKS"){
         if (introYKS) introYKS.classList.remove("hidden");
         if (yksUI)    yksUI.classList.remove("hidden");
@@ -799,8 +856,8 @@
     if (btnYKS) btnYKS.addEventListener("click", () => setMode("YKS"));
     if (btnLGS) btnLGS.addEventListener("click", () => setMode("LGS"));
 
-    // İlk açılış: seçim yapılmadı => her şey kapalı
-    setMode("NONE");
+    // İlk açılış: seçim yapılmadı => sadece butonlar, diğer her şey kapalı
+    hideAll();
   })();
 </script>
 
