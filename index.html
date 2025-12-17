@@ -322,7 +322,50 @@
       color:#fff;
     }
 
-  </style>
+  
+/* --- LGS UI helpers (YKS'i etkilemez) --- */
+.lgsTestLabel{
+  display:block;
+  text-align:center;
+  border:1px solid rgba(0,0,0,.25);
+  border-radius:10px;
+  padding:7px 8px;
+  margin-bottom:6px;
+  font-weight:bold;
+  background: rgba(255,255,255,.75);
+}
+.dywrap{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.dyInput{
+  width: 100%;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,.25);
+  padding: 6px 10px;
+  text-align: center;
+  font-size: 16px;
+  background: rgba(255,255,255,.85);
+}
+.warn{
+  background: rgba(255, 243, 205, .9);
+  border: 1px solid rgba(255, 193, 7, .6);
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+}
+.result{
+  background: rgba(255,255,255,.9);
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+}
+.hidden{ display:none !important; }
+
+</style>
 
   <!-- GoatCounter -->
   <script data-goatcounter="https://gerginix.goatcounter.com/count"
@@ -407,33 +450,113 @@
 </div>
 
 
+
 <div id="lgsUI" class="hidden" style="text-align:center; margin: 14px auto 0; width: var(--control-w);">
   <h1 style="margin: 6px 0 10px; font-size: 22px;">LGS 2025 PUAN ve YÜZDELİK SİMÜLATÖRÜ</h1>
 
   <div class="subtitle" style="margin-bottom: 10px;">
     2026 LGS hazırlığınızı sürdürürken deneme sınavlarında ürettiğiniz netlerin,
-    sizi 2025 LGS yerleştirmesinde hangi puana ve hangi yüzdelik dilime taşıyabileceğini görmek için
-    bu PUAN ve YÜZDELİK simülatörünü yıl boyunca kullanmaya devam edin.
+    sizi 2025 LGS yerleştirmesinde hangi puana ve hangi yüzdelik dilime taşıyabileceğini görmek için bu
+    <b>PUAN ve YÜZDELİK</b> simülatörünü yıl boyunca kullanmaya devam edin.
     <br><br>
-    Netlerinizi doğru/yanlış veya doğrudan net olarak girebilirsiniz. Sistem, puanınızı ve yüzdelik diliminizi hesapladıktan sonra
-    2025 yerleştirme verisine göre girebileceğiniz okulları listeler (en fazla 12 okul).
+    Netlerinizi <b>doğru/yanlış</b> veya doğrudan <b>net</b> olarak girebilirsiniz. Sistem, puanınızı ve yüzdelik diliminizi hesapladıktan sonra
+    2025 yerleştirme verisine göre girebileceğiniz okulları listeler.
     <br><br>
-    <span style="font-size:12px; color:#444;">
-      Bu sonuçlar bir <b>simülasyondur</b>. Gerçek LGS sonuçları; sınavın zorluk düzeyi ve resmî hesaplama yöntemine göre değişebilir.
+    <span style="font-size:12px; opacity:.9;">
+      Bu sonuçlar bir simülasyondur. Gerçek LGS sonuçları; sınavın zorluk düzeyi ve resmî hesaplama yöntemi gibi etkenlere göre değişebilir.
     </span>
   </div>
 
-  <div class="igline">
-    <span class="igicon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Instagram">
-        <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.4-2.15a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/>
-      </svg>
-    </span>
+  <div style="margin:10px 0 12px; text-align:left;">
+    <label style="display:block; font-weight:bold; margin-bottom:6px;">İl Seç</label>
+    <select id="lgsIlSec" style="width:100%; height:38px; border-radius:10px; padding:6px 10px;">
+      <option value="">— İl seç —</option>
+    </select>
+  </div>
 
-    <span>Daha fazlası için instagram hesabımı takip edebilrsiniz:</span>
-    <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
-      instagram.com/umutsahin.tr
-    </a>
+  <div id="lgsForm" style="text-align:left;">
+    <div style="display:grid; grid-template-columns: 1fr; gap: 10px;">
+      <!-- TÜRKÇE -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">TÜRKÇE</div>
+        <div class="dywrap">
+          <input id="lgs_tr_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_tr_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_tr_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+
+      <!-- İNKILAP -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">İNKILAP TARİHİ</div>
+        <div class="dywrap">
+          <input id="lgs_ink_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_ink_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_ink_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+
+      <!-- DİN -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">DİN KÜLTÜRÜ</div>
+        <div class="dywrap">
+          <input id="lgs_din_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_din_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_din_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+
+      <!-- İNGİLİZCE -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">İNGİLİZCE</div>
+        <div class="dywrap">
+          <input id="lgs_ing_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_ing_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_ing_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+
+      <!-- MAT -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">MATEMATİK</div>
+        <div class="dywrap">
+          <input id="lgs_mat_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_mat_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_mat_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+
+      <!-- FEN -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">FEN BİLİMLERİ</div>
+        <div class="dywrap">
+          <input id="lgs_fen_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_fen_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_fen_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+    </div>
+
+    <button id="lgsHesaplaBtn" class="btn" style="width:100%; margin-top:12px;">HESAPLA</button>
+
+    <div id="lgsUyari" class="warn hidden" style="margin-top:10px;"></div>
+
+    <div id="lgsSonuc" class="result hidden" style="margin-top:10px;">
+      <div><b>LGS PUAN:</b> <span id="lgsPuan">—</span></div>
+      <div style="margin-top:6px;"><b>YÜZDELİK DİLİM:</b> <span id="lgsYuzde">—</span></div>
+    </div>
+
+    <div id="lgsListeBox" class="result hidden" style="margin-top:10px;">
+      <div style="font-weight:bold; margin-bottom:6px;">2025 verisine göre girebildiğin okullar (maks. 12)</div>
+      <ol id="lgsOkulListe" style="margin:0; padding-left:18px;"></ol>
+    </div>
+
+    <div style="margin-top: 12px; font-size: 12px;">
+      <span style="opacity:.85;">Daha fazlası için instagram hesabımı takip edebilirsin:</span>
+      <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
+        instagram.com/umutsahin.tr
+      </a>
+    </div>
   </div>
 </div>
 
@@ -943,6 +1066,304 @@
   })();
 </script>
 
+
+
+<script>
+(() => {
+  const MAX = {
+    "TÜRKÇE": 20,
+    "İNKILAP TARİHİ": 10,
+    "DİN KÜLTÜRÜ": 10,
+    "İNGİLİZCE": 10,
+    "MATEMATİK": 20,
+    "FEN BİLİMLERİ": 20
+  };
+
+  const state = {
+    loaded: false,
+    base: null,
+    coef: {},      // test -> per net
+    headers: [],
+    rows: [],      // rows as arrays
+    col: {}        // name -> index
+  };
+
+  const el = (id) => document.getElementById(id);
+
+  function showWarn(msg){
+    const w = el("lgsUyari");
+    if (!w) return;
+    w.textContent = msg;
+    w.classList.remove("hidden");
+  }
+  function hideWarn(){
+    const w = el("lgsUyari");
+    if (!w) return;
+    w.textContent = "";
+    w.classList.add("hidden");
+  }
+
+  function fmtTR(n, digits=3){
+    if (n === null || n === undefined || Number.isNaN(n)) return "—";
+    return Number(n).toLocaleString("tr-TR", {minimumFractionDigits: digits, maximumFractionDigits: digits});
+  }
+  function fmtPct(n){
+    if (n === null || n === undefined || Number.isNaN(n)) return "—";
+    return Number(n).toLocaleString("tr-TR", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }
+
+  function toNum(v){
+    if (v === null || v === undefined) return NaN;
+    if (typeof v === "number") return v;
+    const s = String(v).trim().replace(",", ".");
+    if (!s) return NaN;
+    const x = Number(s);
+    return Number.isFinite(x) ? x : NaN;
+  }
+
+  function getNetFromDY(d, y){
+    return d - (y / 4);
+  }
+
+  function bindDYNet(prefix, maxQ){
+    const dEl = el(prefix + "_d");
+    const yEl = el(prefix + "_y");
+    const nEl = el(prefix + "_n");
+    if (!dEl || !yEl || !nEl) return;
+
+    const recalcNet = () => {
+      const d = toNum(dEl.value);
+      const y = toNum(yEl.value);
+      const hasDY = Number.isFinite(d) || Number.isFinite(y);
+
+      if (!hasDY) return; // DY yoksa neti elle bırak
+
+      const dd = Number.isFinite(d) ? d : 0;
+      const yy = Number.isFinite(y) ? y : 0;
+
+      if (dd < 0 || yy < 0) { showWarn("Doğru/Yanlış negatif olamaz."); return; }
+      if (dd + yy > maxQ) { showWarn(`Doğru + Yanlış toplamı ${maxQ} soruyu aşamaz.`); return; }
+
+      hideWarn();
+      const net = getNetFromDY(dd, yy);
+      nEl.value = net.toLocaleString("tr-TR", {minimumFractionDigits: 2, maximumFractionDigits: 2}).replace(".", ",");
+    };
+
+    dEl.addEventListener("input", recalcNet);
+    yEl.addEventListener("input", recalcNet);
+
+    // Net elle girilirse sadece aralık kontrolü
+    nEl.addEventListener("input", () => {
+      const n = toNum(nEl.value);
+      if (!Number.isFinite(n)) { hideWarn(); return; }
+      if (n > maxQ || n < -maxQ/4) {
+        showWarn(`NET ${(-maxQ/4).toFixed(2)} ile ${maxQ} arasında olmalı.`);
+      } else {
+        hideWarn();
+      }
+    });
+  }
+
+  async function loadDataOnce(){
+    if (state.loaded) return;
+
+    // katsayılar (küçük)
+    const kats = await fetch("data/lgs/LGS_KATSAYILAR_A1_D8_VALUES.json", {cache:"no-store"}).then(r => r.json());
+    // kats: [ [header...], [TABAN PUAN, base, 0, base], [TEST, ..., coef, base] ...]
+    const baseRow = kats.find(r => r && r[0] === "TABAN PUAN");
+    state.base = baseRow ? toNum(baseRow[1]) : null;
+    kats.forEach(r => {
+      if (!r || !r[0]) return;
+      const name = String(r[0]).trim();
+      if (name === "TABAN PUAN") return;
+      const coef = toNum(r[2]);
+      if (Number.isFinite(coef)) state.coef[name] = coef;
+    });
+
+    // kaynak (büyük) — JSON headers+rows
+    const kay = await fetch("data/lgs/LGS_KAYNAK_FULL_VALUES.json", {cache:"no-store"}).then(r => r.json());
+    state.headers = kay.headers || [];
+    state.rows = kay.rows || [];
+    state.col = {};
+    state.headers.forEach((h, i) => { state.col[String(h).trim()] = i; });
+
+    // il listesi
+    const ilIdx = state.col["İl Adı"];
+    const ilSel = el("lgsIlSec");
+    if (ilSel && ilIdx !== undefined){
+      const set = new Set();
+      state.rows.forEach(r => {
+        const v = r[ilIdx];
+        if (v) set.add(String(v).trim());
+      });
+      const ils = Array.from(set).sort((a,b)=>a.localeCompare(b,"tr"));
+      ils.forEach(il => {
+        const opt = document.createElement("option");
+        opt.value = il;
+        opt.textContent = il;
+        ilSel.appendChild(opt);
+      });
+    }
+
+    // DY/NET bağla
+    bindDYNet("lgs_tr",  MAX["TÜRKÇE"]);
+    bindDYNet("lgs_ink", MAX["İNKILAP TARİHİ"]);
+    bindDYNet("lgs_din", MAX["DİN KÜLTÜRÜ"]);
+    bindDYNet("lgs_ing", MAX["İNGİLİZCE"]);
+    bindDYNet("lgs_mat", MAX["MATEMATİK"]);
+    bindDYNet("lgs_fen", MAX["FEN BİLİMLERİ"]);
+
+    state.loaded = true;
+  }
+
+  function readNet(prefix, maxQ){
+    const dEl = el(prefix + "_d");
+    const yEl = el(prefix + "_y");
+    const nEl = el(prefix + "_n");
+
+    const d = dEl ? toNum(dEl.value) : NaN;
+    const y = yEl ? toNum(yEl.value) : NaN;
+
+    const hasDY = (dEl && dEl.value.trim() !== "") || (yEl && yEl.value.trim() !== "");
+
+    if (hasDY){
+      const dd = Number.isFinite(d) ? d : 0;
+      const yy = Number.isFinite(y) ? y : 0;
+
+      if (dd < 0 || yy < 0) throw new Error("Doğru/Yanlış negatif olamaz.");
+      if (dd + yy > maxQ) throw new Error(`Doğru + Yanlış toplamı ${maxQ} soruyu aşamaz.`);
+      return getNetFromDY(dd, yy);
+    }
+
+    const n = nEl ? toNum(nEl.value) : NaN;
+    if (!Number.isFinite(n)) return 0;
+
+    if (n > maxQ || n < -maxQ/4) throw new Error(`NET ${(-maxQ/4).toFixed(2)} ile ${maxQ} arasında olmalı.`);
+    return n;
+  }
+
+  function computeScore(nets){
+    if (!Number.isFinite(state.base)) throw new Error("Katsayı verisi okunamadı (TABAN PUAN).");
+    let s = state.base;
+    for (const [test, net] of Object.entries(nets)){
+      const c = state.coef[test];
+      if (!Number.isFinite(c)) throw new Error(`Katsayı bulunamadı: ${test}`);
+      s += net * c;
+    }
+    return s;
+  }
+
+  function nearestPercentileByScore(score){
+    const puanIdx = state.col["2025 PUAN"];
+    const pctIdx  = state.col["2025 En Düşük % Dilim"];
+    if (puanIdx === undefined || pctIdx === undefined) throw new Error("KAYNAK verisinde gerekli sütunlar yok (2025 PUAN / 2025 En Düşük % Dilim).");
+
+    let best = null;
+    let bestDiff = Infinity;
+
+    for (const r of state.rows){
+      const p = toNum(r[puanIdx]);
+      const pct = toNum(r[pctIdx]);
+      if (!Number.isFinite(p) || !Number.isFinite(pct)) continue;
+      const diff = Math.abs(p - score);
+      if (diff < bestDiff){
+        bestDiff = diff;
+        best = pct;
+      }
+    }
+    if (best === null) throw new Error("Yüzdelik eşleştirmesi için uygun satır bulunamadı.");
+    return best;
+  }
+
+  function listSchools(il, candidatePct){
+    const ilIdx   = state.col["İl Adı"];
+    const ilceIdx = state.col["İlçe Adı"];
+    const okulIdx = state.col["Okul Adı"];
+    const pctIdx  = state.col["2025 En Düşük % Dilim"];
+    const puanIdx = state.col["2025 PUAN"];
+
+    const out = [];
+    for (const r of state.rows){
+      if (il && String(r[ilIdx] || "").trim() !== il) continue;
+      const spct = toNum(r[pctIdx]);
+      if (!Number.isFinite(spct)) continue;
+      if (spct + 1e-12 < candidatePct) continue; // okul daha seçici ise (daha küçük) geçemez
+      out.push({
+        ilce: r[ilceIdx],
+        okul: r[okulIdx],
+        pct: spct,
+        puan: toNum(r[puanIdx])
+      });
+    }
+    out.sort((a,b)=>a.pct-b.pct);
+    return out.slice(0, 12);
+  }
+
+  async function handleCompute(){
+    await loadDataOnce();
+    hideWarn();
+
+    const ilSel = el("lgsIlSec");
+    const il = ilSel ? String(ilSel.value || "").trim() : "";
+    if (!il) { showWarn("Lütfen il seç."); return; }
+
+    try{
+      const nets = {
+        "TÜRKÇE": readNet("lgs_tr",  MAX["TÜRKÇE"]),
+        "İNKILAP TARİHİ": readNet("lgs_ink", MAX["İNKILAP TARİHİ"]),
+        "DİN KÜLTÜRÜ": readNet("lgs_din", MAX["DİN KÜLTÜRÜ"]),
+        "İNGİLİZCE": readNet("lgs_ing", MAX["İNGİLİZCE"]),
+        "MATEMATİK": readNet("lgs_mat", MAX["MATEMATİK"]),
+        "FEN BİLİMLERİ": readNet("lgs_fen", MAX["FEN BİLİMLERİ"])
+      };
+
+      const score = computeScore(nets);
+      const pct = nearestPercentileByScore(score);
+
+      const sonuc = el("lgsSonuc");
+      if (sonuc) sonuc.classList.remove("hidden");
+      const pEl = el("lgsPuan"); if (pEl) pEl.textContent = fmtTR(score, 3);
+      const yEl = el("lgsYuzde"); if (yEl) yEl.textContent = fmtPct(pct);
+
+      const list = listSchools(il, pct);
+      const box = el("lgsListeBox");
+      const ol = el("lgsOkulListe");
+      if (box && ol){
+        ol.innerHTML = "";
+        if (list.length === 0){
+          const li = document.createElement("li");
+          li.textContent = "Bu il için uygun okul bulunamadı.";
+          ol.appendChild(li);
+        }else{
+          list.forEach(item => {
+            const li = document.createElement("li");
+            const ilce = item.ilce ? ` (${item.ilce})` : "";
+            const sp = Number.isFinite(item.pct) ? fmtPct(item.pct) : "—";
+            const sc = Number.isFinite(item.puan) ? fmtTR(item.puan, 3) : "—";
+            li.textContent = `${item.okul}${ilce} — %${sp} — Puan: ${sc}`;
+            ol.appendChild(li);
+          });
+        }
+        box.classList.remove("hidden");
+      }
+    }catch(err){
+      showWarn(err.message || "Bir hata oluştu.");
+    }
+  }
+
+  // Buton
+  document.addEventListener("click", async (e) => {
+    const t = e.target;
+    if (t && t.id === "lgsHesaplaBtn"){
+      e.preventDefault();
+      await handleCompute();
+    }
+  });
+
+  // LGS ekranı ilk kez açıldığında veriyi hazırlamak için: butona basmadan da yüklenebilir
+  // (performans için burada otomatik load yok; sadece hesapla basınca yükler)
+})();
+</script>
 
 </body>
 </html>
