@@ -125,6 +125,16 @@
       margin-bottom:6px;
     }
 
+    /* Test isimleri: çerçeveli ve ortalı (DY/NET satırının üstü) */
+    .grp label{
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: var(--radius);
+      padding: 6px 8px;
+      text-align: center;
+      background: rgba(255,255,255,0.55);
+      box-sizing: border-box;
+    }
+
     #sonuc{
       margin-top:16px;
       font-size:20px;
@@ -328,6 +338,39 @@
   <button id="modeLGS" class="modebtn" type="button">LGS</button>
 </div>
 
+
+<div id="introHome">
+  <div class="subtitle">
+    Bu simülatör, yıl boyunca girdiğiniz deneme sınavlarında ürettiğiniz netlere dayanarak,
+    sizi resmî yerleştirme sonuçlarına en yakın şekilde konumlandırmayı amaçlar.
+    <br><br>
+    Seçtiğiniz sınav türüne göre;
+    <br>
+    <b>YKS</b> adayları için <b>puan ve sıralama</b>,
+    <br>
+    <b>LGS</b> adayları için <b>puan ve yüzdelik dilim</b>
+    hesaplanır.
+    <br><br>
+    Hesaplamalar, ilgili yılın resmî katsayıları ve yerleştirme verileri esas alınarak yapılır.
+    Bu nedenle sonuçlar bir tahmin değil, deneme performansınızın gerçekçi bir simülasyonudur.
+    <br><br>
+    Devam etmek için lütfen <b>sınav türünüzü seçin</b>.
+  </div>
+
+  <div class="igline">
+    <span class="igicon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Instagram">
+        <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.4-2.15a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/>
+      </svg>
+    </span>
+
+    <span>Daha fazlası için instagram hesabımı takip edebilrsiniz:</span>
+    <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
+      instagram.com/umutsahin.tr
+    </a>
+  </div>
+</div>
+
 <div id="introYKS" class="hidden">
 
 
@@ -363,11 +406,37 @@
 
 </div>
 
+
 <div id="lgsUI" class="hidden" style="text-align:center; margin: 14px auto 0; width: var(--control-w);">
   <h1 style="margin: 6px 0 10px; font-size: 22px;">LGS 2025 PUAN ve YÜZDELİK SİMÜLATÖRÜ</h1>
+
   <div class="subtitle" style="margin-bottom: 10px;">
-    LGS modülü bu sayfaya eklenecek. Şimdilik sadece YKS çalışıyor.
+    2026 LGS hazırlığınızı sürdürürken deneme sınavlarında ürettiğiniz netlerin,
+    sizi 2025 LGS yerleştirmesinde hangi puana ve hangi yüzdelik dilime taşıyabileceğini görmek için
+    bu PUAN ve YÜZDELİK simülatörünü yıl boyunca kullanmaya devam edin.
+    <br><br>
+    Netlerinizi doğru/yanlış veya doğrudan net olarak girebilirsiniz. Sistem, puanınızı ve yüzdelik diliminizi hesapladıktan sonra
+    2025 yerleştirme verisine göre girebileceğiniz okulları listeler (en fazla 12 okul).
+    <br><br>
+    <span style="font-size:12px; color:#444;">
+      Bu sonuçlar bir <b>simülasyondur</b>. Gerçek LGS sonuçları; sınavın zorluk düzeyi ve resmî hesaplama yöntemine göre değişebilir.
+    </span>
   </div>
+
+  <div class="igline">
+    <span class="igicon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Instagram">
+        <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.4-2.15a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/>
+      </svg>
+    </span>
+
+    <span>Daha fazlası için instagram hesabımı takip edebilrsiniz:</span>
+    <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
+      instagram.com/umutsahin.tr
+    </a>
+  </div>
+</div>
+
 </div>
 
 <div id="yksUI" class="hidden">
@@ -386,61 +455,61 @@
 <div class="grp">
   <b>TYT Netleri</b>
   <label>TYT Türkçe</label>
-  <div class="dywrap"><input id="tyt_tr_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_tr_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_tr" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="tyt_tr_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_tr_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_tr" type="number" step="0.25"  placeholder="NET" /></div>
   <label>TYT Sosyal</label>
-  <div class="dywrap"><input id="tyt_sos_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_sos_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_sos" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="tyt_sos_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_sos_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_sos" type="number" step="0.25"  placeholder="NET" /></div>
   <label>TYT Matematik</label>
-  <div class="dywrap"><input id="tyt_mat_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_mat_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_mat" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="tyt_mat_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_mat_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_mat" type="number" step="0.25"  placeholder="NET" /></div>
   <label>TYT Fen</label>
-  <div class="dywrap"><input id="tyt_fen_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_fen_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_fen" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="tyt_fen_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_fen_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_fen" type="number" step="0.25"  placeholder="NET" /></div>
 </div>
 
 <div id="grp_say" class="grp">
   <b>AYT (SAY)</b>
   <label>AYT Matematik</label>
-  <div class="dywrap"><input id="ayt_mat_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_mat_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_mat" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_mat_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_mat_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_mat" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Fizik</label>
-  <div class="dywrap"><input id="ayt_fiz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_fiz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_fiz" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_fiz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_fiz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_fiz" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Kimya</label>
-  <div class="dywrap"><input id="ayt_kim_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_kim_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_kim" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_kim_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_kim_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_kim" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Biyoloji</label>
-  <div class="dywrap"><input id="ayt_bio_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_bio_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_bio" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_bio_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_bio_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_bio" type="number" step="0.25"  placeholder="NET" /></div>
 </div>
 
 <div id="grp_ea" class="grp" style="display:none">
   <b>AYT (EA)</b>
   <label>AYT Matematik</label>
-  <div class="dywrap"><input id="ayt_mat_ea_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_mat_ea_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_mat_ea" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_mat_ea_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_mat_ea_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_mat_ea" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Edebiyat</label>
-  <div class="dywrap"><input id="ayt_edeb_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_edeb_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_edeb" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_edeb_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_edeb_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_edeb" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Tarih-1</label>
-  <div class="dywrap"><input id="ayt_tar1_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_tar1_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_tar1" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_tar1_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_tar1_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_tar1" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Coğrafya-1</label>
-  <div class="dywrap"><input id="ayt_cog1_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_cog1_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_cog1" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_cog1_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_cog1_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_cog1" type="number" step="0.25"  placeholder="NET" /></div>
 </div>
 
 <div id="grp_soz" class="grp" style="display:none">
   <b>AYT (SÖZ)</b>
   <label>AYT Edebiyat</label>
-  <div class="dywrap"><input id="ayt_edeb_soz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_edeb_soz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_edeb_soz" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_edeb_soz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_edeb_soz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_edeb_soz" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Tarih-1</label>
-  <div class="dywrap"><input id="ayt_tar1_soz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_tar1_soz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_tar1_soz" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_tar1_soz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_tar1_soz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_tar1_soz" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Coğrafya-1</label>
-  <div class="dywrap"><input id="ayt_cog1_soz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_cog1_soz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_cog1_soz" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_cog1_soz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_cog1_soz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_cog1_soz" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Tarih-2</label>
-  <div class="dywrap"><input id="ayt_tar2_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_tar2_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_tar2" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_tar2_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_tar2_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_tar2" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Coğrafya-2</label>
-  <div class="dywrap"><input id="ayt_cog2_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_cog2_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_cog2" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_cog2_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_cog2_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_cog2" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT Felsefe Grubu</label>
-  <div class="dywrap"><input id="ayt_fels_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_fels_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_fels" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_fels_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_fels_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_fels" type="number" step="0.25"  placeholder="NET" /></div>
   <label>AYT DKAB</label>
-  <div class="dywrap"><input id="ayt_dkab_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_dkab_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_dkab" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ayt_dkab_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_dkab_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_dkab" type="number" step="0.25"  placeholder="NET" /></div>
 </div>
 
 <div id="grp_dil" class="grp" style="display:none">
   <b>YDT (DİL)</b>
   <label>YDT Net</label>
-  <div class="dywrap"><input id="ydt_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ydt_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ydt" type="number" step="0.25" /></div>
+  <div class="dywrap"><input id="ydt_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ydt_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ydt" type="number" step="0.25"  placeholder="NET" /></div>
 </div>
 
 <button id="hesaplaBtn">HESAPLA</button>
@@ -824,9 +893,11 @@
   (function(){
     const btnYKS = document.getElementById("modeYKS");
     const btnLGS = document.getElementById("modeLGS");
-    const introYKS = document.getElementById("introYKS");
-    const yksUI = document.getElementById("yksUI");
-    const lgsUI = document.getElementById("lgsUI");
+
+    const introHome = document.getElementById("introHome");
+    const introYKS  = document.getElementById("introYKS");
+    const yksUI     = document.getElementById("yksUI");
+    const lgsUI     = document.getElementById("lgsUI");
 
     function setActive(btn, on){
       if (!btn) return;
@@ -834,32 +905,44 @@
     }
 
     function hideAll(){
-      if (introYKS) introYKS.classList.add("hidden");
-      if (yksUI)    yksUI.classList.add("hidden");
-      if (lgsUI)    lgsUI.classList.add("hidden");
-      setActive(btnYKS, false);
-      setActive(btnLGS, false);
+      if (introHome) introHome.classList.add("hidden");
+      if (introYKS)  introYKS.classList.add("hidden");
+      if (yksUI)     yksUI.classList.add("hidden");
+      if (lgsUI)     lgsUI.classList.add("hidden");
     }
 
     function setMode(mode){
       hideAll();
+      setActive(btnYKS, false);
+      setActive(btnLGS, false);
+
+      if (mode === "HOME"){
+        if (introHome) introHome.classList.remove("hidden");
+        return;
+      }
+
       if (mode === "YKS"){
         if (introYKS) introYKS.classList.remove("hidden");
         if (yksUI)    yksUI.classList.remove("hidden");
         setActive(btnYKS, true);
-      } else if (mode === "LGS"){
+        return;
+      }
+
+      if (mode === "LGS"){
         if (lgsUI)    lgsUI.classList.remove("hidden");
         setActive(btnLGS, true);
+        return;
       }
     }
 
     if (btnYKS) btnYKS.addEventListener("click", () => setMode("YKS"));
     if (btnLGS) btnLGS.addEventListener("click", () => setMode("LGS"));
 
-    // İlk açılış: seçim yapılmadı => sadece butonlar, diğer her şey kapalı
-    hideAll();
+    // İlk açılış: seçim yok => ana sayfa metni görünsün
+    setMode("HOME");
   })();
 </script>
+
 
 </body>
 </html>
