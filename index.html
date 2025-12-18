@@ -1393,6 +1393,8 @@ function setWarn(msg) {
 
   async function handleCompute() {
     try {
+      const lb0 = $("lgsListeBox");
+      if (lb0) lb0.classList.add("hidden");
       setWarn("");
       await loadDataOnce();
 
@@ -1423,6 +1425,8 @@ function setWarn(msg) {
         const puan2Idx = (state.idx.puan2 != null && state.idx.puan2 >= 0) ? state.idx.puan2 : state.idx.puan;
         const list2 = topListByPercent(ilRows, candY, state.idx.yuzde2, puan2Idx, 12);
         renderLists(list1, list2);
+        const lb = $(\"lgsListeBox\");
+        if (lb) lb.classList.remove(\"hidden\");
       }
 
       const sonuc = $("lgsSonuc");
