@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ücretsiz Ek Yerleştirme Robotu - @umutsahin.tr</title>
+<!DOCTYPE html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Ücretsiz Ek Yerleştirme Robotu - @umutsahin.tr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -231,6 +226,39 @@
   }
   .reset-btn:hover{filter:brightness(0.97);}
 
+  /* --- score-entry filter (puan gir, üstündeki bölümler gizlensin) --- */
+  .score-row{
+    display:flex; flex-wrap:wrap; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    box-shadow:var(--shadow); padding:12px 14px; margin-top:8px;
+  }
+  .score-row .fb-label{
+    font:800 11.5px 'Manrope',sans-serif; color:var(--text-mute); text-transform:uppercase;
+    letter-spacing:.06em; margin-right:2px; flex:none;
+  }
+  .score-row .fb-hint{font:500 11.5px 'Work Sans',sans-serif; color:var(--text-mute); flex-basis:100%; margin-top:-2px;}
+  .score-inputs{display:flex; flex-wrap:wrap; gap:8px; flex:1; min-width:0;}
+  .score-field{
+    display:flex; align-items:center; gap:6px; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:999px; padding:6px 6px 6px 12px;
+  }
+  .score-field.active{border-color:var(--accent); background:var(--accent-soft);}
+  .score-field span{font:700 12px 'Work Sans',sans-serif; color:var(--text-2); white-space:nowrap;}
+  .score-field.active span{color:var(--accent);}
+  .score-field input{
+    width:82px; font:600 12.8px 'Work Sans',sans-serif; color:var(--text); background:var(--surface);
+    border:1px solid var(--border); border-radius:999px; padding:6px 10px;
+    font-variant-numeric:tabular-nums;
+  }
+  .score-field input:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  .score-field .sf-clear{
+    display:none; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%;
+    background:none; border:none; color:var(--text-mute); cursor:pointer; font-size:14px; line-height:1; padding:0;
+  }
+  .score-field.active .sf-clear{display:inline-flex;}
+  .score-field .sf-clear:hover{color:var(--accent);}
+  .score-sort-note{font:600 12px 'Work Sans',sans-serif; color:var(--accent); margin-left:6px;}
+
   .panel{
     background:var(--surface); border:1px solid var(--border); border-radius:16px;
     box-shadow:var(--shadow); overflow:hidden;
@@ -405,6 +433,11 @@
         <div class="fb-groups" id="filterGroups"></div>
         <button class="reset-btn" id="resetBtn" type="button">Tümünü Sıfırla</button>
       </div>
+      <div class="score-row">
+        <span class="fb-label">Puanım</span>
+        <span class="fb-hint">İlgili puan türüne puanını yaz, o türden puanının üzerindeki bölümler otomatik gizlensin.</span>
+        <div class="score-inputs" id="scoreInputs"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -422,7 +455,7 @@
 
   <div class="panel results">
     <div class="results-head">
-      <div class="count"><b id="matchCount">0</b> kayıt eşleşiyor</div>
+      <div class="count"><b id="matchCount">0</b> kayıt eşleşiyor<span class="score-sort-note" id="scoreSortNote" hidden>&middot; puana göre sıralı</span></div>
       <div class="download-bar">
         <span class="dl-label">Listemi İndir:</span>
         <button class="dl-btn dl-pdf" type="button" data-dl="pdf-top">
@@ -560,6 +593,17 @@
   // instead of starting from a fully-checked list they'd have to uncheck.
   var state = {};
   GROUPS.forEach(function(g){ state[g.key] = g.tag ? new Set() : new Set(g.options); });
+
+  // score-entry filter: one numeric input per Puan Türü value actually present in the data.
+  // Entering a score for a given türü hides rows of THAT türü whose Taban Puanı is above it;
+  // rows with no Taban Puanı yet ("oluşmamış") always stay. Combines via AND with GROUPS above,
+  // and doesn't disable/replace them. When at least one score is entered, the result list is
+  // force-sorted by Taban Puanı descending (oluşmamışlar en altta), overriding manual column sort.
+  var scoreState = {};
+  PT_ORDER.forEach(function(pt){ scoreState[pt] = null; });
+  function scoreFilterActive(){
+    return PT_ORDER.some(function(pt){ return scoreState[pt] !== null; });
+  }
 
   function labelFor(g, v){ return g.labelFn ? g.labelFn(v) : v; }
 
@@ -751,6 +795,42 @@
     });
   }
 
+  function renderScoreInputs(){
+    var host = document.getElementById('scoreInputs');
+    host.innerHTML = '';
+    PT_ORDER.forEach(function(pt){
+      var field = document.createElement('label');
+      field.className = 'score-field';
+      field.id = 'scoreField-'+pt;
+
+      var lab = document.createElement('span');
+      lab.textContent = pt;
+
+      var inp = document.createElement('input');
+      inp.type = 'number'; inp.inputMode = 'decimal'; inp.step = 'any'; inp.min = '0';
+      inp.placeholder = 'Puan'; inp.id = 'score-'+pt;
+      if (scoreState[pt] !== null) inp.value = scoreState[pt];
+
+      var clearBtn = document.createElement('button');
+      clearBtn.type = 'button'; clearBtn.className = 'sf-clear'; clearBtn.setAttribute('aria-label', pt+' puanını temizle');
+      clearBtn.innerHTML = '&times;';
+
+      function apply(){
+        var raw = inp.value.replace(',', '.').trim();
+        var n = raw === '' ? null : parseFloat(raw);
+        scoreState[pt] = (n === null || isNaN(n)) ? null : n;
+        field.classList.toggle('active', scoreState[pt] !== null);
+        onFilterChange();
+      }
+      inp.addEventListener('input', apply);
+      clearBtn.addEventListener('click', function(){ inp.value = ''; apply(); });
+
+      field.appendChild(lab); field.appendChild(inp); field.appendChild(clearBtn);
+      if (scoreState[pt] !== null) field.classList.add('active');
+      host.appendChild(field);
+    });
+  }
+
   var COLS = [
     {h:'Tablo', get:function(e){return e[0];}},
     {h:'Program Kodu', get:function(e){return e[1];}, num:true, plain:true},
@@ -781,7 +861,7 @@
       th.appendChild(arrow);
       th.addEventListener('click', function(){
         if (sortState.col === i) sortState.dir *= -1; else { sortState.col = i; sortState.dir = 1; }
-        renderHead(); renderTable(true);
+        renderHead(); computeFiltered(); renderTable(true);
       });
       tr.appendChild(th);
     });
@@ -933,6 +1013,7 @@
   var shown = PAGE;
 
   function computeFiltered(){
+    var scoreActive = scoreFilterActive();
     filtered = ENTRIES.filter(function(e){
       for (var i=0;i<GROUPS.length;i++){
         var g = GROUPS[i];
@@ -943,16 +1024,34 @@
         if (g.tag && state[g.key].size === 0) continue; // tag group, nothing picked yet -> wildcard
         if (!state[g.key].has(v)) return false;
       }
+      // score-entry filter: AND'lenir, diğer filtreleri devre dışı bırakmaz.
+      if (scoreActive){
+        var myScore = scoreState[e[10]];
+        if (myScore !== null && myScore !== undefined){
+          var taban = e[8];
+          if (taban !== null && taban !== undefined && taban > myScore) return false;
+        }
+      }
       return true;
     });
-    var col = COLS[sortState.col];
-    filtered.sort(function(a,b){
-      var av = col.get(a), bv = col.get(b);
-      if (av===null||av===undefined) av = col.num? -Infinity : '';
-      if (bv===null||bv===undefined) bv = col.num? -Infinity : '';
-      if (col.num) return (av-bv)*sortState.dir;
-      return String(av).localeCompare(String(bv),'tr')*sortState.dir;
-    });
+    if (scoreActive){
+      // en az bir puan girildiyse: taban puanına göre yüksekten düşüğe sırala, oluşmamışlar en altta.
+      filtered.sort(function(a,b){
+        var av = a[8], bv = b[8];
+        if (av === null || av === undefined) av = -Infinity;
+        if (bv === null || bv === undefined) bv = -Infinity;
+        return bv - av;
+      });
+    } else {
+      var col = COLS[sortState.col];
+      filtered.sort(function(a,b){
+        var av = col.get(a), bv = col.get(b);
+        if (av===null||av===undefined) av = col.num? -Infinity : '';
+        if (bv===null||bv===undefined) bv = col.num? -Infinity : '';
+        if (col.num) return (av-bv)*sortState.dir;
+        return String(av).localeCompare(String(bv),'tr')*sortState.dir;
+      });
+    }
   }
 
   function renderStats(){
@@ -1061,6 +1160,7 @@
     renderStats();
     renderChips();
     renderTable(true);
+    document.getElementById('scoreSortNote').hidden = !scoreFilterActive();
     // refresh group button counts
     document.querySelectorAll('.fbtn').forEach(function(btn){
       var g = GROUPS.filter(function(x){return x.key===btn.dataset.k;})[0];
@@ -1072,7 +1172,9 @@
 
   document.getElementById('resetBtn').addEventListener('click', function(){
     GROUPS.forEach(function(g){ state[g.key] = g.tag ? new Set() : new Set(g.options); });
+    PT_ORDER.forEach(function(pt){ scoreState[pt] = null; });
     renderFilterGroups();
+    renderScoreInputs();
     onFilterChange();
   });
 
@@ -1094,6 +1196,7 @@
   window.addEventListener('resize', function(){ updateMirrorWidth(); updateScrollEdges(); });
 
   renderFilterGroups();
+  renderScoreInputs();
   renderHead();
   computeFiltered();
   renderStats();
@@ -1103,5 +1206,4 @@
   updateScrollEdges();
 })();
 </script>
-
 </html>
