@@ -806,17 +806,23 @@
       var lab = document.createElement('span');
       lab.textContent = pt;
 
+      // type="text" (not "number"): native number inputs silently DROP the comma
+      // character on keystroke, and Turkish YKS puanları are almost always typed
+      // with a comma decimal separator (örn. "350,24681") — with type="number" the
+      // comma never reaches .value at all, so "350,24681" becomes "35024681" and the
+      // filter never triggers. Handling the text ourselves lets both "," and "." work.
       var inp = document.createElement('input');
-      inp.type = 'number'; inp.inputMode = 'decimal'; inp.step = 'any'; inp.min = '0';
+      inp.type = 'text'; inp.inputMode = 'decimal'; inp.autocomplete = 'off';
       inp.placeholder = 'Puan'; inp.id = 'score-'+pt;
-      if (scoreState[pt] !== null) inp.value = scoreState[pt];
+      if (scoreState[pt] !== null) inp.value = String(scoreState[pt]).replace('.', ',');
 
       var clearBtn = document.createElement('button');
       clearBtn.type = 'button'; clearBtn.className = 'sf-clear'; clearBtn.setAttribute('aria-label', pt+' puanını temizle');
       clearBtn.innerHTML = '&times;';
 
       function apply(){
-        var raw = inp.value.replace(',', '.').trim();
+        // sadece rakam, virgül ve nokta bırak; virgülü ondalık ayracı olarak noktaya çevir
+        var raw = inp.value.replace(/[^0-9,.\-]/g, '').replace(',', '.').trim();
         var n = raw === '' ? null : parseFloat(raw);
         scoreState[pt] = (n === null || isNaN(n)) ? null : n;
         field.classList.toggle('active', scoreState[pt] !== null);
