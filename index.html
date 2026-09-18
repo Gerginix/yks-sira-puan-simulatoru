@@ -753,7 +753,7 @@
 
   var COLS = [
     {h:'Tablo', get:function(e){return e[0];}},
-    {h:'Program Kodu', get:function(e){return e[1];}, num:true},
+    {h:'Program Kodu', get:function(e){return e[1];}, num:true, plain:true},
     {h:'Üniversite Türü', get:function(e){return e[14];}, badge:'tur'},
     {h:'Üniversite', get:function(e){return UNIS[e[2]];}, strong:true},
     {h:'İl', get:function(e){return e[3];}},
@@ -795,10 +795,18 @@
     return v.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:5});
   }
 
+  // For identifier-like numeric columns (e.g. Program Kodu): sortable/right-aligned
+  // like a number, but displayed as plain digits — no thousands separators, since
+  // it's a code, not a quantity, and a stray "." would make it look like a different code.
+  function dispNum(c, v){
+    if (v===null || v===undefined) return '';
+    return c.plain ? String(v) : numFmt(v);
+  }
+
   function colText(c, e){
     var v = c.get(e);
     if (c.statusIfNull) return v===null ? 'Oluşmadı' : numFmt(v);
-    if (c.num) return numFmt(v);
+    if (c.num) return dispNum(c, v);
     return (v===null || v===undefined) ? '' : String(v);
   }
 
@@ -1027,7 +1035,7 @@
           if (v===null) return '<td class="'+cls+'"><span class="status off"><span class="dot"></span>Oluşmadı</span></td>';
           return '<td class="'+cls+'"><span class="status on"><span class="dot"></span>'+numFmt(v)+'</span></td>';
         }
-        if (c.num) return '<td class="'+cls+'">'+numFmt(v)+'</td>';
+        if (c.num) return '<td class="'+cls+'">'+dispNum(c, v)+'</td>';
         var disp = (v===undefined||v===null||v===''?'—':v);
         var titleAttr = (c.strong && disp!=='—') ? (' title="'+String(disp).replace(/"/g,'&quot;')+'"') : '';
         return '<td class="'+cls+'"'+titleAttr+'>'+disp+'</td>';
