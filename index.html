@@ -194,6 +194,13 @@
     border:1px solid var(--border); background:var(--surface-2); color:var(--text);
   }
   .search-mini:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  /* mobil tarayıcılar (özellikle iOS Safari, bazı Android Chrome sürümleri) 16px'in altındaki
+     input font-size'larında dokununca sayfayı otomatik yakınlaştırır (zoom) — bu da klavye
+     kapanınca sayfanın "kaydırılamaz" gibi takılı kalmasına yol açabilir. Mobilde tüm input'ları
+     16px'e çıkarıyoruz, masaüstünde kompakt boyut korunuyor. */
+  @media (max-width:640px){
+    .search-mini{font-size:16px;}
+  }
 
   .tag-hint{font-size:11px; color:var(--text-mute); line-height:1.4;}
   .tagchips{display:flex; flex-wrap:wrap; gap:6px;}
@@ -251,6 +258,9 @@
     font-variant-numeric:tabular-nums;
   }
   .score-field input:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  @media (max-width:640px){
+    .score-field input{width:78px; font-size:16px;}
+  }
   .score-field .sf-clear{
     display:none; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%;
     background:none; border:none; color:var(--text-mute); cursor:pointer; font-size:14px; line-height:1; padding:0;
