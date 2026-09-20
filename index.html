@@ -123,6 +123,14 @@
     position:sticky; top:0; z-index:35;
     margin-inline:-16px;
   }
+  /* Mobilde promo şeridi + filtre çubuğu + puan satırı toplamı ekran yüksekliğini kolayca
+     aşıyor (özellikle puan filtresi eklendikten sonra). position:sticky ile bu blok ekranın
+     tamamını kaplayıp yapışık kalıyor ve kullanıcı ne kadar kaydırırsa kaydırsın alttaki liste
+     görünmüyor — "sayfa kaydırılamıyor" hissi buradan geliyordu. Dar ekranlarda sticky'yi
+     kapatıp bu bloğu normal (sayfayla birlikte kayan) içerik yapıyoruz. */
+  @media (max-width:820px){
+    .sticky-top-stack{ position:static; }
+  }
   .promo-strip{
     background:var(--accent); color:var(--accent-ink); padding-inline:16px;
     padding-top:max(8px, env(safe-area-inset-top,0px));
