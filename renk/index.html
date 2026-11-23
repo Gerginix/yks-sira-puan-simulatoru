@@ -24,6 +24,11 @@ p{margin:0}
 .rules{display:flex;flex-direction:column;gap:10px;padding:0;margin:0;list-style:none;max-width:640px}
 .rules li{display:flex;gap:14px;align-items:center;font-size:18px}
 .rules b{flex:none;width:40px;height:40px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-family:var(--display);font-size:20px}
+.info{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;max-width:760px}
+.info h2{font-size:26px}
+.info p{font-size:18px}
+.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:18px}
+.steps .rules{margin-top:8px}
 .note{font-weight:500;border-left:4px solid var(--ink);padding-left:12px;max-width:640px}
 .btn{font:inherit;font-weight:700;font-size:18px;border:0;border-radius:14px;padding:16px 26px;background:var(--ink);color:var(--bg);cursor:pointer;min-height:54px}
 .btn:disabled{opacity:.35;cursor:not-allowed}
@@ -91,14 +96,27 @@ function intro(){
   app.innerHTML=`<div class="dots4"><i style="background:var(--k)"></i><i style="background:var(--y)"></i><i style="background:var(--s)"></i><i style="background:var(--m)"></i></div>
   <p class="eyebrow">Renklerimiz ve öğrenme biçimleri</p>
   <h1>RENGİMİ BELLİ EDİYORUM</h1>
-  <p style="font-size:19px;max-width:640px">Her ekranda dört ifade göreceksin. Dördüne de puan ver:</p>
-  <ul class="rules">
-   <li><b>4</b><span>Seni en çok tanımlayan ifade</span></li>
-   <li><b>3</b><span>Seni tanımlamaya yakın ifade</span></li>
-   <li><b>2</b><span>Seni kısmen tanımlayan ifade</span></li>
-   <li><b>1</b><span>Seni en az tanımlayan ifade</span></li>
-  </ul>
-  <p class="note">Aynı ekranda aynı puan yalnızca bir kez kullanılabilir.</p>
+  <div class="info">
+   <h2>Bu bir test değil.</h2>
+   <p>Tanı koymaz, teşhis koymaz, etiket yapıştırmaz, seni yargılamaz. Kendinle sohbet etmen için bir başlangıç etkinliğidir. Doğru ya da yanlış cevap yok.</p>
+  </div>
+  <div class="info">
+   <h2>Nasıl yapılır?</h2>
+   <ol class="steps">
+    <li>6 ekran var: beşinde dörder ifade, sonuncusunda dört resim göreceksin.</li>
+    <li>Her ekranda dördüne de puan ver:
+     <ul class="rules">
+      <li><b>4</b><span>Seni en çok tanımlayan</span></li>
+      <li><b>3</b><span>Seni tanımlamaya yakın olan</span></li>
+      <li><b>2</b><span>Seni kısmen tanımlayan</span></li>
+      <li><b>1</b><span>Seni en az tanımlayan</span></li>
+     </ul>
+    </li>
+    <li>Aynı ekranda bir puanı yalnızca bir kez kullanabilirsin; verdiğin puan diğer seçeneklerde silikleşir. Değiştirmek için verdiğin puana yeniden dokun.</li>
+    <li>Uzun uzun düşünme; ilk aklına geleni işaretle.</li>
+    <li>Sonunda baskın rengini ve o renge ait geri bildirimi göreceksin. İki renk eşit çıkarsa sunumu dinleyip sana daha çok uyanı sen seçeceksin.</li>
+   </ol>
+  </div>
   <div class="nav"><span></span><button class="btn" id="start">Başla</button></div>`;
   document.getElementById('start').onclick=()=>{st.step=0;save();render();scrollTo(0,0)};
 }
@@ -123,7 +141,7 @@ function question(){
 function result(){
   const t=totals(st.ans),lead=leaders(t);
   const tot=`<div class="tot">${COL.map(c=>`<div class="t${c}${lead.includes(c)?' top':''}"><span>${esc(DATA.fb[c].ad)}</span><b>${t[c]}</b></div>`).join('')}</div>`;
-  const reset=`<div class="nav"><button class="btn ghost" id="again">${confirmReset?'Emin misin? Puanların silinir':'Testi yeniden çöz'}</button><span></span></div>`;
+  const reset=`<div class="nav"><button class="btn ghost" id="again">${confirmReset?'Emin misin? Puanların silinir':'Baştan başla'}</button><span></span></div>`;
   let c=lead.length===1?lead[0]:st.pick;
   if(c&&!lead.includes(c))c=null;
   if(!c){
@@ -139,7 +157,7 @@ function result(){
     ${tot}
     ${lead.length>1?`<div class="nav"><button class="btn ghost" id="repick">Eşit çıkan diğer rengi seç</button><span></span></div>`:''}
     <div class="fb">${keys.map((k,j)=>`<section><h2>${esc(f.bas[j])}</h2><ul>${f[k].map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section>`).join('')}</div>
-    <p class="foot">Bu test bir eğilim gösterir; tanı, etiket ya da yargı değildir. İki renkte yakın puan aldıysan iki rengin önerilerinden de yararlanabilirsin.</p>${reset}`;
+    <p class="foot">Bu bir test değil; tanı, teşhis, etiket ya da yargı değildir. Kendinle sohbet etmen için bir başlangıçtır. İki renkte yakın puan aldıysan iki rengin önerilerinden de yararlanabilirsin.</p>${reset}`;
     const rp=document.getElementById('repick');if(rp)rp.onclick=()=>{st.pick=null;save();render();scrollTo(0,0)};
   }
   document.getElementById('again').onclick=()=>{if(!confirmReset){confirmReset=true;render();return}confirmReset=false;st=fresh();save();render();scrollTo(0,0)};
