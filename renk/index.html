@@ -120,7 +120,7 @@ function intro(){
     </li>
     <li>Aynı ekranda bir puanı yalnızca bir kez kullanabilirsin; verdiğin puan diğer seçeneklerde silikleşir. Değiştirmek için verdiğin puana yeniden dokun.</li>
     <li>Uzun uzun düşünme; ilk aklına geleni işaretle.</li>
-    <li>Sonunda baskın rengini ve o renge ait geri bildirimi göreceksin. İki renk eşit çıkarsa sunumu dinleyip sana daha çok uyanı sen seçeceksin.</li>
+    <li>Sonunda baskın rengini ve o renge ait geri bildirimi göreceksin. İki renk eşit çıkarsa ikisinin özelliklerini okuyup sana daha çok uyanı sen seçeceksin.</li>
    </ol>
   </div>
   <div class="nav"><span></span><button class="btn" id="start">Başla</button></div>`;
@@ -155,8 +155,8 @@ function result(){
     app.innerHTML=`<p class="eyebrow">Puanların eşit çıktı</p>
     <h1>${lead.map(x=>esc(DATA.fb[x].ad.toLocaleUpperCase('tr'))).join(' = ')}</h1>
     ${tot}
-    <p style="font-size:20px;font-weight:500;max-width:640px">Bu renklerde puanın aynı. Sunumu dinle; sonra sana daha çok uyan rengi seç.</p>
-    <div class="tie">${lead.map(x=>`<button class="btn t${x}" data-pick="${x}">${esc(DATA.fb[x].ad)} · ${esc(DATA.fb[x].oz)}</button>`).join('')}</div>${reset}`;
+    <p style="font-size:20px;font-weight:500;max-width:640px">Bu renklerde puanın aynı. Aşağıdakileri oku, sana daha çok uyan rengi seç. Diğer rengin önerilerinden de yararlanabilirsin.</p>
+    <div class="fb">${lead.map(x=>`<section><h2>${esc(DATA.fb[x].ad)} · ${esc(DATA.fb[x].oz)}</h2><ul>${DATA.fb[x].deger.concat(DATA.fb[x].guclu.slice(0,3)).map(v=>`<li>${esc(v)}</li>`).join('')}</ul><button class="btn t${x}" data-pick="${x}">${esc(DATA.fb[x].ad)} bana daha çok uyuyor</button></section>`).join('')}</div>${reset}`;
     app.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{st.pick=b.dataset.pick;save();render();scrollTo(0,0)});
   }else{
     const f=DATA.fb[c],keys=['deger','guclu','ihtiyac','stres','iletisim'];
