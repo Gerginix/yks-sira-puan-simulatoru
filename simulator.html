@@ -1,0 +1,1456 @@
+
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <title>YKS 2025 PUAN VE SIRA SİMÜLATÖRÜ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- SEO (hafif) -->
+  <meta name="description" content="2026 YKS hazırlığında deneme netlerinle 2025 YKS puan ve sıralamanı (SAY/EA/SÖZ/DİL) simüle et. OBP ile yerleştirme puanı ve sıralama hesaplama." />
+  <meta property="og:title" content="YKS 2025 PUAN VE SIRA SİMÜLATÖRÜ" />
+  <meta property="og:description" content="Deneme netlerin + OBP ile 2025 YKS puan ve sıralamanı simüle et (SAY/EA/SÖZ/DİL)." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="umut.jpeg" />
+
+  <style>
+    :root{
+      --page-w: 380px;
+      --control-w: 260px;
+      --radius: 10px;
+    }
+
+    body{
+      font-family: Arial, sans-serif;
+      max-width: var(--page-w);
+      margin: 24px auto;
+      padding: 10px;
+    }
+
+    h1{
+      text-align:center;
+      margin: 6px 0 10px;
+      font-size: 22px;
+    }
+
+    .subtitle{
+      text-align:center;
+      font-size: 13px;
+      color:#333;
+      line-height:1.45;
+      margin-bottom:16px;
+    }
+
+    /* Instagram satırı (subtitle altında) */
+    .igline{
+      text-align:center;
+      font-size: 13px;
+      margin-top: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .igline a{
+      color:#0b57d0;
+      text-decoration: underline;
+      word-break: break-word;
+    }
+    .igicon{
+      width:18px;
+      height:18px;
+      display:inline-block;
+      flex:0 0 auto;
+    }
+
+    /* Dipnot */
+    .disclaimer{
+      text-align:center;
+      font-size:12px;
+      color:#444;
+      margin-top:10px;
+      line-height:1.4;
+    }
+
+    label{
+      font-weight:700;
+      display:block;
+      margin-top:10px;
+      width: var(--control-w);
+      margin-left:auto;
+      margin-right:auto;
+      font-size:14px;
+    }
+
+    input, select{
+      width: var(--control-w);
+      padding:8px;
+      margin-top:6px;
+      display:block;
+      margin-left:auto;
+      margin-right:auto;
+      text-align:center;
+    }
+
+    button{
+      width: var(--control-w);
+      padding:12px;
+      margin:14px auto 0;
+      font-size:16px;
+      font-weight:700;
+      display:block;
+      cursor:pointer;
+    }
+
+    /* Paylaş butonu (ikincil) */
+    .btn-secondary{
+      margin-top:10px;
+      font-size:14px;
+      font-weight:700;
+      opacity:0.92;
+    }
+
+    .grp{
+      border:1px solid #ddd;
+      border-radius: var(--radius);
+      padding:10px;
+      margin-top:12px;
+    }
+
+    .grp b{
+      display:block;
+      text-align:center;
+      font-size:14px;
+      margin-bottom:6px;
+    }
+
+    /* Test isimleri: çerçeveli ve ortalı (DY/NET satırının üstü) */
+    .grp label{
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: var(--radius);
+      padding: 6px 8px;
+      text-align: center;
+      background: rgba(255,255,255,0.55);
+      box-sizing: border-box;
+    }
+
+    #sonuc{
+      margin-top:16px;
+      font-size:20px;
+      font-weight:800;
+      text-align:center;
+    }
+
+    #sira{
+      margin-top:8px;
+      font-size:16px;
+      font-weight:700;
+      text-align:center;
+    }
+
+    .hint{
+      font-size:12px;
+      color:#555;
+      margin-top:6px;
+      text-align:center;
+    }
+
+    @media (max-width: 420px){
+      :root{
+        --page-w: 92vw;
+        --control-w: 85%;
+      }
+    }
+
+    /* === ARKA PLAN FOTO (PC + MOBİL) === */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image: url("umut.jpeg");
+      background-repeat:no-repeat;
+      background-size:cover;
+      background-position: 65% center; /* PC kadraj */
+      opacity:0.22;                    /* transparan, flu YOK */
+      z-index:-1;
+      pointer-events:none;
+    }
+
+    /* Tüm içerik foto üstünde kalsın */
+    body > *{
+      position:relative;
+      z-index:1;
+    }
+
+    /* === MOBİL AYAR === */
+    @media (max-width: 600px){
+      body::before{
+        background-position: 50% 20%;  /* yüz yukarıda */
+        background-size: 160%;         /* yüz büyük */
+        opacity:0.18;
+      }
+    }
+
+    /* === AKILLI UYARI (satır) === */
+    .warnline{
+      width: var(--control-w);
+      margin: 10px auto 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(180,0,0,0.18);
+      background: rgba(255, 230, 230, 0.55);
+      color: #5a0000;
+      font-size: 12.5px;
+      line-height: 1.4;
+      display:none;
+    }
+    .warnline b{ font-weight:800; }
+
+    /* === NEDEN HESAPLANMADI? (MODAL) === */
+    .modalOverlay{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,0.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index:9999;
+    }
+    .modalCard{
+      width: min(520px, 92vw);
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.20);
+      padding: 16px 16px 14px;
+    }
+    .modalTitle{
+      font-size: 18px;
+      font-weight: 900;
+      margin: 0 0 8px;
+      color:#111;
+      text-align:left;
+    }
+    .modalText{
+      font-size: 13.5px;
+      line-height: 1.5;
+      color:#222;
+      margin: 0 0 12px;
+      white-space: pre-line;
+    }
+    .modalActions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .modalBtn{
+      width:auto;
+      margin:0;
+      padding:10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background:#111;
+      color:#fff;
+      font-weight: 800;
+      font-size: 14px;
+      cursor:pointer;
+    }
+    .modalBtnLight{
+      background: rgba(255,255,255,0.9);
+      color:#111;
+    }
+  
+    /* DY-NET satırı: Doğru / Yanlış / Net (Net = D - Y/4) */
+    .dywrap{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin: 0 0 10px 0;
+    }
+    .dywrap > .dy{
+      width: 101px; /* 56px -> %80 arttırıldı */
+      padding: 8px;
+      border: 1px solid #bbb;
+      border-radius: var(--radius);
+      box-sizing: border-box;
+      font-size: 14px;
+      text-align:center;
+    }
+    .dywrap > input:not(.dy){
+      width: 101px; /* NET hücresi, Doğru/Yanlış ile aynı */
+      padding: 8px;
+      border: 1px solid #bbb;
+      border-radius: var(--radius);
+      box-sizing: border-box;
+      text-align:center;
+    }
+/* === YKS / LGS MOD SEÇİMİ === */
+    .hidden{ display:none !important; }
+
+    .modehint{
+      text-align:center;
+      font-size: 13px;
+      color:#333;
+      margin-top: 4px;
+      margin-bottom: 6px;
+    }
+    .modebar{
+      width: var(--control-w);
+      margin: 10px auto 14px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+    }
+    .modebtn{
+      flex:1 1 auto;
+      width:auto;              /* genel button width'ünü override et */
+      margin:0;
+      padding:10px 0;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background:#f5f5f5;
+      color:#111;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .modebtn.active{
+      background:#111;
+      color:#fff;
+    }
+
+  
+/* --- LGS UI helpers (YKS'i etkilemez) --- */
+.lgsTestLabel{
+  display:block;
+  text-align:center;
+  border:1px solid rgba(0,0,0,.25);
+  border-radius:10px;
+  padding:7px 8px;
+  margin-bottom:6px;
+  font-weight:bold;
+  background: rgba(255,255,255,.75);
+}
+.dywrap{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.dyInput{
+  width: 100%;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,.25);
+  padding: 6px 10px;
+  text-align: center;
+  font-size: 16px;
+  background: rgba(255,255,255,.85);
+}
+.warn{
+  background: rgba(255, 243, 205, .9);
+  border: 1px solid rgba(255, 193, 7, .6);
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+}
+.result{
+  background: rgba(255,255,255,.9);
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+}
+.hidden{ display:none !important; }
+
+</style>
+
+  <!-- GoatCounter -->
+  <script data-goatcounter="https://gerginix.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+</head>
+
+<body>
+
+
+<div class="modehint"><b>Sınav seç:</b></div>
+<div class="modebar" id="modeBar">
+  <button id="modeYKS" class="modebtn" type="button">YKS</button>
+  <button id="modeLGS" class="modebtn" type="button">LGS</button>
+</div>
+
+
+<div id="introHome">
+  <div class="subtitle">
+    Bu simülatör, yıl boyunca girdiğiniz deneme sınavlarında ürettiğiniz netlere dayanarak,
+    sizi resmî yerleştirme sonuçlarına en yakın şekilde konumlandırmayı amaçlar.
+    <br><br>
+    Seçtiğiniz sınav türüne göre;
+    <br>
+    <b>YKS</b> adayları için <b>puan ve sıralama</b>,
+    <br>
+    <b>LGS</b> adayları için <b>puan ve yüzdelik dilim</b>
+    hesaplanır.
+    <br><br>
+    Hesaplamalar, ilgili yılın resmî katsayıları ve yerleştirme verileri esas alınarak yapılır.
+    Bu nedenle sonuçlar bir tahmin değil, deneme performansınızın gerçekçi bir simülasyonudur.
+    <br><br>
+    Devam etmek için lütfen <b>sınav türünüzü seçin</b>.
+  </div>
+
+  <div class="igline">
+    <span class="igicon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Instagram">
+        <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.4-2.15a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/>
+      </svg>
+    </span>
+
+    <span>Daha fazlası için instagram hesabımı takip edebilrsiniz:</span>
+    <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
+      instagram.com/umutsahin.tr
+    </a>
+  </div>
+</div>
+
+<div id="introYKS" class="hidden">
+
+
+<h1>YKS 2025 PUAN VE SIRA SİMÜLATÖRÜ</h1>
+
+<div class="subtitle">
+  2026 YKS hazırlığınızı sürdürürken deneme sınavlarında ürettiğiniz netlerin,
+  sizi 2025 YKS'de kaç puanla hangi puan türünde kaçıncı yapacağını görmek için
+  bu PUAN ve SIRALAMA simülatörünü yıl boyunca kullanmaya devam edin.
+  <br><br>
+  OBP kısmına güncel OBP'nizi yazarak 2025 YKS YERLEŞTİRME PUANINIZI ve
+  SIRALAMANIZI %99,5 oranında doğru hesaplayacaktır.
+</div>
+
+<div class="igline">
+  <span class="igicon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Instagram">
+      <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.4-2.15a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/>
+    </svg>
+  </span>
+
+  <span>Daha fazlası için instagram hesabımı takip edebilrsiniz:</span>
+  <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
+    instagram.com/umutsahin.tr
+  </a>
+</div>
+
+<div class="disclaimer">
+  Bu sonuçlar bir <b>simülasyondur</b>. Gerçek YKS sonuçları; sınavın zorluk düzeyi, standart sapma ve ÖSYM hesaplamalarına göre değişebilir.
+</div>
+
+
+
+</div>
+
+
+
+<div id="lgsUI" class="hidden" style="text-align:center; margin: 14px auto 0; width: var(--control-w);">
+  <h1 style="margin: 6px 0 10px; font-size: 22px;">LGS 2025 PUAN ve YÜZDELİK SİMÜLATÖRÜ</h1>
+
+  <div class="subtitle" style="margin-bottom: 10px;">
+    2026 LGS hazırlığınızı sürdürürken deneme sınavlarında ürettiğiniz netlerin,
+    sizi 2025 LGS yerleştirmesinde hangi puana ve hangi yüzdelik dilime taşıyabileceğini görmek için bu
+    <b>PUAN ve YÜZDELİK</b> simülatörünü yıl boyunca kullanmaya devam edin.
+    <br><br>
+    Netlerinizi <b>doğru/yanlış</b> veya doğrudan <b>net</b> olarak girebilirsiniz. Sistem, puanınızı ve yüzdelik diliminizi hesapladıktan sonra
+    2025 yerleştirme verisine göre girebileceğiniz okulları listeler.
+    <br><br>
+    <span style="font-size:12px; opacity:.9;">
+      Bu sonuçlar bir simülasyondur. Gerçek LGS sonuçları; sınavın zorluk düzeyi ve resmî hesaplama yöntemi gibi etkenlere göre değişebilir.
+    </span>
+  </div>
+
+  <div style="margin:10px 0 12px; text-align:left;">
+    <label style="display:block; font-weight:bold; margin-bottom:6px;">İl Seç</label>
+    <select id="lgsIlSec" style="width:100%; height:38px; border-radius:10px; padding:6px 10px;">
+      <option value="">— İl seç —</option>
+    </select>
+  </div>
+
+  <div id="lgsForm" style="text-align:left;">
+    <div style="display:grid; grid-template-columns: 1fr; gap: 10px;">
+      <!-- TÜRKÇE -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">TÜRKÇE</div>
+        <div class="dywrap">
+          <input id="lgs_tr_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_tr_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_tr_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+
+      <!-- İNKILAP -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">İNKILAP TARİHİ</div>
+        <div class="dywrap">
+          <input id="lgs_ink_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_ink_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_ink_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+
+      <!-- DİN -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">DİN KÜLTÜRÜ</div>
+        <div class="dywrap">
+          <input id="lgs_din_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_din_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_din_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+
+      <!-- İNGİLİZCE -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">İNGİLİZCE</div>
+        <div class="dywrap">
+          <input id="lgs_ing_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_ing_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_ing_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+
+      <!-- MAT -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">MATEMATİK</div>
+        <div class="dywrap">
+          <input id="lgs_mat_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_mat_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_mat_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+
+      <!-- FEN -->
+      <div class="lgsTestBox">
+        <div class="lgsTestLabel">FEN BİLİMLERİ</div>
+        <div class="dywrap">
+          <input id="lgs_fen_d" class="dyInput" inputmode="numeric" placeholder="D" />
+          <input id="lgs_fen_y" class="dyInput" inputmode="numeric" placeholder="Y" />
+          <input id="lgs_fen_n" class="dyInput" inputmode="decimal" placeholder="NET" />
+        </div>
+      </div>
+    </div>
+
+    <button id="lgsHesaplaBtn" class="btn" style="width:100%; margin-top:12px;">HESAPLA</button>
+
+    <div id="lgsUyari" class="warn hidden" style="margin-top:10px;"></div>
+
+    <div id="lgsSonuc" class="result hidden" style="margin-top:10px;">
+      <div><b>LGS PUAN:</b> <span id="lgsPuan">—</span></div>
+      <div style="margin-top:6px;"><b>YÜZDELİK DİLİM:</b> <span id="lgsYuzde">—</span></div>
+    </div>
+
+    <div id="lgsListeBox" class="result hidden" style="margin-top:10px;">
+      <div style="font-weight:bold; margin-bottom:6px;">Okul listeleri (maks. 12 + 12)</div>
+      <ol id="lgsOkulListe" style="margin:0; padding-left:18px;"></ol>
+    </div>
+
+    <div style="margin-top: 12px; font-size: 12px;">
+      <span style="opacity:.85;">Daha fazlası için instagram hesabımı takip edebilirsin:</span>
+      <a href="https://instagram.com/umutsahin.tr" target="_blank" rel="noopener">
+        instagram.com/umutsahin.tr
+      </a>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div id="yksUI" class="hidden">
+<label>Puan Türü</label>
+<select id="puanTuru">
+  <option value="SAY">SAY</option>
+  <option value="EA">EA</option>
+  <option value="SOZ">SÖZ</option>
+  <option value="DIL">DİL</option>
+</select>
+
+<label>OBP (0–100)</label>
+<input id="obp" type="number" step="0.01" placeholder="Örn: 85,50" />
+<div class="hint">Virgül veya nokta ile yazabilirsin.</div>
+
+<div class="grp">
+  <b>TYT Netleri</b>
+  <label>TYT Türkçe</label>
+  <div class="dywrap"><input id="tyt_tr_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_tr_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_tr" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>TYT Sosyal</label>
+  <div class="dywrap"><input id="tyt_sos_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_sos_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_sos" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>TYT Matematik</label>
+  <div class="dywrap"><input id="tyt_mat_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_mat_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_mat" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>TYT Fen</label>
+  <div class="dywrap"><input id="tyt_fen_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="tyt_fen_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="tyt_fen" type="number" step="0.25"  placeholder="NET" /></div>
+</div>
+
+<div id="grp_say" class="grp">
+  <b>AYT (SAY)</b>
+  <label>AYT Matematik</label>
+  <div class="dywrap"><input id="ayt_mat_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_mat_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_mat" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Fizik</label>
+  <div class="dywrap"><input id="ayt_fiz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_fiz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_fiz" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Kimya</label>
+  <div class="dywrap"><input id="ayt_kim_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_kim_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_kim" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Biyoloji</label>
+  <div class="dywrap"><input id="ayt_bio_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_bio_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_bio" type="number" step="0.25"  placeholder="NET" /></div>
+</div>
+
+<div id="grp_ea" class="grp" style="display:none">
+  <b>AYT (EA)</b>
+  <label>AYT Matematik</label>
+  <div class="dywrap"><input id="ayt_mat_ea_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_mat_ea_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_mat_ea" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Edebiyat</label>
+  <div class="dywrap"><input id="ayt_edeb_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_edeb_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_edeb" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Tarih-1</label>
+  <div class="dywrap"><input id="ayt_tar1_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_tar1_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_tar1" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Coğrafya-1</label>
+  <div class="dywrap"><input id="ayt_cog1_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_cog1_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_cog1" type="number" step="0.25"  placeholder="NET" /></div>
+</div>
+
+<div id="grp_soz" class="grp" style="display:none">
+  <b>AYT (SÖZ)</b>
+  <label>AYT Edebiyat</label>
+  <div class="dywrap"><input id="ayt_edeb_soz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_edeb_soz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_edeb_soz" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Tarih-1</label>
+  <div class="dywrap"><input id="ayt_tar1_soz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_tar1_soz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_tar1_soz" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Coğrafya-1</label>
+  <div class="dywrap"><input id="ayt_cog1_soz_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_cog1_soz_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_cog1_soz" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Tarih-2</label>
+  <div class="dywrap"><input id="ayt_tar2_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_tar2_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_tar2" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Coğrafya-2</label>
+  <div class="dywrap"><input id="ayt_cog2_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_cog2_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_cog2" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT Felsefe Grubu</label>
+  <div class="dywrap"><input id="ayt_fels_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_fels_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_fels" type="number" step="0.25"  placeholder="NET" /></div>
+  <label>AYT DKAB</label>
+  <div class="dywrap"><input id="ayt_dkab_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ayt_dkab_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ayt_dkab" type="number" step="0.25"  placeholder="NET" /></div>
+</div>
+
+<div id="grp_dil" class="grp" style="display:none">
+  <b>YDT (DİL)</b>
+  <label>YDT Net</label>
+  <div class="dywrap"><input id="ydt_d" class="dy dy-d" type="number" step="1" placeholder="D" inputmode="numeric" /><input id="ydt_y" class="dy dy-y" type="number" step="1" placeholder="Y" inputmode="numeric" /><input id="ydt" type="number" step="0.25"  placeholder="NET" /></div>
+</div>
+
+<button id="hesaplaBtn">HESAPLA</button>
+
+<div id="sonuc">—</div>
+<div id="sira">—</div>
+
+<!-- Akıllı uyarı satırı (kural tutmazsa burada da görünür) -->
+<div id="uyariSatiri" class="warnline"></div>
+
+<button id="paylasBtn" class="btn-secondary" type="button">SONUCU PAYLAŞ</button>
+<div id="paylasMesaj" class="hint" style="display:none;"></div>
+
+<!-- === NEDEN HESAPLANMADI? MODAL === -->
+<div id="hataOverlay" class="modalOverlay" aria-hidden="true">
+  <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="hataBaslik">
+    <div id="hataBaslik" class="modalTitle">Puan hesaplanamadı</div>
+    <div id="hataMetin" class="modalText"></div>
+    <div class="modalActions">
+      <button id="hataKapat2" class="modalBtn modalBtnLight" type="button">Alanlara dön</button>
+      <button id="hataKapat" class="modalBtn" type="button">Kapat</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script src="app.js"></script>
+
+<script>
+  (function(){
+    // --- yardımcılar ---
+    function readNumber(id){
+      const el = document.getElementById(id);
+      if (!el) return 0;
+      const raw = (el.value ?? "").toString().trim();
+      const normalized = raw.replace(",", ".");
+      const n = Number(normalized);
+      return Number.isFinite(n) ? n : 0;
+    }
+    function round2(x){ return Math.round(x * 100) / 100; }
+
+    // --- modal kontrol ---
+    const overlay = document.getElementById("hataOverlay");
+    const hataMetin = document.getElementById("hataMetin");
+    const kapatBtn = document.getElementById("hataKapat");
+    const kapatBtn2 = document.getElementById("hataKapat2");
+    const uyari = document.getElementById("uyariSatiri");
+
+    function closeModal(){
+      if (overlay) overlay.style.display = "none";
+      if (overlay) overlay.setAttribute("aria-hidden", "true");
+    }
+    function openModal(text){
+      if (hataMetin) hataMetin.textContent = text;
+      if (overlay){
+        overlay.style.display = "flex";
+        overlay.setAttribute("aria-hidden", "false");
+      }
+    }
+    if (kapatBtn) kapatBtn.addEventListener("click", closeModal);
+    if (kapatBtn2) kapatBtn2.addEventListener("click", closeModal);
+    if (overlay){
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeModal();
+      });
+    }
+
+    // --- Akıllı metin üretimi ---
+    function buildRuleMessage(tur, sum){
+      const s = round2(sum);
+      const need = 0.50;
+
+      const titleLine = tur + " yerleştirme puanının oluşması için\n";
+      const ruleLine =
+        (tur === "DIL")
+          ? "YDT'den toplam en az 0,50 net gerekir."
+          : "ilgili AYT testlerinden toplam en az 0,50 net gerekir.";
+
+      let which = "";
+      let example = "";
+
+      if (tur === "SAY"){
+        const mat = readNumber("ayt_mat");
+        const fiz = readNumber("ayt_fiz");
+        const kim = readNumber("ayt_kim");
+        const bio = readNumber("ayt_bio");
+        which =
+          "SAY için geçerli testler: AYT Matematik, Fizik, Kimya, Biyoloji.\n" +
+          "Şu an: Mat=" + mat + ", Fiz=" + fiz + ", Kim=" + kim + ", Bio=" + bio + ".";
+        example = "Örnek: AYT Matematik'i 0,50 yap ve tekrar dene.";
+      } else if (tur === "EA"){
+        const mat = readNumber("ayt_mat_ea");
+        const edb = readNumber("ayt_edeb");
+        const tar = readNumber("ayt_tar1");
+        const cog = readNumber("ayt_cog1");
+        which =
+          "EA için geçerli testler: AYT Matematik, Edebiyat, Tarih-1, Coğrafya-1.\n" +
+          "Şu an: Mat=" + mat + ", Edeb=" + edb + ", Tar1=" + tar + ", Coğ1=" + cog + ".";
+        example = "Örnek: Edebiyat'ı 0,50 yap ve tekrar dene.";
+      } else if (tur === "SOZ"){
+        const edb = readNumber("ayt_edeb_soz");
+        const tar1 = readNumber("ayt_tar1_soz");
+        const cog1 = readNumber("ayt_cog1_soz");
+        const tar2 = readNumber("ayt_tar2");
+        const cog2 = readNumber("ayt_cog2");
+        const fels = readNumber("ayt_fels");
+        const dkab = readNumber("ayt_dkab");
+        which =
+          "SÖZ için geçerli testler: Edebiyat, Tarih-1, Coğrafya-1, Tarih-2, Coğrafya-2, Felsefe, DKAB.\n" +
+          "Şu an: Edeb=" + edb + ", Tar1=" + tar1 + ", Coğ1=" + cog1 + ", Tar2=" + tar2 + ", Coğ2=" + cog2 + ", Fels=" + fels + ", DKAB=" + dkab + ".";
+        example = "Örnek: Edebiyat'ı 0,50 yap ve tekrar dene.";
+      } else if (tur === "DIL"){
+        const ydt = readNumber("ydt");
+        which =
+          "DİL için geçerli test: YDT.\n" +
+          "Şu an: YDT=" + ydt + ".";
+        example = "Örnek: YDT'yi 0,50 yap ve tekrar dene.";
+      }
+
+      const sumLine = "\n\nŞu anki toplamın: " + s.toFixed(2) + "\nGerekli minimum: " + need.toFixed(2);
+
+      return titleLine + ruleLine + "\n\n" + which + sumLine + "\n\n" + example;
+    }
+
+    function setWarnline(text){
+      if (!uyari) return;
+      uyari.textContent = text;
+      uyari.style.display = "block";
+    }
+    function clearWarnline(){
+      if (!uyari) return;
+      uyari.style.display = "none";
+      uyari.textContent = "";
+    }
+
+    // --- KURAL: AYT/YDT toplam >= 0,50 değilse HESAPLA engellenir ---
+    document.addEventListener("DOMContentLoaded", () => {
+      const turSelect = document.getElementById("puanTuru");
+      const btn = document.getElementById("hesaplaBtn");
+      const sonucEl = document.getElementById("sonuc");
+      const siraEl = document.getElementById("sira");
+
+      if (!turSelect || !btn || !sonucEl || !siraEl) return;
+
+      // Puan türü değişince uyarıları temizle
+      turSelect.addEventListener("change", () => {
+        clearWarnline();
+        closeModal();
+      });
+
+      // CAPTURE: app.js'in click handler'ından ÖNCE çalışır
+      btn.addEventListener("click", (e) => {
+        const tur = turSelect.value;
+
+        let sum = 0;
+        if (tur === "SAY"){
+          sum =
+            readNumber("ayt_mat") +
+            readNumber("ayt_fiz") +
+            readNumber("ayt_kim") +
+            readNumber("ayt_bio");
+        } else if (tur === "EA"){
+          sum =
+            readNumber("ayt_mat_ea") +
+            readNumber("ayt_edeb") +
+            readNumber("ayt_tar1") +
+            readNumber("ayt_cog1");
+        } else if (tur === "SOZ"){
+          sum =
+            readNumber("ayt_edeb_soz") +
+            readNumber("ayt_tar1_soz") +
+            readNumber("ayt_cog1_soz") +
+            readNumber("ayt_tar2") +
+            readNumber("ayt_cog2") +
+            readNumber("ayt_fels") +
+            readNumber("ayt_dkab");
+        } else if (tur === "DIL"){
+          sum = readNumber("ydt");
+        }
+
+        // KURAL
+        if (sum < 0.5){
+          // app.js'i durdur
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+
+          // sonuçları sıfırla
+          sonucEl.textContent = "—";
+          siraEl.textContent = "—";
+
+          const msg = buildRuleMessage(tur, sum);
+
+          // satır uyarı + modal ekran
+          setWarnline("⚠️ " + tur + " puanı için ilgili AYT/YDT toplamın 0,50'nin altında. (Şu an: " + round2(sum).toFixed(2) + ") Detay için ekrana bak.");
+          openModal(msg);
+          return;
+        }
+
+        // Kural sağlandıysa: hiçbir şeye karışma
+        clearWarnline();
+        closeModal();
+
+      }, true); // <-- capture
+    });
+  })();
+</script>
+
+<script>
+  (function(){
+    const btn = document.getElementById("paylasBtn");
+    const msg = document.getElementById("paylasMesaj");
+    const sonucEl = document.getElementById("sonuc");
+    const siraEl = document.getElementById("sira");
+
+    if (!btn || !msg || !sonucEl || !siraEl) return;
+
+    function cleanText(t){ return (t || "").toString().trim(); }
+
+    function getShareText(){
+      const sonuc = cleanText(sonucEl.textContent);
+      const sira  = cleanText(siraEl.textContent);
+      const url   = window.location.href;
+
+      const lines = [];
+      lines.push("YKS 2025 Puan ve Sıra Simülatörü");
+      if (sonuc && sonuc !== "—") lines.push(sonuc);
+      if (sira && sira !== "—")  lines.push(sira);
+      lines.push(url);
+      return lines.join("\n");
+    }
+
+    async function copyToClipboard(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch(e){
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        let ok = false;
+        try{ ok = document.execCommand("copy"); }catch(_){ ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+      }
+    }
+
+    btn.addEventListener("click", async () => {
+      const sonuc = cleanText(sonucEl.textContent);
+      if (!sonuc || sonuc === "—") {
+        msg.style.display = "block";
+        msg.textContent = "Önce HESAPLA’ya basıp sonucu üret.";
+        return;
+      }
+
+      const text = getShareText();
+
+      if (navigator.share) {
+        try{
+          await navigator.share({
+            title: "YKS 2025 Puan ve Sıra Simülatörü",
+            text: text
+          });
+          msg.style.display = "block";
+          msg.textContent = "Paylaşım ekranı açıldı.";
+          return;
+        }catch(e){
+          // iptal
+        }
+      }
+
+      const ok = await copyToClipboard(text);
+      msg.style.display = "block";
+      msg.textContent = ok ? "Kopyalandı. WhatsApp/DM’ye yapıştırabilirsin." : "Kopyalanamadı. Tarayıcı izin vermedi.";
+    });
+  })();
+</script>
+
+
+<script>
+/* =====================================================
+   YKS DOĞRU / YANLIŞ -> NET OTOMATİK (YKS motorunu bozmaz)
+   - Net input id'leri AYNI kalır (tyt_tr, ayt_mat, ...)
+   - Yeni alanlar: <id>_d ve <id>_y
+   - Kural: Net = D - Y/4
+   - Kural: D + Y <= maxSoru (aşarsa Y kısılır)
+   - Negatif net mümkün (D/Y sayıları negatif olamaz)
+===================================================== */
+(function(){
+  const MAXQ = {
+    tyt_tr: 40, tyt_sos: 20, tyt_mat: 40, tyt_fen: 20,
+    ayt_mat: 40, ayt_fiz: 14, ayt_kim: 13, ayt_bio: 13,
+    ayt_mat_ea: 40, ayt_edeb: 24, ayt_tar1: 10, ayt_cog1: 6,
+    ayt_edeb_soz: 24, ayt_tar1_soz: 10, ayt_cog1_soz: 6,
+    ayt_tar2: 11, ayt_cog2: 11, ayt_fels: 12, ayt_dkab: 6,
+    ydt: 80
+  };
+
+  function toInt(val){
+    const s = (val ?? "").toString().trim();
+    if (!s) return null;
+    const n = Number(s.replace(",", "."));
+    if (!Number.isFinite(n)) return null;
+    return Math.trunc(n);
+  }
+
+  function fmtNet(x){
+    // 0.25 adımlı; ama küsurat çıkarsa da düzgün yaz
+    const r = Math.round(x * 1000) / 1000;
+    return (Math.abs(r) < 1e-12) ? "0" : String(r);
+  }
+
+  function bindOne(id){
+    const netEl = document.getElementById(id);
+    const dEl = document.getElementById(id + "_d");
+    const yEl = document.getElementById(id + "_y");
+    if (!netEl || !dEl || !yEl) return;
+
+    const max = MAXQ[id];
+
+    function recalc(){
+      const dRaw = toInt(dEl.value);
+      const yRaw = toInt(yEl.value);
+
+      // İkisi de boşsa net manuel kalsın
+      if (dRaw === null && yRaw === null){
+        netEl.readOnly = false;
+        return;
+      }
+
+      let d = (dRaw === null) ? 0 : dRaw;
+      let y = (yRaw === null) ? 0 : yRaw;
+
+      // Doğru/yanlış negatif olamaz
+      if (d < 0) d = 0;
+      if (y < 0) y = 0;
+
+      // Üst limit (tek tek)
+      if (d > max) d = max;
+      if (y > max) y = max;
+
+      // D+Y aşarsa yanlış kıs
+      if (d + y > max){
+        y = Math.max(0, max - d);
+      }
+
+      // UI'ya geri yaz (düzeltme olduysa)
+      if (dRaw !== null && dEl.value !== String(d)) dEl.value = String(d);
+      if (yRaw !== null && yEl.value !== String(y)) yEl.value = String(y);
+
+      const net = d - (y / 4);
+      netEl.value = fmtNet(net);
+      netEl.readOnly = true;
+    }
+
+    dEl.addEventListener("input", recalc);
+    yEl.addEventListener("input", recalc);
+    dEl.addEventListener("blur", recalc);
+    yEl.addEventListener("blur", recalc);
+
+    // Sayfa ilk açılışında da hesapla
+    recalc();
+  }
+
+  function init(){
+    Object.keys(MAXQ).forEach(bindOne);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+
+
+<script>
+  (function(){
+    const btnYKS = document.getElementById("modeYKS");
+    const btnLGS = document.getElementById("modeLGS");
+
+    const introHome = document.getElementById("introHome");
+    const introYKS  = document.getElementById("introYKS");
+    const yksUI     = document.getElementById("yksUI");
+    const lgsUI     = document.getElementById("lgsUI");
+
+    function setActive(btn, on){
+      if (!btn) return;
+      btn.classList.toggle("active", !!on);
+    }
+
+    function hideAll(){
+      if (introHome) introHome.classList.add("hidden");
+      if (introYKS)  introYKS.classList.add("hidden");
+      if (yksUI)     yksUI.classList.add("hidden");
+      if (lgsUI)     lgsUI.classList.add("hidden");
+    }
+
+    function setMode(mode){
+      hideAll();
+      setActive(btnYKS, false);
+      setActive(btnLGS, false);
+
+      if (mode === "HOME"){
+        if (introHome) introHome.classList.remove("hidden");
+        return;
+      }
+
+      if (mode === "YKS"){
+        if (introYKS) introYKS.classList.remove("hidden");
+        if (yksUI)    yksUI.classList.remove("hidden");
+        setActive(btnYKS, true);
+        return;
+      }
+
+      if (mode === "LGS"){
+        if (lgsUI)    lgsUI.classList.remove("hidden");
+        setActive(btnLGS, true);
+        return;
+      }
+    }
+
+    if (btnYKS) btnYKS.addEventListener("click", () => setMode("YKS"));
+    if (btnLGS) btnLGS.addEventListener("click", () => setMode("LGS"));
+
+    // İlk açılış: seçim yok => ana sayfa metni görünsün
+    setMode("HOME");
+  })();
+</script>
+
+
+
+<script>
+(() => {
+  // --- LGS motor: sadece LGS ekranında çalışır ---
+  const MAXQ = {
+    "TÜRKÇE": 20,
+    "İNKILAP TARİHİ": 10,
+    "DİN KÜLTÜRÜ": 10,
+    "İNGİLİZCE": 10,
+    "MATEMATİK": 20,
+    "FEN BİLİMLERİ": 20
+  };
+
+  const state = {
+    loaded: false,
+    base: null,
+    coef: {},         // test adı -> 1 net puan katsayısı
+    headers: [],
+    rows: [],
+    idx: {},          // kolon indexleri
+  };
+
+  const $ = (id) => document.getElementById(id);
+
+  const toNum = (v) => {
+    if (v == null) return NaN;
+    const s = String(v).trim().replace(",", ".");
+    if (s === "") return NaN;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : NaN;
+  };
+
+  const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+
+  const netFromDY = (d, y) => d - (y / 3);
+
+  const ensureIdx = () => {
+    const h = state.headers;
+    const findLast = (name) => {
+      let last = -1;
+      for (let i = 0; i < h.length; i++) if (h[i] === name) last = i;
+      return last;
+    };
+    state.idx.ilList = findLast("İl Adı"); // AY listesi (son İL ADI)
+    // Okul satırlarının ili: aynı başlık ilk kez A sütununda geçer
+    const findFirst = (name) => {
+      for (let i=0;i<h.length;i++) if (h[i] === name) return i;
+      return -1;
+    };
+    state.idx.ilSchool = findFirst("İl Adı"); // okul satırlarının ili (A)
+    state.idx.il = state.idx.ilList; // dropdown için eski isim (geri uyum)
+    state.idx.okul = findLast("Okul Adı");
+    state.idx.puan = findLast("2025 PUAN");
+    state.idx.puan2 = findLast("2025 2. YER. PUANI");
+    state.idx.yuzde = findLast("2025 En Düşük % Dilim");
+    state.idx.yuzde2 = findLast("2025 En Düşük Nakil Sonrası % Dilim");
+  };
+
+  async function loadDataOnce() {
+    if (state.loaded) return;
+
+    // katsayılar
+    const kats = await fetch("data/lgs/LGS_KATSAYILAR_A1_D8_VALUES.json", { cache: "no-store" }).then(r => r.json());
+    // beklenen format: 2D array
+    const baseRow = Array.isArray(kats) ? kats.find(r => r && r[0] === "TABAN PUAN") : null;
+    state.base = baseRow ? toNum(baseRow[1]) : null;
+
+    if (Array.isArray(kats)) {
+      kats.forEach(r => {
+        if (!r || !r[0]) return;
+        const name = String(r[0]).trim();
+        if (name === "TABAN PUAN") return;
+        const coef = toNum(r[2]);
+        if (Number.isFinite(coef)) state.coef[name] = coef;
+      });
+    }
+
+    // kaynak (okullar)
+    const src = await fetch("data/lgs/LGS_KAYNAK_FULL_VALUES.json", { cache: "no-store" }).then(r => r.json());
+    state.headers = src.headers || [];
+    state.rows = src.rows || [];
+    ensureIdx();
+
+    // il listesini doldur
+    const sel = $("lgsIlSec");
+    if (sel) {
+      const ilSet = new Set();
+      const ilIdx = state.idx.il;
+      if (ilIdx >= 0) {
+        state.rows.forEach(row => {
+          const il = row?.[ilIdx];
+          if (il != null && String(il).trim() !== "") ilSet.add(String(il).trim());
+        });
+      }
+      const ils = Array.from(ilSet).sort((a,b)=>a.localeCompare(b, "tr"));
+      // reset options
+      sel.innerHTML = "";
+      const opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = "— İl seç —";
+      sel.appendChild(opt0);
+      ils.forEach(il => {
+        const opt = document.createElement("option");
+        opt.value = il;
+        opt.textContent = il;
+        sel.appendChild(opt);
+      });
+    }
+
+    // input limitlerini bağla (fiilî sınır)
+    bindInputLimits();
+
+    state.loaded = true;
+  }
+
+  function bindInputLimits() {
+    // her test için D/Y/N inputları
+    const map = [
+      ["TÜRKÇE", "lgs_tr_d", "lgs_tr_y", "lgs_tr_n"],
+      ["İNKILAP TARİHİ", "lgs_ink_d", "lgs_ink_y", "lgs_ink_n"],
+      ["DİN KÜLTÜRÜ", "lgs_din_d", "lgs_din_y", "lgs_din_n"],
+      ["İNGİLİZCE", "lgs_ing_d", "lgs_ing_y", "lgs_ing_n"],
+      ["MATEMATİK", "lgs_mat_d", "lgs_mat_y", "lgs_mat_n"],
+      ["FEN BİLİMLERİ", "lgs_fen_d", "lgs_fen_y", "lgs_fen_n"],
+    ];
+
+    map.forEach(([test, did, yid, nid]) => {
+      const maxQ = MAXQ[test];
+      const dEl = $(did);
+      const yEl = $(yid);
+      const nEl = $(nid);
+
+      // HTML min/max (görsel/klavye için)
+      [dEl, yEl].forEach(el => {
+        if (!el) return;
+        el.setAttribute("inputmode", "numeric");
+        el.setAttribute("min", "0");
+        el.setAttribute("max", String(maxQ));
+      });
+      if (nEl) {
+        nEl.setAttribute("inputmode", "decimal");
+        nEl.setAttribute("min", "0");
+        nEl.setAttribute("max", String(maxQ));
+      }
+
+      // D/Y girilince NET temizlensin
+      const onDY = () => {
+        if (!dEl || !yEl) return;
+        // clamp D/Y
+        let d = clamp(Math.trunc(toNum(dEl.value) || 0), 0, maxQ);
+        let y = clamp(Math.trunc(toNum(yEl.value) || 0), 0, maxQ);
+
+        // D+Y <= maxQ
+        if (d + y > maxQ) {
+          // önce D'yi koru, Y'yi kırp
+          y = maxQ - d;
+          if (y < 0) { d = maxQ; y = 0; }
+        }
+
+        dEl.value = String(d);
+        yEl.value = String(y);
+
+        if (nEl) nEl.value = ""; // neti boşalt
+      };
+
+      // NET girilince D/Y temizlensin (küsuratlı net serbest, 0..maxQ)
+      const onNet = () => {
+        if (!nEl) return;
+        const raw = toNum(nEl.value);
+        if (!Number.isFinite(raw)) return;
+        const n = clamp(raw, 0, maxQ);
+        nEl.value = String(n).replace(".", ",");
+        if (dEl) dEl.value = "";
+        if (yEl) yEl.value = "";
+      };
+
+      if (dEl) dEl.addEventListener("input", onDY);
+      if (yEl) yEl.addEventListener("input", onDY);
+      if (nEl) nEl.addEventListener("input", onNet);
+    });
+  }
+
+  function getCandidateScore() {
+    if (!Number.isFinite(state.base)) throw new Error("TABAN PUAN okunamadı.");
+    let total = state.base;
+
+    const tests = [
+      ["TÜRKÇE", "lgs_tr_d", "lgs_tr_y", "lgs_tr_n"],
+      ["İNKILAP TARİHİ", "lgs_ink_d", "lgs_ink_y", "lgs_ink_n"],
+      ["DİN KÜLTÜRÜ", "lgs_din_d", "lgs_din_y", "lgs_din_n"],
+      ["İNGİLİZCE", "lgs_ing_d", "lgs_ing_y", "lgs_ing_n"],
+      ["MATEMATİK", "lgs_mat_d", "lgs_mat_y", "lgs_mat_n"],
+      ["FEN BİLİMLERİ", "lgs_fen_d", "lgs_fen_y", "lgs_fen_n"],
+    ];
+
+    tests.forEach(([name, did, yid, nid]) => {
+      const maxQ = MAXQ[name];
+      const dEl = $(did), yEl = $(yid), nEl = $(nid);
+
+      const hasDY = (dEl && dEl.value.trim() !== "") || (yEl && yEl.value.trim() !== "");
+      let net = 0;
+
+      if (hasDY) {
+        const d = clamp(Math.trunc(toNum(dEl?.value) || 0), 0, maxQ);
+        const y = clamp(Math.trunc(toNum(yEl?.value) || 0), 0, maxQ);
+        net = netFromDY(d, y);
+      } else {
+        const n = toNum(nEl?.value);
+        net = Number.isFinite(n) ? n : 0;
+      }
+
+      net = clamp(net, 0, maxQ);
+
+      const coef = state.coef[name];
+      if (Number.isFinite(coef)) total += net * coef;
+    });
+
+    return total;
+  }
+
+  function filterByIl(il) {
+    const ilIdx = (state.idx.ilSchool != null && state.idx.ilSchool >= 0) ? state.idx.ilSchool : state.idx.il;
+    if (ilIdx < 0) return [];
+    return state.rows.filter(r => String(r?.[ilIdx] ?? "").trim() === il);
+  }
+
+  function bestPercentileForScore(allRows, score) {
+    // Excel kuralı (genel):
+    // 1) Önce, adayın PUAN'ı ile "kazanabildiği ilk okul"u bul (puan <= adayPuan içinde en yüksek puan).
+    // 2) Eğer hiç kazanabildiği okul yoksa, en yakın puanı bul (mutlak fark en küçük).
+    const puanIdx = state.idx.puan;
+    const yuzdeIdx = state.idx.yuzde;
+    if (puanIdx < 0 || yuzdeIdx < 0) return null;
+
+    const items = (allRows || [])
+      .map(r => ({ p: toNum(r?.[puanIdx]), y: toNum(r?.[yuzdeIdx]) }))
+      .filter(x => Number.isFinite(x.p) && Number.isFinite(x.y));
+
+    if (!items.length) return null;
+
+    // 1) kazanabildiği ilk okul (puan <= score içinde en yüksek puan)
+    let best = null;
+    for (const it of items){
+      if (it.p <= score){
+        if (!best || it.p > best.p) best = it;
+      }
+    }
+    if (best) return best.y;
+
+    // 2) hiç kazanamıyorsa: en yakın puan
+    let nearest = items[0];
+    let bestDiff = Math.abs(score - nearest.p);
+    for (let i=1;i<items.length;i++){
+      const d = Math.abs(score - items[i].p);
+      if (d < bestDiff){
+        bestDiff = d;
+        nearest = items[i];
+      }
+    }
+    return nearest.y;
+  }
+
+
+  function topListByPercent(rows, candYuzde, yuzdeIdx, puanIdxForDisplay, limit=12) {
+    if (yuzdeIdx < 0) return [];
+    const okulIdx = state.idx.okul;
+    const puanIdx = puanIdxForDisplay;
+
+    const eligible = [];
+    for (let i=0;i<rows.length;i++){
+      const r = rows[i];
+      const y = toNum(r?.[yuzdeIdx]);
+      if (!Number.isFinite(y)) continue;
+      if (y < candYuzde) continue; // Excel: okul yüzdeliği >= aday yüzdeliği
+      // Sıralama anahtarı: y + satır/1e6 (Excel'deki ROW()/1000000 mantığı)
+      const key = y + (i+1)/1000000;
+      const p = puanIdx >= 0 ? toNum(r?.[puanIdx]) : NaN;
+      eligible.push({ r, y, p, key });
+    }
+
+    eligible.sort((a,b)=> a.key - b.key); // en yakın (daha iyi) yüzdelik
+    return eligible.slice(0, limit).map(x => ({
+      okul: okulIdx >= 0 ? String(x.r?.[okulIdx] ?? "").trim() : "",
+      yuzde: x.y,
+      puan: x.p
+    }));
+  }
+
+function renderLists(list1, list2) {
+    const lb0 = $("lgsListeBox");
+    const box = $("lgsOkulListe");
+    if (!box) return;
+    if ((!list1 || list1.length===0) && (!list2 || list2.length===0)) {
+      box.innerHTML = "";
+      if (lb0) lb0.classList.add("hidden");
+      return;
+    }
+    if (!box) return;
+
+    const fmtPuan = (n) => (Number.isFinite(n) ? n.toFixed(3).replace(".", ",") : "");
+    const fmtY = (n) => (Number.isFinite(n) ? String(n).replace(".", ",") : "");
+
+    const htmlList = (title, items, showYuzdeLabel) => {
+      if (!items.length) {
+        return `<div style="margin:10px 0; padding:10px; border:1px solid rgba(0,0,0,.12); border-radius:10px; background:#fff;">
+          <b>${title}</b><div style="margin-top:6px;">Uygun okul bulunamadı.</div></div>`;
+      }
+      const rows = items.map((it,i)=>`
+        <div style="display:flex; gap:10px; justify-content:space-between; padding:6px 0; border-top:1px dashed rgba(0,0,0,.12); align-items:flex-start;">
+          <div style="text-align:left; flex:1; word-break:break-word; overflow-wrap:anywhere;">${i+1}. ${it.okul}</div>
+          <div style="min-width:86px; text-align:right; white-space:nowrap;">
+            <div>${fmtPuan(it.puan)}</div>
+            <div style="font-size:12px; opacity:.8;">${showYuzdeLabel}${fmtY(it.yuzde)}</div>
+          </div>
+        </div>`).join("");
+      return `<div style="margin:10px 0; padding:10px; border:1px solid rgba(0,0,0,.12); border-radius:10px; background:#fff;">
+        <b>${title}</b>
+        ${rows}
+      </div>`;
+    };
+
+    box.innerHTML =
+      htmlList("1. Yerleştirme (2025 PUAN) — Maks. 12", list1, "% ") +
+      htmlList("Nakil dönemi / Son yerleştirme (2025 2. YER. PUANI) — Maks. 12", list2, "% ");
+    const lb = $("lgsListeBox");
+    if (lb) lb.classList.remove("hidden");
+  }
+
+function setWarn(msg) {
+    const w = $("lgsUyari");
+    if (w) w.textContent = msg || "";
+  }
+
+  async function handleCompute() {
+    try {
+      setWarn("");
+      await loadDataOnce();
+
+      const il = $("lgsIlSec")?.value || "";
+      if (!il) {
+        setWarn("İl seçmeden hesaplama yapılamaz.");
+        return;
+      }
+
+      const ilRows = filterByIl(il);
+      const score = getCandidateScore();
+
+      // sonuçları yaz
+      const puanEl = $("lgsPuan");
+      if (puanEl) puanEl.textContent = score.toFixed(3).replace(".", ",");
+
+      const yuz = bestPercentileForScore(state.rows, score);
+      const yuzEl = $("lgsYuzde");
+      if (yuzEl) yuzEl.textContent = (yuz == null ? "—" : String(yuz).replace(".", ","));
+
+      // listeler (2 dönem)
+      if (yuz == null || !Number.isFinite(Number(yuz))) {
+        renderLists([], []);
+      } else {
+        const candY = Number(yuz);
+        const list1 = topListByPercent(ilRows, candY, state.idx.yuzde, state.idx.puan, 12);
+        // Nakil listesinde puan gösterimi: 2025 2. YER. PUANI varsa onu göster, yoksa 2025 PUAN
+        const puan2Idx = (state.idx.puan2 != null && state.idx.puan2 >= 0) ? state.idx.puan2 : state.idx.puan;
+        const list2 = topListByPercent(ilRows, candY, state.idx.yuzde2, puan2Idx, 12);
+        renderLists(list1, list2);
+      }
+
+      const sonuc = $("lgsSonuc");
+      if (sonuc) sonuc.classList.remove("hidden");
+    } catch (e) {
+      setWarn(e?.message || "Hata oluştu.");
+    }
+  }
+
+  // LGS moduna geçince iller hemen gelsin (ama hesaplama il seçilmeden çalışmaz)
+  const btnLGS = $("modeLGS");
+  if (btnLGS) btnLGS.addEventListener("click", () => { loadDataOnce().catch(() => {}); });
+
+  const btn = $("lgsHesaplaBtn");
+  if (btn) btn.addEventListener("click", handleCompute);
+
+})();
+</script>
+
+
+</body>
+</html>
