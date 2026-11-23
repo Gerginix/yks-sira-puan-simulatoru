@@ -260,6 +260,14 @@ section:not([hidden])>.card{animation:fadeUp .28s ease-out both}
 .ktab td:nth-last-child(2){white-space:nowrap}
 .kacik{font-size:.86rem;line-height:1.5;background:var(--oku-soft,#f3f4f6);border-radius:10px;padding:10px 12px;margin:6px 0 10px}.krehber{font-size:.84rem;line-height:1.5;border:1px dashed currentColor;border-radius:10px;padding:10px 12px;margin:10px 0;opacity:.9}
 .ksonraki{background:var(--brand-soft);border-radius:11px;padding:9px 12px;margin-top:8px}
+.kgb{border:2px solid var(--brand);border-radius:14px;padding:14px 16px;margin:14px 0 4px;background:var(--card)}
+.kgb h3{color:var(--brand);font-size:1.2rem;margin-bottom:6px}
+.kgb-genel{font-size:1rem;margin:4px 0 8px}.kgb-ornt{background:var(--brand-soft);border-radius:10px;padding:8px 11px;font-size:.92rem;margin:6px 0}
+.kgb-k{margin-top:12px}.kgb-k>b{font-family:var(--d-font);font-size:1.02rem}.kgb-k ul{margin:6px 0 0;padding-left:20px}.kgb-k li{margin:3px 0}
+.kgb-alan{border-left:4px solid var(--warn);background:var(--paper);border-radius:8px;padding:8px 12px;margin-top:8px}.kgb-alan p{margin:4px 0;font-size:.92rem}
+.kgb-at{font-family:var(--d-font);font-weight:800}.kgb-p{font-size:.8rem;color:var(--muted);font-weight:700}
+.kgb-k.guc li::marker{color:var(--good)}.kgb-k.hed li::marker{color:var(--brand)}
+@media print{.kgb{break-inside:auto}.kgb-alan{break-inside:avoid}}
 .kkaynak{margin-top:12px;font-size:.72rem;color:var(--muted);line-height:1.45}
 .kfoot{margin-top:14px;font-size:.8rem;color:var(--muted);text-align:center}
 @media print{
@@ -1382,6 +1390,7 @@ function karneCiz(rec,docId,yeni){
      <div class="kmini veri"><b>${v.p["Veri Okuma"]??"—"}</b><span>Veri Okuma</span></div>
    </div>
    <div class="kbars">${[["Odak","odak"],["Akıcı Okuma","oku"],["Zamana Karşı","yaris"],["Veri Okuma","veri"]].map(([a,m])=>v.p[a]==null?"":`<div class="kbar"><span>${a}</span><div class="t"><i style="width:${v.p[a]}%;background:${MOD_RENK[m]}"></i></div><b>${v.p[a]}</b></div>`).join("")}</div>`;
+  const KGB=kisiselGeriBildirim(v,k);if(KGB)h+=KGB.html;
   h+=`<div class="krehber"><b>Karne nasıl okunur?</b> Bağlam Gücü puanı, dört aşamanın puanlarının ortalamasıdır (her biri 0–100). Her aşamanın altında önce o bölümün neyi ölçtüğü ve puanın nasıl hesaplandığı yazar. Tablolarda <b>Sonuç</b> öğrencinin değerini, <b>Karşılaştırma</b> neye göre değerlendirildiğini, <b>Yorum</b> ne anlama geldiğini gösterir. Renkler: <span class="gy good">yeşil</span> güçlü, <span class="gy warn">turuncu</span> geliştirilebilir, <span class="gy bad">kırmızı</span> öncelikli çalışılacak.</div>`;
   if(v.guclu)h+=`<p class="kgz"><b>En güçlü beceri:</b> ${v.guclu} &nbsp;·&nbsp; <b>Geliştirilecek beceri:</b> ${v.zayif}</p>`;
 
@@ -1477,6 +1486,102 @@ function karneCiz(rec,docId,yeni){
   gecmisCiz(k,kayitId||docId);
 }
 
+/* ---- Kişisel geri bildirim (Hattie ve Timperley: Neredeyim? → Nereye gidiyorum? → Sonra ne?) ---- */
+function kisiselGeriBildirim(v,k){
+  const M=[];const det=v.det||{};
+  const ad=((k&&k.ad)||"").trim().split(/\s+/)[0]||"Öğrenci";
+  const yuz=(a,b)=>b?Math.round(a/b*100):0;
+  // her modül için kanıt, güç/öncelik, hedef ve günlük alıştırma
+  if(v.o){const od=det.odak||{},t=od.schTime||0,o=v.o;
+    const guc=[],zay=[];
+    if(t&&t<=25)guc.push("Schulte tablosunu "+sn(t)+"de bitirdi; gözle tarama hızı iyi.");else if(t)zay.push("Schulte tablosu "+sn(t)+" sürdü; gözle tarama yavaş.");
+    if(o.toplam&&o.dogru/o.toplam>=.8)guc.push("Bağlam avında "+o.dogru+"/"+o.toplam+" doğru: metinde aradığını buluyor.");else if(o.toplam)zay.push("Bağlam avında "+o.dogru+"/"+o.toplam+" doğru"+(o.tur.acele?"; "+o.tur.acele+" soruda soruyu bitirmeden dokundu":"")+(o.tur.kayip?"; "+o.tur.kayip+" soruda aradığını bulamadı":"")+".");
+    if(od.schMiss>=SCH_MISS)zay.push("Schulte'de "+od.schMiss+" yanlış dokunuş: sayıyı netleştirmeden basıyor.");
+    const hed=[];if(t)hed.push("Schulte süresi: "+sn(t)+" → "+sn(Math.max(15,Math.round(t*.85))));
+    if(o.toplam&&o.dogru<o.toplam)hed.push("Bağlam avı: "+o.dogru+"/"+o.toplam+" → "+Math.min(o.toplam,o.dogru+1)+"/"+o.toplam);
+    if(o.ort>=8)hed.push("Bağlam avında bilgi bulma süresi: "+sn(o.ort)+" → 8 sn'nin altı");
+    M.push({m:"odak",ad:"Odak",p:o.puan,guc,zay,hed,neden:"Maarif soruları uzun metnin içine gömülü küçük bir bilgiyi sorar; dikkat dağılınca bilgi gözden kaçar.",
+      yap:o.sonraki,alis:"Schulte tablosu 3 tur (süre tut, her turda süreyi yaz) + 2 kısa metinde bağlam avı"});}
+  if(v.r){const r=v.r,b=BANTLAR[r.seviye]||{y:0},ref=REF[r.seviye];
+    const guc=[],zay=[];
+    if(r.anlama>=85)guc.push("Okuduğu metnin "+r.dogru+"/"+r.n+" sorusunu doğru yanıtladı: anlama güçlü.");else zay.push("Anlama %"+r.anlama+" ("+r.dogru+"/"+r.n+"): "+(r.anlama>=70?"ana fikri yakalıyor, ayrıntıyı kaçırıyor.":"okuduğunun önemli kısmını kaçırıyor."));
+    if(ref&&r.wpm>=b.y&&r.wpm<=TARAMA_SINIRI)guc.push("Dakikada "+r.wpm+" kelime okudu; "+(r.bantAd||"").toLocaleLowerCase("tr")+" düzeyi için yeterli tempo.");else if(ref&&r.wpm<b.y)zay.push("Dakikada "+r.wpm+" kelime okudu; "+(r.bantAd||"").toLocaleLowerCase("tr")+" ortalaması "+String(ref.ort).replace(".",",")+". Uzun metinde süre yetmeyebilir.");
+    const tl=r.turlar||{};Object.keys(SORU_TUR).forEach(x=>{const z=tl[x];if(z&&z[1]&&z[0]<z[1])zay.push(SORU_TUR[x]+" sorularında "+(z[1]-z[0])+"/"+z[1]+" kaçırdı.");});
+    const hed=[];if(r.anlama<85)hed.push("Anlama: %"+r.anlama+" → %85 ve üstü (5 sorudan en az 4-5 doğru)");
+    if(ref&&r.wpm<ref.ort&&r.wpm<=TARAMA_SINIRI)hed.push("Okuma hızı: "+r.wpm+" → "+Math.round(Math.min(ref.ort,r.wpm*1.1))+" kelime/dk (anlama düşmeden)");
+    if(!hed.length)hed.push("Aynı hız ve anlamayı bilimsel ve tablolu metinlerde de korumak");
+    M.push({m:"oku",ad:"Akıcı Okuma",p:r.puan,guc,zay,hed,neden:"Bağlam temelli sorularda önce metni anlamak gerekir; anlama eksikse doğru bilgi bulunsa bile yanlış yorumlanır.",
+      yap:r.sonraki,alis:"Seviyesine uygun bir metni süre tutarak oku, kapatıp 3 cümleyle özetle, sonra metne dönüp özeti kontrol et"});}
+  if(v.y){const y=v.y,ky=(det.yaris&&det.yaris.kayit)||[],n=ky.length,dg=ky.filter(x=>x.dogru&&!x.doldu).length,lim=(det.yaris&&det.yaris.limit)||40;
+    const guc=[],zay=[];
+    if(n&&dg/n>=.8&&!y.tur.doldu)guc.push("Zamana karşı "+dg+"/"+n+" doğru ve süresi hiç bitmedi: baskı altında sakin.");
+    else{if(n)zay.push("Zamana karşı "+dg+"/"+n+" doğru.");if(y.tur.doldu)zay.push(y.tur.doldu+" soruda süre ("+lim+" sn) yetmedi: senaryonun tamamını okuyor, soruyu hedeflemiyor.");}
+    if(y.tur.acele)zay.push(y.tur.acele+" soruda acele edip yanıldı.");if(y.tur.sonAn)zay.push(y.tur.sonAn+" soruyu ancak son saniyelerde çözdü: sınavda süre riski.");
+    const hed=[];if(y.tur.doldu)hed.push("Süresi yetmeyen soru: "+y.tur.doldu+" → 0");if(n&&dg<n)hed.push("Doğru: "+dg+"/"+n+" → "+Math.min(n,dg+1)+"/"+n);
+    if(!hed.length)hed.push("Soru başına süreyi "+Math.round(lim*.6)+" sn'nin altına indirmek");
+    M.push({m:"yaris",ad:"Zamana Karşı",p:y.puan,guc,zay,hed,neden:"LGS/YKS'de soru başına ortalama 1–1,5 dakika var; senaryoyu baştan sona okumak süreyi bitirir.",
+      yap:y.sonraki,alis:"2 senaryo sorusu: önce soruyu oku, cevabı metinde ara, süre tut ("+lim+" sn)"});}
+  if(v.vr){const vr=v.vr,s=vr.satirlar||[],n=s.length,dg=s.filter(x=>x.dogru).length;
+    const guc=[],zay=[];const tt={};s.forEach(x=>{const a=(tt[x.t]=tt[x.t]||[0,0]);a[1]++;if(x.dogru)a[0]++;});
+    if(n&&dg/n>=.8)guc.push("Grafik ve tablo sorularında "+dg+"/"+n+" doğru: veriyi doğru okuyor.");else if(n)zay.push("Grafik ve tablo sorularında "+dg+"/"+n+" doğru.");
+    Object.keys(tt).forEach(x=>{const a=tt[x];if(a[0]<a[1])zay.push((VERI_TUR[x]||x)+" sorularında "+(a[1]-a[0])+"/"+a[1]+" kaçırdı.");});
+    const hed=[];if(n&&dg<n)hed.push("Veri okuma: "+dg+"/"+n+" → "+Math.min(n,dg+1)+"/"+n);if(!hed.length)hed.push("Çok serili grafiklerde ve uzun tablolarda aynı doğruluğu korumak");
+    M.push({m:"veri",ad:"Veri Okuma",p:vr.puan,guc,zay,hed,neden:"Maarif sorularının önemli bir kısmı grafik, tablo ya da şema içerir; birim ve başlık kaçınca bütün işlem boşa gider.",
+      yap:vr.sonraki,alis:"1 grafik ya da tablo: başlık → birim → soru sırasıyla 3 soru çöz, okuduğun değeri önce yaz"});}
+  if(!M.length)return null;
+  const sir=M.slice().sort((a,b)=>a.p-b.p);
+  const oncelik=sir.filter(x=>x.p<75).slice(0,2);if(!oncelik.length)oncelik.push(sir[0]);
+  const guclu=M.slice().sort((a,b)=>b.p-a.p).filter(x=>x.guc.length&&!oncelik.includes(x));
+  // genel değerlendirme + modüller arası örüntü
+  const ort=v.ort;
+  let genel=ort==null?"":ort>=85?ad+", Bağlam Gücü çok yüksek: uzun metinli sorularda dikkat, okuma, süre ve veri becerilerin birlikte güçlü.":
+    ort>=70?ad+", Bağlam Gücü iyi düzeyde: temel beceriler oturmuş, birkaç noktayı cilalarsan uzun metinli sorularda belirgin fark yaratırsın.":
+    ort>=50?ad+", temel beceriler oturmaya başlamış; aşağıdaki iki alana düzenli, kısa çalışmalarla hızla yükselebilirsin.":
+    ad+", uzun metinli sorular şu an zorluyor. Bu çok normal ve çalışılabilir bir durum: her gün 15 dakikalık kısa alıştırmalarla ilk ilerlemeyi birkaç haftada görürsün.";
+  const ornt=[],R=v.r,Y=v.y,O=v.o,V=v.vr;
+  if(R&&Y&&R.anlama<70&&Y.tur.doldu)ornt.push("Metni anlamakta zorlandığı için zamana karşı bölümünde süre de yetmiyor; önce anlama çalışılırsa süre sorunu da büyük ölçüde çözülür.");
+  else if(R&&Y&&R.wpm<(BANTLAR[R.seviye]||{y:0}).y&&(Y.tur.doldu||Y.tur.sonAn))ornt.push("Yavaş okuma, zamana karşı bölümünde süre baskısına dönüşüyor; tempo çalışması iki bölüme birden katkı verir.");
+  if(O&&Y&&O.tur.acele&&Y.tur.acele)ornt.push("Acele edip yanılma iki bölümde de görülüyor: cevabı işaretlemeden önce bir kez kontrol etme alışkanlığı en hızlı kazanç olur.");
+  if(R&&V&&R.anlama>=85&&V.puan<70)ornt.push("Düz metni iyi anlıyor ama grafik ve tabloya geçince zorlanıyor; veri okuma alıştırmaları öncelikli.");
+  if(O&&R&&O.puan>=80&&R.anlama<70)ornt.push("Aradığı bilgiyi hızlı buluyor ama metnin bütününü anlamakta zorlanıyor; bulmak ile anlamak arasındaki köprü çalışılmalı.");
+  // anlama kaynaklı süre sorunu varsa önce okuma
+  if(R&&Y&&R.anlama<70&&Y.tur.doldu){const ok=M.find(x=>x.m==="oku");const i=oncelik.indexOf(ok);if(i>0)oncelik.splice(i,1);if(i!==0){oncelik.unshift(ok);oncelik.length=Math.min(oncelik.length,2);}}
+  // hiç güçlü kanıt yoksa en yüksek bölümü olumlu söyle
+  const enIyi=M.slice().sort((a,b)=>b.p-a.p)[0];
+  const olumlu=guclu.length?null:("En yüksek puanın "+enIyi.ad+" bölümünde ("+enIyi.p+"/100); buradan başlayarak diğer bölümleri de yükseltebilirsin.");
+  // haftalık plan
+  const p1=oncelik[0],p2=oncelik[1]||oncelik[0];
+  const korG=M.slice().sort((a,b)=>b.p-a.p).find(x=>!oncelik.includes(x)&&x.p>=75);
+  const kor=korG||M.slice().sort((a,b)=>a.p-b.p).find(x=>!oncelik.includes(x))||p1;
+  const plan=[["Pazartesi",p1],["Salı",p2],["Çarşamba",p1],["Perşembe",kor,korG?"(güçlü alanı koru)":kor===p1?"":"(üçüncü alan)"],["Cuma",p2],["Cumartesi",null,"Bağlam Gücü'nü yeniden çöz ya da süreli bir mini deneme yap; sonuçları bu karneyle karşılaştır"],["Pazar",null,"Dinlenme"]];
+  const veli=oncelik.map(x=>x.m==="oku"?"Akşamları 10 dakika birlikte okuyun; bitince “Bu metin ne anlatıyordu?” diye sorup tek cümlelik özet isteyin.":
+    x.m==="odak"?"Çalışırken telefon ve ekran başka odada olsun; 15 dakikalık kesintisiz çalışma, sonra 5 dakika mola.":
+    x.m==="yaris"?"Soru çözerken süre tutmasına yardım edin; süre biterse kızmadan “Soruyu önce okudun mu?” diye hatırlatın.":
+    "Gazete ve haberlerdeki grafiklere birlikte bakın; “Bu grafik ne anlatıyor?” diye sorun.").filter((x,i,a)=>a.indexOf(x)===i);
+  // HTML
+  const li=a=>a.map(x=>`<li>${esc(x)}</li>`).join("");
+  let h=`<div class="kgb"><h3>Kişisel Geri Bildirim</h3>`;
+  if(genel)h+=`<p class="kgb-genel">${esc(genel)}</p>`;
+  if(ornt.length)h+=`<p class="kgb-ornt"><b>Bölümler arası bağlantı:</b> ${esc(ornt.join(" "))}</p>`;
+  if(guclu.length)h+=`<div class="kgb-k guc"><b>💪 Güçlü yanların</b><ul>${li(guclu.flatMap(x=>x.guc).slice(0,4))}</ul></div>`;
+  else if(olumlu)h+=`<div class="kgb-k guc"><b>💪 Güçlü yanın</b><ul>${li([olumlu])}</ul></div>`;
+  h+=`<div class="kgb-k onc"><b>🎯 Öncelikli çalışma alanların</b>${oncelik.map((x,i)=>`<div class="kgb-alan"><div class="kgb-at">${i+1}. ${x.ad} <span class="kgb-p">${x.p}/100</span></div>
+    ${x.zay.length?`<p><b>Ne gördük:</b> ${esc(x.zay.join(" "))}</p>`:""}<p><b>Neden önemli:</b> ${esc(x.neden)}</p><p><b>Ne yapmalı:</b> ${esc(x.yap||x.alis)}</p></div>`).join("")}</div>`;
+  h+=`<div class="kgb-k hed"><b>📈 Bir sonraki karne için hedeflerin</b><ul>${li(oncelik.flatMap(x=>x.hed).concat(guclu.length?[]:[]).slice(0,5))}</ul></div>`;
+  h+=`<div class="kgb-k pln"><b>🗓️ 1 haftalık çalışma planı</b> <span class="kmeta">(günde 15 dakika; 2 hafta uygula)</span><table class="ktab"><tbody>${plan.map(([g,x,e])=>`<tr><td><b>${g}</b></td><td>${x?esc(x.alis)+` <span class="kmeta">· ${x.ad}${e?" "+e:""}</span>`:esc(e)}</td></tr>`).join("")}</tbody></table></div>`;
+  if(veli.length)h+=`<div class="kgb-k vel"><b>👪 Veliye not: evde nasıl destek olunur?</b><ul>${li(veli)}</ul></div>`;
+  h+=`</div>`;
+  // metin (WhatsApp / kopya)
+  const T=["💬 KİŞİSEL GERİ BİLDİRİM"];if(genel)T.push(genel);ornt.forEach(x=>T.push(x));
+  if(guclu.length){T.push("💪 Güçlü yanların:");guclu.flatMap(x=>x.guc).slice(0,4).forEach(x=>T.push("• "+x));}
+  else if(olumlu)T.push("💪 "+olumlu);
+  T.push("🎯 Öncelikli çalışma alanların:");oncelik.forEach((x,i)=>{T.push((i+1)+". "+x.ad+" ("+x.p+"/100)");if(x.zay.length)T.push("   Ne gördük: "+x.zay.join(" "));T.push("   Ne yapmalı: "+(x.yap||x.alis));});
+  T.push("📈 Hedefler:");oncelik.flatMap(x=>x.hed).slice(0,5).forEach(x=>T.push("• "+x));
+  T.push("🗓️ Haftalık plan (günde 15 dk):");plan.forEach(([g,x,e])=>T.push("• "+g+": "+(x?x.alis+" ("+x.ad+")":e)));
+  if(veli.length){T.push("👪 Veliye not:");veli.forEach(x=>T.push("• "+x));}
+  return {html:h,metin:T};
+}
+
 function karneMetni(k,v,tarih){
   const L=[];
   L.push("📋 BAĞLAM GÜCÜ KARNESİ");
@@ -1484,6 +1589,7 @@ function karneMetni(k,v,tarih){
   L.push(tarih);
   L.push("★ Bağlam Gücü: "+(v.ort==null?"—":v.ort)+(v.tamam?"":" (eksik modül var)"));
   if(v.guclu)L.push("En güçlü: "+v.guclu+" · Geliştirilecek: "+v.zayif);
+  const KGB=kisiselGeriBildirim(v,k);if(KGB){L.push("");KGB.metin.forEach(x=>L.push(x));}
   L.push("");
   L.push("🎯 ODAK: "+(v.o?v.o.puan+"/100":"tamamlanmadı"));
   if(v.o){
