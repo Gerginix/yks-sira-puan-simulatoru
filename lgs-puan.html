@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LGS Puan ve Yüzdelik Hesaplama 2026 - @umutsahin.tr</title>
+<meta name="description" content="Doğru ve yanlışlarını gir; 2026 LGS katsayılarıyla netini, puanını ve MEB 2026 yerleştirme verisine göre yüzdelik dilimini gör.">
+<style>
+  :root{
+    --bg:#eef1f6; --surface:#ffffff; --surface-2:#f6f8fb; --border:#dbe1ea;
+    --text:#152036; --text-2:#5b6478; --text-mute:#8791a3;
+    --accent:#1e3a5f; --accent-ink:#ffffff; --accent-soft:#e6edf6;
+    --gold:#c68a1f; --gold-soft:#fbeecd; --good:#1c8a5a; --good-soft:#e2f5ec; --bad:#b42318; --bad-soft:#fdecea;
+    --shadow:0 1px 2px rgba(21,32,54,.06), 0 8px 24px -12px rgba(21,32,54,.18);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f1420; --surface:#161d2c; --surface-2:#1c2437; --border:#2b3550;
+      --text:#e9edf6; --text-2:#aab3c8; --text-mute:#77809a;
+      --accent:#5b8fc7; --accent-ink:#0b1220; --accent-soft:#1d2c42;
+      --gold:#e0ad4e; --gold-soft:#3a2f16; --good:#4fd396; --good-soft:#123526; --bad:#ff8a80; --bad-soft:#3a1714;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1420; --surface:#161d2c; --surface-2:#1c2437; --border:#2b3550;
+    --text:#e9edf6; --text-2:#aab3c8; --text-mute:#77809a;
+    --accent:#5b8fc7; --accent-ink:#0b1220; --accent-soft:#1d2c42;
+    --gold:#e0ad4e; --gold-soft:#3a2f16; --good:#4fd396; --good-soft:#123526; --bad:#ff8a80; --bad-soft:#3a1714;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--text);font:16px/1.5 Arial,Helvetica,sans-serif}
+  main{max-width:980px;margin:0 auto;padding:24px 16px 48px}
+  h1{font-size:clamp(24px,4.5vw,34px);line-height:1.2;margin:8px 0 6px;color:var(--text)}
+  .alt{color:var(--text-2);margin:0 0 20px}
+  .izgara{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;align-items:start}
+  @media (max-width:760px){.izgara{grid-template-columns:1fr}}
+  .kart{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:18px}
+  .kart h2{font-size:18px;margin:0 0 12px}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:13px;color:var(--text-2);font-weight:700;text-align:center;padding:6px 4px;border-bottom:1px solid var(--border)}
+  th:first-child,td:first-child{text-align:left}
+  td{padding:7px 4px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  .ders{font-weight:700}
+  .ders small{display:block;font-weight:400;color:var(--text-mute);font-size:12px}
+  input[type=number]{width:64px;max-width:100%;padding:8px 6px;font:700 16px Arial,Helvetica,sans-serif;text-align:center;color:var(--text);background:var(--surface-2);border:1.5px solid var(--border);border-radius:9px;-moz-appearance:textfield}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input[type=number]:focus{outline:none;border-color:var(--accent)}
+  @media (max-width:480px){input[type=number]{width:50px;padding:8px 2px} .kart{padding:14px 12px} td,th{padding-left:2px;padding-right:2px}}
+  input.hata{border-color:var(--bad);background:var(--bad-soft)}
+  .net{font-weight:700;color:var(--accent);min-width:48px;display:inline-block}
+  .bos{color:var(--text-mute)}
+  .uyari{color:var(--bad);font-size:13px;min-height:18px;margin-top:8px}
+  .dugmeler{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  button{font:700 14px Arial,Helvetica,sans-serif;border-radius:999px;padding:8px 16px;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent)}
+  button.dolu{background:var(--accent);color:var(--accent-ink)}
+  .sonuc{position:sticky;top:12px}
+  .buyuk{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .kutu{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px}
+  .kutu .e{font-size:13px;color:var(--text-2)}
+  .kutu .d{font-size:clamp(26px,6vw,34px);font-weight:700;line-height:1.15;color:var(--text);font-variant-numeric:tabular-nums}
+  .kutu.vurgu{background:var(--accent-soft);border-color:transparent}
+  .kutu.vurgu .d{color:var(--accent)}
+  .kutu.genis{grid-column:1/-1}
+  .serit{height:12px;border-radius:999px;background:linear-gradient(90deg,var(--good) 0%,var(--gold) 50%,var(--bad) 100%);position:relative;margin:16px 0 6px;opacity:.85}
+  .imlec{position:absolute;top:-5px;width:4px;height:22px;border-radius:2px;background:var(--text);transform:translateX(-2px);transition:left .25s}
+  .serit-etk{display:flex;justify-content:space-between;font-size:12px;color:var(--text-mute)}
+  .not{font-size:13px;color:var(--text-2);margin:10px 0 0}
+  .katsayi td,.katsayi th{text-align:center}
+  details{margin-top:20px}
+  summary{cursor:pointer;font-weight:700}
+  .kaynak{font-size:13px;color:var(--text-2)}
+  .kaynak a{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<nav id="umut-modul-nav" aria-label="Modüller" style="position:relative;z-index:50;background:#16305c;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;padding:10px 12px;margin:0"><a href="./" style="background:transparent;color:#fff;border:1.5px solid #fff;border-radius:999px;padding:7px 16px;font:700 14px Arial,Helvetica,sans-serif;text-decoration:none;white-space:nowrap;display:inline-block">Ek Yerleştirme Robotu</a><a href="simulator.html" style="background:transparent;color:#fff;border:1.5px solid #fff;border-radius:999px;padding:7px 16px;font:700 14px Arial,Helvetica,sans-serif;text-decoration:none;white-space:nowrap;display:inline-block">Puan ve Sıra Simülatörü</a><a href="renk/" style="background:transparent;color:#fff;border:1.5px solid #fff;border-radius:999px;padding:7px 16px;font:700 14px Arial,Helvetica,sans-serif;text-decoration:none;white-space:nowrap;display:inline-block">Rengimi Belli Ediyorum</a><a href="baglam-gucu.html" style="background:transparent;color:#fff;border:1.5px solid #fff;border-radius:999px;padding:7px 16px;font:700 14px Arial,Helvetica,sans-serif;text-decoration:none;white-space:nowrap;display:inline-block">Bağlam Gücü</a><a href="lgs-puan.html" style="background:#fff;color:#16305c;border:1.5px solid #fff;border-radius:999px;padding:7px 16px;font:700 14px Arial,Helvetica,sans-serif;text-decoration:none;white-space:nowrap;display:inline-block" aria-current="page">LGS Puan ve Yüzdelik</a></nav>
+
+<main>
+  <h1>LGS Puan ve Yüzdelik Hesaplama</h1>
+  <p class="alt">Doğru ve yanlışlarını gir; 2026 LGS'ye göre netini, puanını ve yüzdelik dilimini gör. 3 yanlış 1 doğruyu götürür.</p>
+
+  <div class="izgara">
+    <section class="kart" aria-labelledby="g-baslik">
+      <h2 id="g-baslik">Doğru ve yanlışların</h2>
+      <table>
+        <thead><tr><th>Ders</th><th>Doğru</th><th>Yanlış</th><th>Boş</th><th>Net</th></tr></thead>
+        <tbody id="satirlar"></tbody>
+      </table>
+      <div class="uyari" id="uyari" role="alert"></div>
+      <div class="dugmeler">
+        <button type="button" class="dolu" id="tam">Hepsi doğru</button>
+        <button type="button" id="temizle">Temizle</button>
+      </div>
+    </section>
+
+    <section class="kart sonuc" aria-labelledby="s-baslik" aria-live="polite">
+      <h2 id="s-baslik">Sonuç (2026 LGS'ye göre)</h2>
+      <div class="buyuk">
+        <div class="kutu"><div class="e">Toplam net</div><div class="d" id="o-net">0</div></div>
+        <div class="kutu vurgu"><div class="e">LGS puanı</div><div class="d" id="o-puan">–</div></div>
+        <div class="kutu vurgu genis"><div class="e">Yüzdelik dilim</div><div class="d" id="o-yuzde">–</div></div>
+        <div class="kutu genis"><div class="e">Türkiye sıralaması (yaklaşık, 994.358 aday)</div><div class="d" id="o-sira">–</div></div>
+      </div>
+      <div class="serit" aria-hidden="true"><div class="imlec" id="imlec" style="left:100%"></div></div>
+      <div class="serit-etk"><span>%0 · en iyi</span><span>%50</span><span>%100</span></div>
+      <p class="not" id="o-yorum"></p>
+    </section>
+  </div>
+
+  <section class="kart" style="margin-top:20px" aria-labelledby="k-baslik">
+    <h2 id="k-baslik">2026 LGS'de 1 net kaç puan?</h2>
+    <table class="katsayi">
+      <thead><tr><th>Matematik</th><th>Türkçe</th><th>Fen</th><th>Din</th><th>İnkılap</th><th>İngilizce</th></tr></thead>
+      <tbody><tr><td>4,98</td><td>4,18</td><td>3,83</td><td>1,93</td><td>1,68</td><td>1,62</td></tr></tbody>
+    </table>
+    <p class="not">Hiç net yapmayan öğrenci yaklaşık 188 puan alır. 2026'da Matematik en zor test olduğu için matematik netinin değeri en yüksek oldu.</p>
+
+    <details>
+      <summary>Nasıl hesaplanıyor, ne kadar doğru?</summary>
+      <div class="kaynak">
+        <p><b>Puan:</b> 187,81 + Türkçe×4,18 + Matematik×4,98 + Fen×3,83 + İnkılap×1,68 + Din×1,93 + İngilizce×1,62. MEB bu katsayıları yayımlamaz; değerler 2026 sonuçlarından çıkarılmıştır (<a href="https://www.matematik.biz/lgs-puan-hesaplama/" rel="noopener">matematik.biz</a>). 2026 LGS'den yayımlanmış 22 gerçek sonuç örneğinin (<a href="https://dersmetre.com/sonuc-ornekleri/lgs-2026" rel="noopener">dersmetre.com</a>) 21'inde formül ±0,5 puan içinde tutuyor. Ağırlıklar (Türkçe, Matematik, Fen 4; diğerleri 1) MEB 2026 Merkezî Sınav Raporu'ndandır.</p>
+        <p><b>Yüzdelik:</b> MEB 2026 yerleştirme sonuçlarında 137 lise programının taban puanı ve yüzdelik dilimi arasından ara değerle bulunur. 500 puan: 452 tam puanlı öğrenci. Sıralama = yüzdelik × 994.358 sınava giren.</p>
+        <p><b>Sınır:</b> Sonuç tahminidir; resmi puan yalnız MEB sonuç belgesinde yazar. 2027 LGS'nin katsayıları ve yüzdelikleri sınavdan sonra belli olacak; deneme sonuçlarını 2026'ya göre yorumlamak için kullan.</p>
+      </div>
+    </details>
+  </section>
+</main>
+
+<script>
+(function(){
+  var EGRI = [[100,100],[149.758,99.71],[151.085,99.69],[152.462,99.67],[152.605,99.67],[153.373,99.66],[156.96,99.6],[162.154,99.25],[166.457,98.83],[167.181,98.77],[168.813,98.61],[169.908,98.49],[170.119,98.44],[170.802,98.27],[175.72,97.09],[176.034,97.02],[179.168,96.27],[180.394,95.99],[182.522,95.46],[185.893,94.17],[186.744,93.8],[191.577,91.48],[195.112,89.58],[197.439,88.2],[197.924,87.9],[200.316,86.43],[201.02,85.99],[201.021,85.99],[203.296,84.51],[207.32,81.76],[212.523,78.12],[215.266,76.21],[216.422,75.37],[216.573,75.3],[220.185,72.83],[220.712,72.62],[221.522,72.35],[222.824,71.07],[226.792,68.38],[228.192,67.53],[230.059,66.33],[230.448,66.08],[230.506,66.02],[230.568,66.02],[231.866,65.2],[238.366,61.34],[239.31,60.79],[239.385,60.79],[240.199,60.34],[245.039,57.67],[246.338,56.98],[246.633,56.83],[249.962,55.2],[253.144,53.62],[254.573,52.98],[257.512,51.59],[258.211,51.27],[259.44,50.71],[259.833,50.52],[260.071,50.43],[261.58,49.8],[262.094,49.56],[262.634,49.3],[263.387,48.87],[263.625,48.77],[268.829,46.66],[278.746,42.75],[278.829,42.71],[282.855,41.19],[284.219,40.48],[290.041,38.62],[292.224,37.83],[298.038,35.81],[301.253,34.81],[305.043,33.55],[307.414,32.78],[311.926,31.35],[312.954,31.06],[313.905,30.75],[320.231,28.83],[320.281,28.83],[320.801,28.64],[338.228,23.72],[339.163,23.45],[342.012,22.69],[342.051,22.69],[342.837,22.48],[349.009,20.87],[350.266,20.58],[353.055,19.87],[355.09,19.39],[356.093,19.16],[356.55,19.02],[359.038,18.43],[364.415,17.18],[366.074,16.82],[373.585,15.18],[379.18,13.95],[380.243,13.67],[380.741,13.61],[387.871,12.26],[391.577,11.58],[401.241,9.85],[407.22,8.85],[409.464,8.49],[411.795,8.2],[415.686,7.47],[419.337,6.93],[419.661,6.88],[420.365,6.79],[425.026,6.11],[426.815,5.87],[429.439,5.52],[429.986,5.45],[434.651,4.83],[435.893,4.7],[437.31,4.51],[439.076,4.3],[440.181,4.17],[441.232,3.96],[444.639,3.66],[444.893,3.64],[446.217,3.46],[446.643,3.41],[451.17,2.93],[452.47,2.81],[454.552,2.6],[461.556,1.96],[466.999,1.49],[469.579,1.31],[471.081,1.16],[473.138,1.06],[475.181,0.93],[482.67,0.51],[482.802,0.5],[484.462,0.42],[491.433,0.17],[492.182,0.16],[500,0.0455]];
+  var DERSLER = [
+    {ad:'Türkçe', soru:20, k:4.18},
+    {ad:'Matematik', soru:20, k:4.98},
+    {ad:'Fen Bilimleri', soru:20, k:3.83},
+    {ad:'T.C. İnkılap Tarihi', soru:10, k:1.68},
+    {ad:'Din Kültürü', soru:10, k:1.93},
+    {ad:'İngilizce', soru:10, k:1.62}
+  ];
+  var SABIT = 187.81, ADAY = 994358, ANAHTAR = 'lgs-puan-2026';
+  var tb = document.getElementById('satirlar');
+  var fmt = function(x, d){ return x.toLocaleString('tr-TR', {minimumFractionDigits:d, maximumFractionDigits:d}); };
+
+  DERSLER.forEach(function(d, i){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="ders">' + d.ad + '<small>' + d.soru + ' soru</small></td>' +
+      '<td><input type="number" inputmode="numeric" min="0" max="' + d.soru + '" id="d' + i + '" aria-label="' + d.ad + ' doğru"></td>' +
+      '<td><input type="number" inputmode="numeric" min="0" max="' + d.soru + '" id="y' + i + '" aria-label="' + d.ad + ' yanlış"></td>' +
+      '<td class="bos" id="b' + i + '">' + d.soru + '</td>' +
+      '<td><span class="net" id="n' + i + '">0</span></td>';
+    tb.appendChild(tr);
+  });
+
+  function yuzdelik(p){
+    if (p >= 500) return EGRI[EGRI.length - 1][1];
+    if (p <= EGRI[0][0]) return 100;
+    for (var i = 1; i < EGRI.length; i++){
+      if (p <= EGRI[i][0]){
+        var a = EGRI[i - 1], b = EGRI[i];
+        var t = (p - a[0]) / (b[0] - a[0] || 1);
+        return Math.exp(Math.log(a[1]) + t * (Math.log(b[1]) - Math.log(a[1])));
+      }
+    }
+    return EGRI[EGRI.length - 1][1];
+  }
+
+  function oku(id){ var v = document.getElementById(id).value; return v === '' ? 0 : Math.floor(+v); }
+
+  function hesapla(){
+    var top = 0, puan = SABIT, hatali = [], dolu = false, tamam = true;
+    DERSLER.forEach(function(d, i){
+      var di = document.getElementById('d' + i), yi = document.getElementById('y' + i);
+      var D = oku('d' + i), Y = oku('y' + i);
+      if (di.value !== '' || yi.value !== '') dolu = true;
+      var kotu = D < 0 || Y < 0 || D + Y > d.soru;
+      di.classList.toggle('hata', kotu); yi.classList.toggle('hata', kotu);
+      if (kotu){ hatali.push(d.ad); return; }
+      var n = D - Y / 3;
+      if (D !== d.soru) tamam = false;
+      document.getElementById('b' + i).textContent = d.soru - D - Y;
+      document.getElementById('n' + i).textContent = fmt(n, n % 1 ? 2 : 0);
+      top += n; puan += n * d.k;
+    });
+    document.getElementById('uyari').textContent = hatali.length ? hatali.join(', ') + ': doğru + yanlış, soru sayısını geçemez.' : '';
+    try { var kayit = DERSLER.map(function(_, i){ return [document.getElementById('d' + i).value, document.getElementById('y' + i).value]; }); localStorage.setItem(ANAHTAR, JSON.stringify(kayit)); } catch(e){}
+    if (hatali.length || !dolu){
+      ['o-puan','o-yuzde','o-sira'].forEach(function(id){ document.getElementById(id).textContent = '–'; });
+      document.getElementById('o-net').textContent = dolu ? '–' : '0';
+      document.getElementById('o-yorum').textContent = dolu ? '' : 'Doğru ve yanlış sayılarını girdikçe sonuç burada çıkar.';
+      document.getElementById('imlec').style.left = '100%';
+      return;
+    }
+    if (tamam) puan = 500;
+    puan = Math.max(100, Math.min(500, puan));
+    var yz = yuzdelik(puan);
+    var sira = Math.max(1, Math.round(yz / 100 * ADAY));
+    document.getElementById('o-net').textContent = fmt(top, top % 1 ? 2 : 0);
+    document.getElementById('o-puan').textContent = fmt(puan, 2);
+    document.getElementById('o-yuzde').textContent = '%' + fmt(yz, yz < 1 ? 2 : (yz < 10 ? 2 : 1));
+    document.getElementById('o-sira').textContent = tamam ? '1 (452 tam puanlı öğrenciyle birlikte)' : '≈ ' + sira.toLocaleString('tr-TR') + '.';
+    document.getElementById('imlec').style.left = Math.min(100, Math.max(0, yz)) + '%';
+    document.getElementById('o-yorum').textContent = tamam
+      ? '2026 LGS\'de 452 öğrenci 500 tam puan aldı.'
+      : '2026 LGS\'ye giren 994.358 öğrenci arasında yüzdelik dilimin: %' + fmt(yz, yz < 10 ? 2 : 1) + ' (küçük olan daha iyi).';
+  }
+
+  tb.addEventListener('input', hesapla);
+  document.getElementById('temizle').addEventListener('click', function(){
+    DERSLER.forEach(function(_, i){ document.getElementById('d' + i).value = ''; document.getElementById('y' + i).value = ''; });
+    hesapla();
+  });
+  document.getElementById('tam').addEventListener('click', function(){
+    DERSLER.forEach(function(d, i){ document.getElementById('d' + i).value = d.soru; document.getElementById('y' + i).value = 0; });
+    hesapla();
+  });
+  try { var k = JSON.parse(localStorage.getItem(ANAHTAR) || 'null'); if (k) k.forEach(function(v, i){ document.getElementById('d' + i).value = v[0]; document.getElementById('y' + i).value = v[1]; }); } catch(e){}
+  hesapla();
+})();
+</script>
+</body>
+</html>
